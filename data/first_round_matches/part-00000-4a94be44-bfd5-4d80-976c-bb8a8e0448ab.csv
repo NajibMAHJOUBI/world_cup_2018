@@ -1,0 +1,48 @@
+A,Brazil,Croatia
+A,Brazil,Mexico
+A,Brazil,Cameroon
+A,Croatia,Mexico
+A,Croatia,Cameroon
+A,Mexico,Cameroon
+B,Spain,Holland
+B,Spain,Chile
+B,Spain,Australia
+B,Holland,Chile
+B,Holland,Australia
+B,Chile,Australia
+C,Colombia,Greece
+C,Colombia,Ivory Coast
+C,Colombia,Japan
+C,Greece,Ivory Coast
+C,Greece,Japan
+C,Ivory Coast,Japan
+D,Uruguay,Costa Rica
+D,Uruguay,England
+D,Uruguay,Italy
+D,Costa Rica,England
+D,Costa Rica,Italy
+D,England,Italy
+E,Switzerland,Ecuador
+E,Switzerland,France
+E,Switzerland,Honduras
+E,Ecuador,France
+E,Ecuador,Honduras
+E,France,Honduras
+F,Argentina,Bosnia-Herzegovina
+F,Argentina,Iran
+F,Argentina,Nigeria
+F,Bosnia-Herzegovina,Iran
+F,Bosnia-Herzegovina,Nigeria
+F,Iran,Nigeria
+G,Germany,Portugal
+G,Germany,Ghana
+G,Germany,USA
+G,Portugal,Ghana
+G,Portugal,USA
+G,Ghana,USA
+H,Belgium,Algeria
+H,Belgium,Russia
+H,Belgium,South Korea
+H,Algeria,Russia
+H,Algeria,South Korea
+H,Russia,South Korea
