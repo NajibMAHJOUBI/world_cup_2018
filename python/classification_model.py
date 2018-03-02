@@ -1,6 +1,6 @@
 
 # pyspark libraries
-from pyspark.ml.classification import DecisionTreeClassifier, LogisticRegression, RandomForestClassifier
+from pyspark.ml.classification import DecisionTreeClassifier, LogisticRegression, RandomForestClassifier, MultilayerPerceptronClassifier
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBuilder
 
@@ -8,7 +8,7 @@ from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBui
 class ClassificationModel:
     def __init__(self, data, classification_model, validator=None):
         self.data = data
-        self.model = classification_model
+        self.model_classifier = classification_model
         self.validator= validator
         self.featuresCol = "features"
         self.labelCol = "label"
@@ -25,41 +25,44 @@ class ClassificationModel:
        self.get_evaluator()
        self.get_validator()
        self.fit_validator()
+       self.save_best_model()
        #self.evaluate_evaluator()
 
     def param_grid_builder(self):
-        if (self.model =="logistic_regression"):
+        if (self.model_classifier =="logistic_regression"):
             self.grid = ParamGridBuilder()\
                        .addGrid(self.estimator.maxIter, [10, 15, 20])\
                        .addGrid(self.estimator.regParam, [0.0, 0.1, 0.5, 1.0])\
                        .addGrid(self.estimator.elasticNetParam, [0.0, 0.1, 0.5, 1.0])\
                        .build()    
-        elif(self.model == "decision_tree"):
+        elif(self.model_classifier == "decision_tree"):
             self.grid = ParamGridBuilder()\
                         .addGrid(self.estimator.maxDepth, [5, 10, 20])\
                         .addGrid(self.estimator.maxBins, [8, 16, 32])\
                         .build()
-        elif(self.model == "random_forest"):
+        elif(self.model_classifier == "random_forest"):
             self.grid = ParamGridBuilder()\
                         .addGrid(self.estimator.numTrees, [3, 6, 18])\
                         .addGrid(self.estimator.maxDepth, [5, 10, 15])\
                         .build()
-        elif(self.model == "multilayer_perceptron"):
-            pass
-        elif(self.model == "one_vs_rest"):
+        elif(self.model_classifier == "multilayer_perceptron"):
+            self.grid = ParamGridBuilder()\
+                        .addGrid(self.estimator.layers, [[8,7,6,5,4,3], [8, 7, 4, 3], [8, 6, 5, 3]])\
+                        .build()            
+        elif(self.model_classifier == "one_vs_rest"):
             pass
 
     def get_estimator(self):
-        if (self.model == "logistic_regression"):
+        if (self.model_classifier == "logistic_regression"):
             self.estimator = LogisticRegression(featuresCol=self.featuresCol, labelCol=self.labelCol, family="multinomial")
-        elif(self.model == "decision_tree"):
+        elif(self.model_classifier == "decision_tree"):
             self.estimator = DecisionTreeClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
-        elif(self.model == "random_forest"):
+        elif(self.model_classifier == "random_forest"):
             self.estimator = RandomForestClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
-        elif(self.model == "multilayer_perceptron"):
-            pass
-        elif(self.model == "one_vs_rest"):
-            pass
+        elif(self.model_classifier == "multilayer_perceptron"):
+            self.estimator = MultilayerPerceptronClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
+        elif(self.model_classifier == "one_vs_rest"):
+            self.estimator = OneVsRest(featuresCol=self.featuresCol, labelCol=self.labelCol)
     
     def get_evaluator(self):
         self.evaluator = MulticlassClassificationEvaluator(predictionCol=self.predictionCol, labelCol=self.labelCol, metricName="accuracy")
@@ -91,3 +94,7 @@ class ClassificationModel:
             prediction = self.transform_model(self.data)      
             return self.evaluator.evaluate(prediction)
 
+    def save_best_model(self):
+        print("./test/classification_model/{0}".format(self.model_classifier))
+        self.model.bestModel.save("./test/classification_model/{0}".format(self.model_classifier))
+   
