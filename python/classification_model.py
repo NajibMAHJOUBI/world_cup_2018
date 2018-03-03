@@ -1,8 +1,11 @@
 
 # pyspark libraries
 from pyspark.ml.classification import DecisionTreeClassifier, LogisticRegression, RandomForestClassifier, MultilayerPerceptronClassifier
+from pyspark.ml.classification import LogisticRegressionModel, DecisionTreeClassificationModel, RandomForestClassificationModel,  MultilayerPerceptronClassificationModel
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBuilder
+# python libraries
+import os
 
 # Class Classification Model
 class ClassificationModel:
@@ -13,6 +16,7 @@ class ClassificationModel:
         self.featuresCol = "features"
         self.labelCol = "label"
         self.predictionCol = "prediction"
+        self.root_path_model = "./test/classification_model"
  
     def __str__(self):
         s = "Classification model: {0}".format(self.model)
@@ -27,6 +31,9 @@ class ClassificationModel:
        self.fit_validator()
        self.save_best_model()
        #self.evaluate_evaluator()
+
+    def get_path_save_model(self):
+        return os.path.join(self.root_path_model ,self.model_classifier)
 
     def param_grid_builder(self):
         if (self.model_classifier =="logistic_regression"):
@@ -95,6 +102,20 @@ class ClassificationModel:
             return self.evaluator.evaluate(prediction)
 
     def save_best_model(self):
-        print("./test/classification_model/{0}".format(self.model_classifier))
-        self.model.bestModel.save("./test/classification_model/{0}".format(self.model_classifier))
+        self.model.bestModel.save(self.get_path_save_model())
+
+    def get_best_model(self):
+        if (self.model_classifier == "logistic_regression"):
+            return LogisticRegressionModel.load(self.get_path_save_model())
+        elif(self.model_classifier == "decision_tree"):
+            return DecisionTreeClassificationModel.load(self.get_path_save_model())
+        elif(self.model_classifier == "random_forest"):
+            return RandomForestClassificationModel.load(self.get_path_save_model())
+        elif(self.model_classifier == "multilayer_perceptron"):
+            MultilayerPerceptronClassificationModel.load(self.get_path_save_model())
+        elif(self.model_classifier == "one_vs_rest"):
+            pass
+        
+
+
    
