@@ -1,7 +1,7 @@
 
 # pyspark libraries
-from pyspark.ml.classification import DecisionTreeClassifier, LogisticRegression, RandomForestClassifier, MultilayerPerceptronClassifier
-from pyspark.ml.classification import LogisticRegressionModel, DecisionTreeClassificationModel, RandomForestClassificationModel,  MultilayerPerceptronClassificationModel
+from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, MultilayerPerceptronClassifier, OneVsRest, LinearSVC
+from pyspark.ml.classification import LogisticRegressionModel, DecisionTreeClassificationModel, RandomForestClassificationModel,  MultilayerPerceptronClassificationModel, OneVsRestModel
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBuilder
 # python libraries
@@ -57,7 +57,15 @@ class ClassificationModel:
                         .addGrid(self.estimator.layers, [[8,7,6,5,4,3], [8, 7, 4, 3], [8, 6, 5, 3]])\
                         .build()            
         elif(self.model_classifier == "one_vs_rest"):
-            pass
+            lr_0 = LogisticRegression(regParam=0.0, family="binomial")
+            lr_1 = LogisticRegression(regParam=0.1, family="binomial")
+            lr_2 = LogisticRegression(regParam=1.0, family="binomial")
+            svc_0 = LinearSVC(regParam=0.0)
+            svc_1 = LinearSVC(regParam=0.1)
+            svc_2 = LinearSVC(regParam=1.0)
+            self.grid = ParamGridBuilder()\
+                        .addGrid(self.estimator.classifier, [lr_0, lr_1, lr_2, svc_0, svc_1, svc_2])\
+                        .build()              
 
     def get_estimator(self):
         if (self.model_classifier == "logistic_regression"):
@@ -72,13 +80,13 @@ class ClassificationModel:
             self.estimator = OneVsRest(featuresCol=self.featuresCol, labelCol=self.labelCol)
     
     def get_evaluator(self):
-        self.evaluator = MulticlassClassificationEvaluator(predictionCol=self.predictionCol, labelCol=self.labelCol, metricName="accuracy")
+        return MulticlassClassificationEvaluator(predictionCol=self.predictionCol, labelCol=self.labelCol, metricName="accuracy")
 
     def get_validator(self):
         if (self.validator == "cross_validation"):
-            self.validation = CrossValidator(estimator=self.estimator, estimatorParamMaps=self.grid, evaluator=self.evaluator, numFolds=4)
+            self.validation = CrossValidator(estimator=self.estimator, estimatorParamMaps=self.grid, evaluator=self.get_evaluator(), numFolds=4)
         elif (self.validator == "train_validation"):
-            self.validation = TrainValidationSplit(estimator=self.estimator, estimatorParamMaps=self.grid, evaluator=self.evaluator, trainRatio=0.75)
+            self.validation = TrainValidationSplit(estimator=self.estimator, estimatorParamMaps=self.grid, evaluator=self.get_evaluator(), trainRatio=0.75)
         else:
             self.train, self.test = self.data.randomSplit([0.8, 0.2])
 
@@ -95,14 +103,14 @@ class ClassificationModel:
         if (self.validator is None):
             train_prediction = self.transform_model(self.train)
             test_prediction = self.transform(self.test)
-            print("Accuracy on the train dataset: {0}".format(self.evaluator.evaluate(train_prediction)))
-            print("Accuracy on the test dataset: {0}".format(self.evaluator.evaluate(test_prediction)))
+            print("Accuracy on the train dataset: {0}".format(self.get_evaluator().evaluate(train_prediction)))
+            print("Accuracy on the test dataset: {0}".format(self.get_evaluator().evaluate(test_prediction)))
         else:
             prediction = self.transform_model(self.data)      
             return self.evaluator.evaluate(prediction)
 
     def save_best_model(self):
-        self.model.bestModel.save(self.get_path_save_model())
+        self.model.bestModel.write().overwrite().save(self.get_path_save_model())
 
     def get_best_model(self):
         if (self.model_classifier == "logistic_regression"):
@@ -112,9 +120,9 @@ class ClassificationModel:
         elif(self.model_classifier == "random_forest"):
             return RandomForestClassificationModel.load(self.get_path_save_model())
         elif(self.model_classifier == "multilayer_perceptron"):
-            MultilayerPerceptronClassificationModel.load(self.get_path_save_model())
+            return MultilayerPerceptronClassificationModel.load(self.get_path_save_model())
         elif(self.model_classifier == "one_vs_rest"):
-            pass
+            return OneVsRestModel.load(self.get_path_save_model())
         
 
 
