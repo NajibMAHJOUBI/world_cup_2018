@@ -72,7 +72,7 @@ class FeaturizationData:
 	])
 
 	self.names_results_to_convert = self.schema_qualifying_results.names
-	self.names_results_to_remove = ["date",  "team_1", "team_2", "score_team_1", "score_team_2", "tournament", "country_played"]
+	self.names_results_to_remove = ["year", "month", "date",  "team_1", "team_2", "score_team_1", "score_team_2", "tournament", "country_played"]
 	for name in self.names_results_to_remove: self.names_results_to_convert.remove(name)
 
     def __str__(self):
@@ -135,12 +135,18 @@ class FeaturizationData:
 		return float(x_replace_minus)
 
         udf_convert_string_to_float = udf(lambda x: convert_string_to_float(x), FloatType())
+
+        def get_date_string(date, month, year):
+            return str(year) + "/" + str(month) + "/" + str(date)
+
+        udf_get_date = udf(lambda date, month, year: get_date_string(date, month, year), StringType())
+
         path = "./data/{0}/2014_World_Cup_{1}_qualifying_results.tsv".format(confederation, confederation)
         return self.spark.read.csv(path, sep="\t", schema=self.schema_qualifying_results, header=False)\
                               .select([udf_convert_string_to_float(col(name)).alias(name) for name in self.names_results_to_convert] + self.names_results_to_remove)\
-                              .select("team_1", "team_2", "score_team_1", "score_team_2")\
                               .withColumn("label", udf_win_team_1(col("score_team_1"), col("score_team_2")))\
-                              .select("team_1", "team_2", "label")
+                              .withColumn("new_date", udf_get_date(col("date"), col("month"), col("year")))\
+                              .select(col("team_1"), col("team_2"), col("label"), col("new_date").alias("date"))
 
 
     def get_data_confederation(self, confederation):
