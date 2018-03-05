@@ -1,6 +1,6 @@
 
 # pyspark libraries
-from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, MultilayerPerceptronClassifier, OneVsRest, LinearSVC
+from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, MultilayerPerceptronClassifier, OneVsRest, LinearSVC, GBTClassifier
 from pyspark.ml.classification import LogisticRegressionModel, DecisionTreeClassificationModel, RandomForestClassificationModel,  MultilayerPerceptronClassificationModel, OneVsRestModel
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBuilder
@@ -38,33 +38,56 @@ class ClassificationModel:
     def param_grid_builder(self):
         if (self.model_classifier =="logistic_regression"):
             self.grid = ParamGridBuilder()\
-                       .addGrid(self.estimator.maxIter, [10, 15, 20])\
-                       .addGrid(self.estimator.regParam, [0.0, 0.1, 0.5, 1.0])\
-                       .addGrid(self.estimator.elasticNetParam, [0.0, 0.1, 0.5, 1.0])\
+                       .addGrid(self.estimator.maxIter, [5, 10, 15, 20])\
+                       .addGrid(self.estimator.regParam, [0.0, 0.01, 0.1, 1.0, 10.0])\
+                       .addGrid(self.estimator.elasticNetParam, [0.0, 0.25, 0.5, 0.75, 1.0])\
+                       .addGrid(self.estimator.fitIntercept, [True, False])\
+                       .addGrid(self.estimator.aggregationDepth, [2, 4, 8, 16])\
                        .build()    
         elif(self.model_classifier == "decision_tree"):
             self.grid = ParamGridBuilder()\
-                        .addGrid(self.estimator.maxDepth, [5, 10, 20])\
-                        .addGrid(self.estimator.maxBins, [8, 16, 32])\
+                        .addGrid(self.estimator.maxDepth, [5, 10, 15, 20, 25])\
+                        .addGrid(self.estimator.maxBins, [4, 8, 16, 32])\
                         .build()
         elif(self.model_classifier == "random_forest"):
             self.grid = ParamGridBuilder()\
-                        .addGrid(self.estimator.numTrees, [3, 6, 18])\
-                        .addGrid(self.estimator.maxDepth, [5, 10, 15])\
+                        .addGrid(self.estimator.numTrees, [5, 10, 15, 20, 25])\
+                        .addGrid(self.estimator.maxDepth, [5, 10, 15, 20])\
+                        .addGrid(self.estimator.maxBins, [4, 8, 16, 32])\
                         .build()
         elif(self.model_classifier == "multilayer_perceptron"):
             self.grid = ParamGridBuilder()\
-                        .addGrid(self.estimator.layers, [[8,7,6,5,4,3], [8, 7, 4, 3], [8, 6, 5, 3]])\
+                        .addGrid(self.estimator.layers, [[8, 7, 6, 5, 4, 3], 
+                                                         [8, 10, 3], [8, 8, 5, 3],
+                                                         [8, 12, 12, 5, 3]])\
                         .build()            
         elif(self.model_classifier == "one_vs_rest"):
-            lr_0 = LogisticRegression(regParam=0.0, family="binomial")
-            lr_1 = LogisticRegression(regParam=0.1, family="binomial")
-            lr_2 = LogisticRegression(regParam=1.0, family="binomial")
-            svc_0 = LinearSVC(regParam=0.0)
-            svc_1 = LinearSVC(regParam=0.1)
-            svc_2 = LinearSVC(regParam=1.0)
+            lr_0 = LogisticRegression(regParam=0.0, elasticNetParam=0.0, family="binomial")
+            lr_1 = LogisticRegression(regParam=0.5, elasticNetParam=0.0, family="binomial")
+            lr_2 = LogisticRegression(regParam=1.0, elasticNetParam=0.0, family="binomial")
+            lr_3 = LogisticRegression(regParam=0.0, elasticNetParam=0.5, family="binomial")
+            lr_4 = LogisticRegression(regParam=0.5, elasticNetParam=0.5, family="binomial")
+            lr_5 = LogisticRegression(regParam=1.0, elasticNetParam=0.5, family="binomial")
+            lr_6 = LogisticRegression(regParam=0.0, elasticNetParam=1.0, family="binomial")
+            lr_7 = LogisticRegression(regParam=0.5, elasticNetParam=1.0, family="binomial")
+            lr_8 = LogisticRegression(regParam=1.0, elasticNetParam=1.0, family="binomial")
+            svc_0 = LinearSVC(regParam=0.0, fitIntercept=True)
+            svc_1 = LinearSVC(regParam=0.5, fitIntercept=True)
+            svc_2 = LinearSVC(regParam=1.0, fitIntercept=True)
+            svc_3 = LinearSVC(regParam=0.0, fitIntercept=False)
+            svc_4 = LinearSVC(regParam=0.5, fitIntercept=False)
+            svc_5 = LinearSVC(regParam=1.0, fitIntercept=False)
+            gb_0 = GBTClassifier(maxDepth=10, maxBins=16)
+            gb_1 = GBTClassifier(maxDepth=10, maxBins=16)
+            gb_2 = GBTClassifier(maxDepth=10, maxBins=16)
+            gb_3 = GBTClassifier(maxDepth=20, maxBins=32)
+            gb_4 = GBTClassifier(maxDepth=20, maxBins=32)
+            gb_5 = GBTClassifier(maxDepth=20, maxBins=32)
+
             self.grid = ParamGridBuilder()\
-                        .addGrid(self.estimator.classifier, [lr_0, lr_1, lr_2, svc_0, svc_1, svc_2])\
+                        .addGrid(self.estimator.classifier, [lr_0, lr_1, lr_2, lr_3, lr_4, lr_5, lr_6, lr_7, lr_8, 
+                                                             svc_0, svc_1, svc_2, svc_3, svc_4, svc_5,
+                                                             gb_0, gb_1, gb_2, gb_3, gb_4, gb_5])\
                         .build()              
 
     def get_estimator(self):
@@ -107,7 +130,7 @@ class ClassificationModel:
             print("Accuracy on the test dataset: {0}".format(self.get_evaluator().evaluate(test_prediction)))
         else:
             prediction = self.transform_model(self.data)      
-            return self.evaluator.evaluate(prediction)
+            return self.get_evaluator().evaluate(prediction)
 
     def save_best_model(self):
         self.model.bestModel.write().overwrite().save(self.get_path_save_model())
