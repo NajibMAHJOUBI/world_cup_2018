@@ -6,6 +6,7 @@ from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBuilder
 # python libraries
 import os
+from itertools import product
 
 # Class Classification Model
 class ClassificationModel:
@@ -62,32 +63,19 @@ class ClassificationModel:
                                                          [8, 12, 12, 5, 3]])\
                         .build()            
         elif(self.model_classifier == "one_vs_rest"):
-            lr_0 = LogisticRegression(regParam=0.0, elasticNetParam=0.0, family="binomial")
-            lr_1 = LogisticRegression(regParam=0.5, elasticNetParam=0.0, family="binomial")
-            lr_2 = LogisticRegression(regParam=1.0, elasticNetParam=0.0, family="binomial")
-            lr_3 = LogisticRegression(regParam=0.0, elasticNetParam=0.5, family="binomial")
-            lr_4 = LogisticRegression(regParam=0.5, elasticNetParam=0.5, family="binomial")
-            lr_5 = LogisticRegression(regParam=1.0, elasticNetParam=0.5, family="binomial")
-            lr_6 = LogisticRegression(regParam=0.0, elasticNetParam=1.0, family="binomial")
-            lr_7 = LogisticRegression(regParam=0.5, elasticNetParam=1.0, family="binomial")
-            lr_8 = LogisticRegression(regParam=1.0, elasticNetParam=1.0, family="binomial")
-            svc_0 = LinearSVC(regParam=0.0, fitIntercept=True)
-            svc_1 = LinearSVC(regParam=0.5, fitIntercept=True)
-            svc_2 = LinearSVC(regParam=1.0, fitIntercept=True)
-            svc_3 = LinearSVC(regParam=0.0, fitIntercept=False)
-            svc_4 = LinearSVC(regParam=0.5, fitIntercept=False)
-            svc_5 = LinearSVC(regParam=1.0, fitIntercept=False)
-#            gb_0 = GBTClassifier(maxDepth=10, maxBins=16)
-#            gb_1 = GBTClassifier(maxDepth=10, maxBins=16)
-#            gb_2 = GBTClassifier(maxDepth=10, maxBins=16)
-#            gb_3 = GBTClassifier(maxDepth=20, maxBins=32)
-#            gb_4 = GBTClassifier(maxDepth=20, maxBins=32)
-#            gb_5 = GBTClassifier(maxDepth=20, maxBins=32)
+            list_classifier = []
+            # logistic regression classifier
+            regParam = [0.0, 0.5, 1.0]
+            elasticNetParam = [0.0, 0.25, 0.5, 0.75, 1.0]
+            for reg,elastic in product(regParam, elasticNetParam):
+                list_classifier.append(LogisticRegression(regParam=reg, elasticNetParam=elastic, family="binomial"))
+            # linerSVC
+            intercept = [True, False]
+            for reg, inter in product(regParam, intercept):
+                list_classifier.append(LinearSVC(regParam=reg, fitIntercept=inter))            
 
             self.grid = ParamGridBuilder()\
-                        .addGrid(self.estimator.classifier, [
-                                                             lr_0, lr_1, lr_2, lr_3, lr_4, lr_5, lr_6, lr_7, lr_8, 
-                                                             svc_0, svc_1, svc_2, svc_3, svc_4, svc_5])\
+                        .addGrid(self.estimator.classifier, list_classifier)\
                         .build()              
 
     def get_estimator(self):
