@@ -2,19 +2,13 @@
 # World Cup 2014
 
 
-| Group A  | Group B     | Group C     | Group D    | Group E | Group F | Group G | Group H |
-| -------  | -------     | ------      | -------    | ------- | ------- | ------ | ------- |
-| Brazil   | Spain       | Colombia    | Uruguay    | Switzerland | Argentina | Germany | Belgium |
-| Croatia  | Netherlands | Greece      | Costa Rica | Ecuador | Bosnia and Herzegovina | Portugal | Algeria |
-| Mexico   | Chile       | Ivory Coast | England    | France | Iran | Ghana | Russia |
-| Cameroon | Australia   | Japan       | Italy      | Honduras | Nigeria | United States | South Korea |
+ - Groups:
 
-| Group E | Group F | Group G | Group H |
-| ------- | ------- | ------ | ------- |
-| Switzerland | Argentina | Germany | Belgium |
-| Ecuador | Bosnia and Herzegovina | Portugal | Algeria |
-| France | Iran | Ghana | Russia |
-| Honduras | Nigeria | United States | South Korea |
-
+| Group A     | Group B         | Group C         | Group D    | Group E        | Group F                    | Group G       | Group H     |
+| -------     | -------         | ------          | -------    | -------        | -------                    | ------        | -------     |
+| Brazil (1)  | Spain (1)       | Colombia (1)    | England (1)| Switzerland (1)| Argentina      (1)         | Germany   (1) | Belgium  (1)|
+| Croatia (2) | Netherlands (2) | Ivory Coast (2) | Italy (2)  | France      (2)| Bosnia and Herzegovina (2) | Portugal  (2) | South Korea (2)|
+| Mexico      | Chile           | Japan           | Uruguay    | Ecuador        | Nigeria                    | Ghana         | Russia      |
+| Cameroon    | Australia       | Greece          | Costa Rica | Honduras       | Iran                       | United States | Algeria     |
 
 
