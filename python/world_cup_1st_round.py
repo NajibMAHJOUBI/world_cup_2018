@@ -31,8 +31,10 @@ class WorldCupFirstRound:
         matches_features = self.define_matches_features(label)
         prediction = self.transform_model(matches_features)
         label_prediction = self.join_label_prediction(label, prediction)
-        dic_result_group_team = self.global_result_by_team(label_prediction)
-        self.first_second_by_group(dic_result_group_team)
+        print("Accuracy: {0}".format(self.evaluate_evaluator(label_prediction)))
+        self.win_losse_drawn_count_by_group(label_prediction)
+#        dic_result_group_team = self.global_result_by_team(label_prediction)
+#        self.first_second_by_group(dic_result_group_team)
     
     def load_data_groups(self):
         udf_strip = udf(lambda x: x.strip(), StringType())
@@ -103,6 +105,9 @@ class WorldCupFirstRound:
 
     def evaluate_evaluator(self, label_prediction):
         return ClassificationModel(None, None).get_evaluator().evaluate(label_prediction)
+
+    def win_losse_drawn_count_by_group(self, data):
+        data.groupBy("prediction").count().show()
 
     def win_losse_drawn_by_team(self, data):
         udf_get_team_1 = udf(lambda x: x[0], StringType())
