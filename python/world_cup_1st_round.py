@@ -33,8 +33,8 @@ class WorldCupFirstRound:
         label_prediction = self.join_label_prediction(label, prediction)
         print("Accuracy: {0}".format(self.evaluate_evaluator(label_prediction)))
         self.win_losse_drawn_count_by_group(label_prediction)
-#        dic_result_group_team = self.global_result_by_team(label_prediction)
-#        self.first_second_by_group(dic_result_group_team)
+        dic_result_group_team = self.global_result_by_team(label_prediction)
+        self.first_second_by_group(dic_result_group_team)
     
     def load_data_groups(self):
         udf_strip = udf(lambda x: x.strip(), StringType())

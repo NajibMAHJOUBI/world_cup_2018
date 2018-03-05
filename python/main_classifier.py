@@ -20,8 +20,8 @@ print("data count: {0}".format(data.count()))
 #data.show()
 #
 # Classification Model
-classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron", "one_vs_rest"]
-#classification_model = ["decision_tree", "random_forest"]
+#classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron", "one_vs_rest"]
+classification_model = ["logistic_regression"]
 dic_evaluate_model = {}
 dic_model_classifier = {}
 for model in classification_model:

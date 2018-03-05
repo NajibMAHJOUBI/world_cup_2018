@@ -77,17 +77,17 @@ class ClassificationModel:
             svc_3 = LinearSVC(regParam=0.0, fitIntercept=False)
             svc_4 = LinearSVC(regParam=0.5, fitIntercept=False)
             svc_5 = LinearSVC(regParam=1.0, fitIntercept=False)
-            gb_0 = GBTClassifier(maxDepth=10, maxBins=16)
-            gb_1 = GBTClassifier(maxDepth=10, maxBins=16)
-            gb_2 = GBTClassifier(maxDepth=10, maxBins=16)
-            gb_3 = GBTClassifier(maxDepth=20, maxBins=32)
-            gb_4 = GBTClassifier(maxDepth=20, maxBins=32)
-            gb_5 = GBTClassifier(maxDepth=20, maxBins=32)
+#            gb_0 = GBTClassifier(maxDepth=10, maxBins=16)
+#            gb_1 = GBTClassifier(maxDepth=10, maxBins=16)
+#            gb_2 = GBTClassifier(maxDepth=10, maxBins=16)
+#            gb_3 = GBTClassifier(maxDepth=20, maxBins=32)
+#            gb_4 = GBTClassifier(maxDepth=20, maxBins=32)
+#            gb_5 = GBTClassifier(maxDepth=20, maxBins=32)
 
             self.grid = ParamGridBuilder()\
-                        .addGrid(self.estimator.classifier, [lr_0, lr_1, lr_2, lr_3, lr_4, lr_5, lr_6, lr_7, lr_8, 
-                                                             svc_0, svc_1, svc_2, svc_3, svc_4, svc_5,
-                                                             gb_0, gb_1, gb_2, gb_3, gb_4, gb_5])\
+                        .addGrid(self.estimator.classifier, [
+                                                             lr_0, lr_1, lr_2, lr_3, lr_4, lr_5, lr_6, lr_7, lr_8, 
+                                                             svc_0, svc_1, svc_2, svc_3, svc_4, svc_5])\
                         .build()              
 
     def get_estimator(self):
