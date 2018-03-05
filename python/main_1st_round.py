@@ -14,7 +14,7 @@ spark = SparkSession.builder.master("local").appName("World_Cup_2014").getOrCrea
 
 # Play first round of the world cup
 classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron", "one_vs_rest"]
-#classification_model = ["decision_tree", "random_forest"]
+#classification_model = ["decision_tree"]
 for model in classification_model:
     print("\n\nModel classifier: {0}".format(model))
     first_round = WorldCupFirstRound(spark, model, "2014/06/12", "2014/06/26")

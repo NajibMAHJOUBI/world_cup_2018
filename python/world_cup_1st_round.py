@@ -21,6 +21,7 @@ class WorldCupFirstRound:
         self.model_classifier = classification_model
         self.start_date = round_start_date
         self.end_date = round_end_date
+        self.tp_groups = [("A", "B"), ("C", "D"), ("E", "F"), ("G", "H")]
     
     def __str__(self):
         pass
@@ -30,11 +31,15 @@ class WorldCupFirstRound:
         label = self.get_matches_results(self.start_date, self.end_date)
         matches_features = self.define_matches_features(label)
         prediction = self.transform_model(matches_features)
+        self.save_prediction(prediction)
         label_prediction = self.join_label_prediction(label, prediction)
         print("Accuracy: {0}".format(self.evaluate_evaluator(label_prediction)))
         self.win_losse_drawn_count_by_group(label_prediction)
         dic_result_group_team = self.global_result_by_team(label_prediction)
-        self.first_second_by_group(dic_result_group_team)
+        dic_first_by_group, dic_second_by_group = self.first_second_by_group(dic_result_group_team)
+        self.print_first_second_by_group(dic_first_by_group, dic_second_by_group)
+        self.print_matches_next_stage(dic_first_by_group, dic_second_by_group)
+        self.save_matches_next_stage(dic_first_by_group, dic_second_by_group)
     
     def load_data_groups(self):
         udf_strip = udf(lambda x: x.strip(), StringType())
@@ -184,12 +189,37 @@ class WorldCupFirstRound:
                 dic_second_by_group[group] = map(lambda tp: tp[0], second_teams)
             else:
                 dic_second_by_group[group] = None
+        return dic_first_by_group, dic_second_by_group
 
-        for group in groups:
+    def print_first_second_by_group(self, dic_first_by_group, dic_second_by_group):
+        for group in dic_first_by_group.keys():
             print("Group: {0}".format(group))
             print("1st: {0}".format(dic_first_by_group[group]))
             print("2nd: {0}".format(dic_second_by_group[group]))
 
+    def print_matches_next_stage(self, dic_first_by_group, dic_second_by_group):
+        def get_team(tp):
+            if len(tp) == 1:
+                return tp[0]
+            else:
+                return '-'.join(sentence)
+
+        for tp in self.tp_groups:
+            print('/'.join(dic_first_by_group[tp[0]]) + " - " + '/'.join(dic_second_by_group[tp[1]]))
+            print('/'.join(dic_first_by_group[tp[1]]) + " - " + '/'.join(dic_second_by_group[tp[0]]))
+
+    def save_matches_next_stage(self, dic_first_by_group, dic_second_by_group):
+        data = []
+        for tp in self.tp_groups:
+            data.append(('/'.join(dic_first_by_group[tp[0]]), '/'.join(dic_second_by_group[tp[1]]))) 
+            data.append(('/'.join(dic_first_by_group[tp[1]]), '/'.join(dic_second_by_group[tp[0]])))
+        self.spark.createDataFrame(data, ["team_1", "team_2"]).write.csv("./test/matches_next_stage/{0}".format(self.model_classifier), mode="overwrite", sep=",", header=True)
+
+    def save_prediction(self, prediction):
+        (prediction
+         .select("team_1", "team_2", "prediction", "label")
+         .write.csv("./test/prediction/{0}".format(self.model_classifier), mode="overwrite", sep=",", header=True))
 
 
 
+      

@@ -175,24 +175,24 @@ class FeaturizationData:
 
         for tp in self.dic_data.iteritems(): data_union_0 = data_union_0.union(tp[1])
         data_union_0.count()
-        
-        def inverse_result(label):
-            if (label == 2.0):
-                return 1.0
-            elif (label == 1.0):
-                return 2.0
-            else:
-                return label
+        self.data_union = data_union_0        
+#        def inverse_result(label):
+#            if (label == 2.0):
+#                return 1.0
+#            elif (label == 1.0):
+#                return 2.0
+#            else:
+#                return label
 
-        udf_inverse_result = udf(lambda result: inverse_result(result), FloatType())
+#        udf_inverse_result = udf(lambda result: inverse_result(result), FloatType())
 
-        udf_minus_features = udf(lambda feature: -1.0 * feature, VectorUDT())
-            
-        data_union_1 = (data_union_0
-                        .withColumn("new_label", udf_inverse_result(col("label")))
-                        .withColumn("new_features", udf_minus_features(col("features")))
-                        .select(col("new_label").alias("label"), col("new_features").alias("features")))
-        data_union_1.count()
+#        udf_minus_features = udf(lambda feature: -1.0 * feature, VectorUDT())
+#            
+#        data_union_1 = (data_union_0
+#                        .withColumn("new_label", udf_inverse_result(col("label")))
+#                        .withColumn("new_features", udf_minus_features(col("features")))
+#                        .select(col("new_label").alias("label"), col("new_features").alias("features")))
+#        data_union_1.count()
 
-        self.data_union = data_union_0.union(data_union_1)
+#        self.data_union = data_union_0.union(data_union_1)
 
