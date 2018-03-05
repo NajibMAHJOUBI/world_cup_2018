@@ -23,3 +23,21 @@ The two first are the first and second of each group.
   - Argentina - Switzerland
   - Germany - Algeria
   - Belgium - United States
+
+- Quarter-finals:
+
+  - Brazil - Colombia
+  - France - Germany
+  - Netherlands - Costa Rica
+  - Argentina - Belgium
+
+- Semi-finals:
+  - Brazil - Germany
+  - Netherlands - Argnetina
+
+- Final:
+  - Germany
+  - Argentina
+
+- Third place:
+  - Brazil - Netherlands
