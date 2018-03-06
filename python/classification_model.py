@@ -27,41 +27,48 @@ class ClassificationModel(unittest.TestCase):
         return s
 
     def run(self):
+       self.define_estimator()
+       self.define_evaluator()
+       self.define_grid_builder()
+       self.define_validator()
        self.fit_validator()
-#       self.save_best_model()
+       self.save_best_model()
        #self.evaluate_evaluator()
 
     def get_path_save_model(self):
         return os.path.join(self.root_path_model ,self.model_classifier)
 
-    def get_grid_builder(self):
+    def define_grid_builder(self):
         if (self.model_classifier =="logistic_regression"):
-            return ParamGridBuilder()\
-                       .addGrid(self.get_estimator().maxIter, [5, 10, 15, 20])\
-                       .addGrid(self.get_estimator().regParam, [0.0, 0.01, 0.1, 1.0, 10.0])\
-                       .addGrid(self.get_estimator().elasticNetParam, [0.0, 0.25, 0.5, 0.75, 1.0])\
-                       .addGrid(self.get_estimator().fitIntercept, [True, False])\
-                       .addGrid(self.get_estimator().aggregationDepth, [2, 4, 8, 16])\
-                       .build()    
+            self.param_grid = (ParamGridBuilder()
+                               .addGrid(self.estimator.maxIter, [5, 10, 15, 20])
+                               .addGrid(self.estimator.regParam, [0.0, 0.01, 0.1, 1.0, 10.0])
+                               .addGrid(self.estimator.elasticNetParam, [0.0, 0.25, 0.5, 0.75, 1.0])
+                               .addGrid(self.estimator.fitIntercept, [True, False])
+                               .addGrid(self.estimator.aggregationDepth, [2, 4, 8, 16])
+                               .build())    
         elif(self.model_classifier == "decision_tree"):
-            return ParamGridBuilder()\
-                        .addGrid(self.get_estimator().maxDepth, [5, 10, 15, 20, 25])\
-                        .addGrid(self.get_estimator().maxBins, [4, 8, 16, 32])\
-                        .build()
+            self.param_grid = (ParamGridBuilder()
+                               .addGrid(self.estimator.maxDepth, [5, 10, 15, 20, 25])
+                               .addGrid(self.estimator.maxBins, [4, 8, 16, 32])
+                               .build())
         elif(self.model_classifier == "random_forest"):
-            return ParamGridBuilder()\
-                        .addGrid(self.get_estimator().numTrees, [5, 10, 15, 20, 25])\
-                        .addGrid(self.get_estimator().maxDepth, [5, 10, 15, 20])\
-                        .addGrid(self.get_estimator().maxBins, [4, 8, 16, 32])\
-                        .build()
+            self.param_grid = (ParamGridBuilder()
+                               .addGrid(self.estimator.numTrees, [5, 10, 15, 20, 25])
+                               .addGrid(self.estimator.maxDepth, [5, 10, 15, 20])
+                               .addGrid(self.estimator.maxBins, [4, 8, 16, 32])
+                               .build())
         elif(self.model_classifier == "multilayer_perceptron"):
-            return (ParamGridBuilder()
-                    .addGrid(self.get_estimator().layers, [[8, 7, 6, 5, 4, 3], [8, 10, 3], [8, 8, 5, 3], [8, 12, 12, 5, 3]])
-                    .build())
+            if self.layers is None:
+                self.layers = [[8, 7, 6, 5, 4, 3], [8, 10, 3], [8, 8, 5, 3],  [8, 12, 12, 5, 3]]
+            
+            self.param_grid = (ParamGridBuilder()
+                               .addGrid(self.estimator.layers, self.layers)
+                               .build())
         elif(self.model_classifier == "one_vs_rest"):
             list_classifier = []
             # logistic regression classifier
-            regParam = [0.0, 0.5, 1.0]
+            regParam = [0.0, 0.01, 0.1, 1.0, 10.0]
             elasticNetParam = [0.0, 0.25, 0.5, 0.75, 1.0]
             for reg,elastic in product(regParam, elasticNetParam):
                 list_classifier.append(LogisticRegression(regParam=reg, elasticNetParam=elastic, family="binomial"))
@@ -70,49 +77,47 @@ class ClassificationModel(unittest.TestCase):
             for reg, inter in product(regParam, intercept):
                 list_classifier.append(LinearSVC(regParam=reg, fitIntercept=inter))            
 
-            return ParamGridBuilder()\
-                        .addGrid(get_estimator().classifier, list_classifier)\
-                        .build()              
+            self.param_grid = (ParamGridBuilder()
+                               .addGrid(self.estimator.classifier, list_classifier)
+                               .build())
 
-    def get_estimator(self):
+    def define_estimator(self):
         if (self.model_classifier == "logistic_regression"):
-            return LogisticRegression(featuresCol=self.featuresCol, labelCol=self.labelCol, family="multinomial")
+            self.estimator = LogisticRegression(featuresCol=self.featuresCol, labelCol=self.labelCol, family="multinomial")
         elif(self.model_classifier == "decision_tree"):
-            return DecisionTreeClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
+            self.estimator = DecisionTreeClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
         elif(self.model_classifier == "random_forest"):
-            return RandomForestClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
+            self.estimator = RandomForestClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
         elif(self.model_classifier == "multilayer_perceptron"):
-            return MultilayerPerceptronClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
+            self.estimator = MultilayerPerceptronClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
         elif(self.model_classifier == "one_vs_rest"):
-            return OneVsRest(featuresCol=self.featuresCol, labelCol=self.labelCol)
+            self.estimator = OneVsRest(featuresCol=self.featuresCol, labelCol=self.labelCol)
     
-    def get_evaluator(self):
-        return MulticlassClassificationEvaluator(predictionCol=self.predictionCol, labelCol=self.labelCol, metricName="accuracy")
+    def define_evaluator(self):
+        self.evaluator = MulticlassClassificationEvaluator(predictionCol=self.predictionCol, labelCol=self.labelCol, metricName="accuracy")
 
-    def get_validator(self):
+    def define_validator(self):
         if (self.validator == "cross_validation"):
-            return CrossValidator(estimator=self.get_estimator(), 
-                                  estimatorParamMaps=self.get_grid_builder(), 
-                                  evaluator=self.get_evaluator(), 
-                                  numFolds=4)
+            self.validator = CrossValidator(estimator=self.estimator, 
+                                            estimatorParamMaps=self.param_grid, 
+                                            evaluator=self.evaluator, 
+                                            numFolds=4)
         elif (self.validator == "train_validation"):
 #            print(self.get_grid_builder())
-            return TrainValidationSplit(estimator=self.get_estimator(), 
-                                        estimatorParamMaps=self.get_grid_builder(), 
-                                        evaluator=self.get_evaluator(), 
-                                        trainRatio=0.75)
+            self.validator =  TrainValidationSplit(estimator=self.estimator, 
+                                                   estimatorParamMaps=self.param_grid, 
+                                                   evaluator=self.evaluator, 
+                                                   trainRatio=0.75)
 
     def fit_validator(self):
-#        print(self.get_validator().getEstimatorParamMaps())
-
-        self.model = self.get_validator().fit(self.data)
+        self.model = self.validator.fit(self.data)
 
     def transform_model(self, data):
         return self.model.transform(data)
 
     def evaluate_evaluator(self):
         prediction = self.transform_model(self.data)      
-        return self.get_evaluator().evaluate(prediction)
+        return self.evaluator.evaluate(prediction)
 
     def save_best_model(self):
         self.model.bestModel.write().overwrite().save(self.get_path_save_model())
