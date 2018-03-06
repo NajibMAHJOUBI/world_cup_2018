@@ -20,13 +20,14 @@ print("data count: {0}".format(data.count()))
 #data.show()
 #
 # Classification Model
-classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron", "one_vs_rest"]
-#classification_model = ["one_vs_rest"]
+#classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron", "one_vs_rest"]
+classification_model = ["multilayer_perceptron"]
 dic_evaluate_model = {}
 dic_model_classifier = {}
 for model in classification_model:
     print("Model classification: {0}".format(model))
-    classification_model = ClassificationModel(data, model, "train_validation")
+    classification_model = ClassificationModel(data, model, "./test/classification_model", validator="train_validation", list_layers=None)
+    print(classification_model)
     classification_model.run()
     dic_model_classifier[model] = classification_model.get_best_model()
     dic_evaluate_model[model] = classification_model.evaluate_evaluator()
