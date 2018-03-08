@@ -1,79 +1,21 @@
 
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType
+# Pyspark libraries
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType, BooleanType
 from pyspark.sql.functions import col, udf
 from pyspark.ml.linalg import Vectors, VectorUDT
+from pyspark.ml.feature import StringIndexer
+# My libraries
+from get_data_schema import get_data_schema
 
 
 
-def convert_string_to_float(x):
-    x_replace_minus = x.replace(u'\u2212', '-')
-    if x_replace_minus == '-':
-        return np.nan
-    else:
-        return float(x_replace_minus)
 
 class FeaturizationData:
-    def __init__(self, spark_session, list_confederation):
+    def __init__(self, spark_session, list_confederation, list_date = None):
         self.spark = spark_session 
         self.confederations = list_confederation
-	self.schema_qualifying_start = StructType([
-				    StructField("rankGroup_local", StringType(), True),
-				    StructField("rankGroup_global", StringType(), True),
-				    StructField("teamGroup_team", StringType(), True),
-				    StructField("ratingGroup_rating", StringType(), True),
-				    StructField("highestGroup_rank_max", StringType(), True),
-				    StructField("highestGroup_rating_max", StringType(), True),
-				    StructField("averageGroup_rank_avg", StringType(), True),
-				    StructField("averageGroup_rating_avg", StringType(), True),
-				    StructField("lowestGroup_rank_min", StringType(), True),
-				    StructField("lowestGroup_rating_min", StringType(), True),
-				    StructField("change3mGroup_rank_three_month_change", StringType(), True),
-				    StructField("change3mGroup_rating_three_month_change", StringType(), True),
-				    StructField("change6mGroup_rank_six_month_change", StringType(), True),
-				    StructField("change6mGroup_rating_six_month_change", StringType(), True),
-				    StructField("change1yGroup_rank_one_year_change", StringType(), True),
-				    StructField("change1yGroup_rating_one_year_change", StringType(), True),
-				    StructField("change2yGroup_rank_two_year_change", StringType(), True),
-				    StructField("change2yGroup_rating_two_year_change", StringType(), True),
-				    StructField("change5yGroup_rank_five_year_change", StringType(), True),
-				    StructField("change5yGroup_rating_five_year_change", StringType(), True),
-				    StructField("change10yGroup_rank_ten_year_change", StringType(), True),
-				    StructField("change10yGroup_rating_ten_year_change", StringType(), True),
-				    StructField("matchesGroup_total", StringType(), True),
-				    StructField("matchesGroup_home", StringType(), True),
-				    StructField("matchesGroup_away", StringType(), True),
-				    StructField("matchesGroup_neutral", StringType(), True),
-				    StructField("matchesGroup_wins", StringType(), True),
-				    StructField("matchesGroup_losses", StringType(), True),
-				    StructField("matchesGroup_draws", StringType(), True),
-				    StructField("goalsGroup_for", StringType(), True),
-				    StructField("goalsGroup_against", StringType(), True)
-	])
-        self.names_start_to_convert = self.schema_qualifying_start.names
-        self.names_start_to_convert.remove("teamGroup_team")
-
-	self.schema_qualifying_results = StructType([
-	    StructField("year", StringType(), True),
-	    StructField("month", StringType(), True),
-	    StructField("date", StringType(), True),
-	    StructField("team_1", StringType(), True),
-	    StructField("team_2", StringType(), True),
-	    StructField("score_team_1", IntegerType(), True),
-	    StructField("score_team_2", IntegerType(), True),
-	    StructField("tournament", StringType(), True),
-	    StructField("country_played", StringType(), True),
-	    StructField("rating_moved", StringType(), True),
-	    StructField("rating_team_1", StringType(), True),
-	    StructField("rating_team_2", StringType(), True),
-	    StructField("rank_moved_team_1", StringType(), True),
-	    StructField("rank_moved_team_2", StringType(), True),
-	    StructField("rank_team_1", StringType(), True),
-	    StructField("rank_team_2", StringType(), True)
-	])
-
-	self.names_results_to_convert = self.schema_qualifying_results.names
-	self.names_results_to_remove = ["year", "month", "date",  "team_1", "team_2", "score_team_1", "score_team_2", "tournament", "country_played"]
-	for name in self.names_results_to_remove: self.names_results_to_convert.remove(name)
+        self.start_date = list_date[0]
+        self.end_date = list_date[1]
 
     def __str__(self):
         s = "List of confederations: {0} \n".format(self.confederations)
@@ -83,6 +25,8 @@ class FeaturizationData:
     def run(self): 
         self.loop_all_confederations()
         self.union_all_confederation()
+        self.string_indexer()
+#        self.data_union.groupBy("matches").count().sort("count", ascending=False).show()
 
     def get_data_union(self):
         return self.data_union
@@ -100,10 +44,12 @@ class FeaturizationData:
 
         udf_create_features = udf(lambda s,t,u,v,w,x,y,z: Vectors.dense([s,t,u,v,w,x,y,z]), VectorUDT())
 
+        names_start_to_convert = get_data_schema("qualifying_start").names
+        names_start_to_convert.remove("teamGroup_team")
         path = "./data/{0}/2014_World_Cup_{1}_qualifying_start.tsv".format(confederation, confederation)
         return self.spark.read.csv(path, sep="\t", 
-                                      schema=self.schema_qualifying_start, header=False)\
-                                 .select([udf_convert_string_to_float(col(name)).alias(name) for name in self.names_start_to_convert] + ["teamGroup_team"])\
+                                      schema=get_data_schema("qualifying_start"), header=False)\
+                                 .select([udf_convert_string_to_float(col(name)).alias(name) for name in names_start_to_convert] + ["teamGroup_team"])\
                                  .withColumn("features", udf_create_features(
                                              udf_get_percentage_game(col("matchesGroup_home"), col("matchesGroup_total")), 
                                              udf_get_percentage_game(col("matchesGroup_away"), col("matchesGroup_total")),
@@ -141,16 +87,31 @@ class FeaturizationData:
 
         udf_get_date = udf(lambda date, month, year: get_date_string(date, month, year), StringType())
 
+	names_results_to_convert = get_data_schema("qualifying_results").names
+	names_results_to_remove = ["year", "month", "date",  "team_1", "team_2", "score_team_1", "score_team_2", "tournament", "country_played"]
+	for name in names_results_to_remove: names_results_to_convert.remove(name)
         path = "./data/{0}/2014_World_Cup_{1}_qualifying_results.tsv".format(confederation, confederation)
-        return self.spark.read.csv(path, sep="\t", schema=self.schema_qualifying_results, header=False)\
-                              .select([udf_convert_string_to_float(col(name)).alias(name) for name in self.names_results_to_convert] + self.names_results_to_remove)\
+        data = self.spark.read.csv(path, sep="\t", schema=get_data_schema("qualifying_results"), header=False)\
+                              .select([udf_convert_string_to_float(col(name)).alias(name) for name in names_results_to_convert] + names_results_to_remove)\
                               .withColumn("label", udf_win_team_1(col("score_team_1"), col("score_team_2")))\
                               .withColumn("new_date", udf_get_date(col("date"), col("month"), col("year")))\
                               .select(col("team_1"), col("team_2"), col("label"), col("new_date").alias("date"))
+        if (self.start_date is not None) and (self.end_date is not None):
+            def filter_date(date, start_date, end_date):
+                if ((date >= start_date) and (date <= end_date)):
+                    return True
+                else:
+                    return False
+            start_date, end_date = self.start_date, self.end_date
+            udf_filter_date = udf(lambda date: filter_date(date, start_date, end_date), BooleanType())
+            return data.filter(udf_filter_date(col("date")))
+        else:
+            return data  
 
 
     def get_data_confederation(self, confederation):
         udf_diff_features = udf(lambda features_1, features_2: features_1 - features_2, VectorUDT())
+        udf_team1_team2 = udf(lambda team_1, team_2, date: team_1 + "/" + team_2 + "_" + date, StringType())
         df_qualifying_results = self.get_qualifying_results_data(confederation)
         df_qualifying_start = self.get_qualifying_start_data(confederation)
         return df_qualifying_results.join(df_qualifying_start, df_qualifying_results.team_1 == df_qualifying_start.team)\
@@ -158,7 +119,7 @@ class FeaturizationData:
                                  .join(df_qualifying_start, df_qualifying_results.team_2 == df_qualifying_start.team)\
                                  .withColumnRenamed("features", "features_2").drop("team")\
                                  .withColumn("features", udf_diff_features(col("features_1"), col("features_2")))\
-                                 .select("label", "features")
+                                 .select(col("label"), col("features"), udf_team1_team2(col("team_1"), col("team_2"), col("date")).alias("matches"))
 
 
     def loop_all_confederations(self):
@@ -169,30 +130,19 @@ class FeaturizationData:
     def union_all_confederation(self):
         schema = StructType([
 	    StructField("label", FloatType(), True),
-	    StructField("features", VectorUDT(), True)])
+	    StructField("features", VectorUDT(), True),
+            StructField("matches", StringType(), True)])
 
         data_union_0 = self.spark.createDataFrame(self.spark.sparkContext.emptyRDD(), schema)
 
         for tp in self.dic_data.iteritems(): data_union_0 = data_union_0.union(tp[1])
         data_union_0.count()
-        self.data_union = data_union_0        
-#        def inverse_result(label):
-#            if (label == 2.0):
-#                return 1.0
-#            elif (label == 1.0):
-#                return 2.0
-#            else:
-#                return label
+        self.data_union = data_union_0
 
-#        udf_inverse_result = udf(lambda result: inverse_result(result), FloatType())
+    def string_indexer(self):
+        string_indexer =  StringIndexer(inputCol="matches", outputCol="id")
+        model = string_indexer.fit(self.data_union)
+        self.data_union = model.transform(self.data_union).drop("matches")
+        model.write().overwrite().save("./test/string_indexer")  
 
-#        udf_minus_features = udf(lambda feature: -1.0 * feature, VectorUDT())
-#            
-#        data_union_1 = (data_union_0
-#                        .withColumn("new_label", udf_inverse_result(col("label")))
-#                        .withColumn("new_features", udf_minus_features(col("features")))
-#                        .select(col("new_label").alias("label"), col("new_features").alias("features")))
-#        data_union_1.count()
-
-#        self.data_union = data_union_0.union(data_union_1)
 

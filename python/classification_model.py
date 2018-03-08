@@ -11,16 +11,17 @@ import unittest
 
 # Class Classification Model
 class ClassificationModel(unittest.TestCase):
-    def __init__(self, data, classification_model, path_model, validator=None, list_layers=None):
+    def __init__(self, data, classification_model, path_model, path_transform, validator=None, list_layers=None):
         self.data = data
         self.model_classifier = classification_model
+        self.root_path_model = path_model #"./test/classification_model"
+        self.root_path_transform = path_transform
         self.validator= validator
         self.layers = list_layers
         self.featuresCol = "features"
         self.labelCol = "label"
         self.predictionCol = "prediction"
-        self.root_path_model = path_model #"./test/classification_model"
- 
+
     def __str__(self):
         s = "\nClassification model: {0}\n".format(self.model_classifier)
         s += "Validator: {0}\n".format(self.validator)
@@ -33,10 +34,20 @@ class ClassificationModel(unittest.TestCase):
        self.define_validator()
        self.fit_validator()
        self.save_best_model()
-       #self.evaluate_evaluator()
+       self.transform_model()
+       self.save_transform()
 
     def get_path_save_model(self):
-        return os.path.join(self.root_path_model ,self.model_classifier)
+        return os.path.join(self.root_path_model, self.model_classifier)
+
+    def get_path_transform(self):
+        return os.path.join(self.root_path_transform, self.model_classifier)
+
+    def set_model(self, model):
+        self.model = model
+
+    def set_transform(self, data):
+        self.transform = data
 
     def define_grid_builder(self):
         if (self.model_classifier =="logistic_regression"):
@@ -112,15 +123,20 @@ class ClassificationModel(unittest.TestCase):
     def fit_validator(self):
         self.model = self.validator.fit(self.data)
 
-    def transform_model(self, data):
-        return self.model.transform(data)
+    def transform_model(self):
+        self.transform = self.model.transform(self.data)
 
-    def evaluate_evaluator(self):
-        prediction = self.transform_model(self.data)      
-        return self.evaluator.evaluate(prediction)
+    def evaluate_evaluator(self): 
+        return self.evaluator.evaluate(self.transform)
 
     def save_best_model(self):
         self.model.bestModel.write().overwrite().save(self.get_path_save_model())
+
+    def save_transform(self):
+        (self.transform
+         .select("id", "label", "prediction")
+         .coalesce(1)
+         .write.csv(self.get_path_transform(), mode="overwrite", sep=",", header=True))
 
     def get_best_model(self):
         if (self.model_classifier == "logistic_regression"):

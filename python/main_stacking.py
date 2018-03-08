@@ -12,7 +12,7 @@ spark = SparkSession.builder.master("local").appName("World_Cup_2014").getOrCrea
 
 # Stacking classification models
 classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron", "one_vs_rest"]
-stacking = Stacking(spark, classification_model, "decision_tree", "train_validation")
+stacking = Stacking(spark, classification_model, "decision_tree", "train_validation", "./test/transform")
 stacking.run()
 
 #def combinations_classifier_features(self):

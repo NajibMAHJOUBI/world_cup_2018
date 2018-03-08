@@ -17,20 +17,22 @@ featurization = FeaturizationData(spark, confederations)
 featurization.run()
 data = featurization.get_data_union().cache()
 #print("data count: {0}".format(data.count()))
-#data.show()
-#
+#data.show(5)
+
 # Classification Model
-#classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron", "one_vs_rest"]
-classification_model = ["one_vs_rest"]
-dic_evaluate_model = {}
-dic_model_classifier = {}
+dic_evaluate_model, dic_model_classifier = {}, {}
+classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron", "one_vs_rest"]
+#classification_model = ["decision_tree"]
 for model in classification_model:
     print("Model classification: {0}".format(model))
-    classification_model = ClassificationModel(data, model, "./test/classification_model", validator="train_validation", list_layers=None)
-    print(classification_model)
+    classification_model = ClassificationModel(data, model, "./test/classification_model", "./test/transform", validator="train_validation", list_layers=None)
     classification_model.run()
-#    dic_model_classifier[model] = classification_model.get_best_model()
+##    dic_model_classifier[model] = classification_model.get_best_model()
     dic_evaluate_model[model] = classification_model.evaluate_evaluator()
-print(dic_evaluate_model)
+
+print("Accuracy")
+for key, value in dic_evaluate_model.iteritems():
+    print("{0}: {1}".format(key, value))
+
 #print(dic_model_classifier)
 

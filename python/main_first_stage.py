@@ -6,17 +6,35 @@ First Round World Cup
 from pyspark.sql import SparkSession
 # my libraries
 from featurization_data import FeaturizationData
-from world_cup_1st_round import WorldCupFirstRound
+from first_stage import FirstRound
 
 
 # define spark session
 spark = SparkSession.builder.master("local").appName("World_Cup_2014").getOrCreate()
 
 # Play first round of the world cup
-classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron", "one_vs_rest"]
-#classification_model = ["decision_tree"]
-for model in classification_model:
-    print("\n\nModel classifier: {0}".format(model))
-    first_round = WorldCupFirstRound(spark, model, "2014/06/12", "2014/06/26")
-    first_round.run()
-    
+#
+# featurization confederation data
+featurization = FeaturizationData(spark, ["WCF"], list_date=["2014/06/12", "2014/06/26"])
+featurization.run()
+data = featurization.get_data_union().cache()
+#data.show(10)
+print(data.count())
+
+# --> Elementary classifier method
+#classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron", "one_vs_rest"]
+##classification_model = ["decision_tree"]
+#first_stage_accuracy = {}
+#for model in classification_model:
+#    print("\n\nModel classifier: {0}".format(model))
+#    first_round = FirstRound(spark, model, False, data, "./test/classification_model", "./test/prediction")
+#    first_round.run()
+#    first_stage_accuracy[model] = first_round.evaluate_evaluator(first_round.get_transform())
+#    
+#for key, value in first_stage_accuracy.iteritems():
+#    print("{0}: {1}".format(key, value))
+
+# --> Stacking method
+first_round = FirstRound(spark, "random_forest", True, data, "./test/classification_model/stacking", "./test/prediction/stacking")
+first_round.run()
+print("Stacking: {0}".format(first_round.evaluate_evaluator(first_round.get_transform())))
