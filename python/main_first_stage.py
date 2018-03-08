@@ -7,7 +7,7 @@ from pyspark.sql import SparkSession
 # my libraries
 from featurization_data import FeaturizationData
 from first_stage import FirstRound
-
+from result_statistic import ResultStatistic
 
 # define spark session
 spark = SparkSession.builder.master("local").appName("World_Cup_2014").getOrCreate()
@@ -38,3 +38,10 @@ print(data.count())
 first_round = FirstRound(spark, "random_forest", True, data, "./test/classification_model/stacking", "./test/prediction/stacking")
 first_round.run()
 print("Stacking: {0}".format(first_round.evaluate_evaluator(first_round.get_transform())))
+
+#first_round.get_data().show()
+
+
+result_stat = ResultStatistic(spark, first_round.get_data())
+print(result_stat)
+result_stat.run()
