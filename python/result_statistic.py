@@ -32,8 +32,8 @@ class ResultStatistic:
         dic_first_by_group, dic_second_by_group = self.first_second_by_group(dic_result_group_team)
 #        print(dic_first_by_group)
 #        print(dic_second_by_group)
-#        print_first_second_by_group(dic_first_by_group, dic_second_by_group)
-#        print_matches_next_stage(dic_first_by_group, dic_second_by_group)
+        print_first_second_by_group(dic_first_by_group, dic_second_by_group)
+        print_matches_next_stage(dic_first_by_group, dic_second_by_group)
         accuracy_global, accuracy_1st, accuracy_2nd = self.accuracy_teams_qualified(dic_first_by_group, dic_second_by_group)
         print("Global accuracy: {0}\n 1st accuracy: {1}\n 2nd accuracy: {2}".format(accuracy_global, accuracy_1st, accuracy_2nd))
 
