@@ -18,7 +18,8 @@ class FeaturizationData:
         self.end_date = list_date[1]
 
     def __str__(self):
-        s = "List of confederations: {0} \n".format(self.confederations)
+        s = "FeaturizationData class:\n"
+        s += "List of confederations: {0} \n".format(self.confederations)
         s += "Spark Session: {0}".format(self.spark)
         return s
 
