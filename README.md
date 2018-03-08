@@ -1,8 +1,12 @@
 
 # World Cup 2014
 
+The world cup 2014 took place in Brazil from 12 June to 13 July 2014. Initially,
+32 teams have been engaged in the competition. 64 matches have been played during the competition.
 
- - Groups:
+ - **Groups**:
+
+ Eight groups with for team by group have been engaged. The first and second of each groups are allowed to pursue the competition to the second stage. The matches took place from 2014/06/12 to2014/06/26. Each team played three matches during this stage.
 
 | Group A  | Group B     | Group C     | Group D    | Group E     | Group F                | Group G       | Group H     |
 | -------  | -------     | ------      | -------    | -------     | -------                | ------        | -------     |
@@ -11,9 +15,9 @@
 | Croatia  | Spain       | Ivory Coast | Italy      | Ecuador     | Bosnia and Herzegovina | Portugal      | Russia      |
 | Cameroon | Australia   | Japan       | England    | Honduras    | Iran                   | Ghana         | South Korea |
 
-The two first are the first and second of each group. The matches took place from 2014/06/12 to2014/06/26.
+The two first are the first and second of each group.
 
-- Second Stage (Round of 16):
+- **Second Stage** (Round of 16):
 
   - Brazil<sup>*</sup> - Chile
   - Netherlands<sup>*</sup> - Mexico
@@ -26,7 +30,7 @@ The two first are the first and second of each group. The matches took place fro
 
 The matches took place from 2014/06/28 to 2014/07/01.
 
-- Quarter-finals:
+- **Quarter-finals**:
 
   - Brazil<sup>*</sup> - Colombia
   - France - Germany<sup>*</sup>
@@ -35,20 +39,29 @@ The matches took place from 2014/06/28 to 2014/07/01.
 
 The matches took place from 2014/07/04 to 2014/07/05.
 
-- Semi-finals:
+- **Semi-finals**:
   - Brazil - Germany<sup>*</sup>
   - Netherlands - Argentina<sup>*</sup>
 
 The matches took place from 2014/07/08 to 2014/07/09.
 
-- Final:
+- **Final**:
   - Germany<sup>*</sup> - Argentina
 
-The matche took place 2014/07/12.
+The match took place 2014/07/12.
 
-- Third place:
+- **Third place**:
   - Brazil - Netherlands<sup>*</sup>
 
-The matche took place 2014/07/13.
+The match took place 2014/07/13.
 
-The winner of each matche is mark with the symbol <sup>*</sup>.
+The winner of each match is mark with the symbol <sup>*</sup>.
+
+## Data
+
+## Classification Models
+
+## Stacking model
+
+The classification model are used to predict the issue of each matches. Three possible
+issue (win, lose, draw).
