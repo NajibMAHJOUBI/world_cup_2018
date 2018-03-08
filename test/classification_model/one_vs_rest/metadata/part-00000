@@ -1,1 +1,1 @@
-{"class":"org.apache.spark.ml.classification.OneVsRestModel","timestamp":1520268135370,"sparkVersion":"2.3.0","uid":"OneVsRestModel_4afb8a42ba131317f3c7","paramMap":{"labelCol":"label","predictionCol":"prediction","featuresCol":"features"},"labelMetadata":"{}","numClasses":3}
+{"class":"org.apache.spark.ml.classification.OneVsRestModel","timestamp":1520423327587,"sparkVersion":"2.3.0","uid":"OneVsRestModel_43d0a0977bbe7a698503","paramMap":{"featuresCol":"features","predictionCol":"prediction","labelCol":"label"},"labelMetadata":"{}","numClasses":3}
