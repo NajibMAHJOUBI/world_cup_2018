@@ -48,12 +48,12 @@ The matches took place from 2014/07/08 to 2014/07/09.
 - **Final**:
   - Germany<sup>*</sup> - Argentina
 
-The match took place 2014/07/12.
+The match took place 2014/07/13.
 
 - **Third place**:
   - Brazil - Netherlands<sup>*</sup>
 
-The match took place 2014/07/13.
+The match took place 2014/07/12.
 
 The winner of each match is mark with the symbol <sup>*</sup>.
 
