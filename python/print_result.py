@@ -12,7 +12,7 @@ def first_second_by_group(dic_result_group_team):
         first_teams = filter(lambda tp: tp[1] == results[0], country_result)
         dic_first_by_group[group] = map(lambda tp: tp[0], first_teams)
 
-        if (len(results) >= 2):
+        if len(results) >= 2:
             second_teams = filter(lambda tp: tp[1] == results[1], country_result)
             dic_second_by_group[group] = map(lambda tp: tp[0], second_teams)
         else:
@@ -26,14 +26,7 @@ def print_first_second_by_group(dic_first_by_group, dic_second_by_group):
         print("2nd: {0}".format(dic_second_by_group[group]))
 
 def print_matches_next_stage(dic_first_by_group, dic_second_by_group):
-    def get_team(tp):
-        if len(tp) == 1:
-            return tp[0]
-        else:
-            return '-'.join(sentence)
-
-    tp_groups = [("A", "B"), ("C", "D"), ("E", "F"), ("G", "H")]
-    for tp in tp_groups:
+    for tp in [("A", "B"), ("C", "D"), ("E", "F"), ("G", "H")]:
         print('/'.join(dic_first_by_group[tp[0]]) + " - " + '/'.join(dic_second_by_group[tp[1]]))
         print('/'.join(dic_first_by_group[tp[1]]) + " - " + '/'.join(dic_second_by_group[tp[0]]))
 

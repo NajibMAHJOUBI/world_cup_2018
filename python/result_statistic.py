@@ -41,7 +41,7 @@ class ResultStatistic:
         schema = StructType([StructField("group", StringType(), True),
                              StructField("1st", StringType(), True),
                              StructField("2nd", StringType(), True)])
-        return (self.spark.read.csv("./data/first_round_top_groups.csv", sep=",", schema=schema, header=False))
+        return self.spark.read.csv("./data/first_round_top_groups.csv", sep=",", schema=schema, header=False)
 
     def load_data_groups(self):
         udf_strip = udf(lambda x: x.strip(), StringType())
@@ -115,7 +115,7 @@ class ResultStatistic:
             first_teams = filter(lambda tp: tp[1] == results[0], country_result)
             dic_first_by_group[group] = map(lambda tp: tp[0], first_teams)
 
-            if (len(results) >= 2):
+            if len(results) >= 2:
                 second_teams = filter(lambda tp: tp[1] == results[1], country_result)
                 dic_second_by_group[group] = map(lambda tp: tp[0], second_teams)
             else:

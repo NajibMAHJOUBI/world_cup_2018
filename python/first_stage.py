@@ -1,12 +1,8 @@
-
-
-from pyspark.sql.types import StructType, StructField, StringType, ArrayType, BooleanType, FloatType
+from pyspark.ml.feature import IndexToString, StringIndexerModel
 from pyspark.ml.linalg import VectorUDT
 from pyspark.sql.functions import udf, col
-from pyspark.ml.feature import StringIndexer, IndexToString, StringIndexerModel
+from pyspark.sql.types import StructType, StructField, StringType, FloatType
 
-from itertools import combinations
-from featurization_data import FeaturizationData
 from classification_model import ClassificationModel
 from stacking_ensemble_method import Stacking
 
@@ -15,16 +11,19 @@ class FirstRound:
     def __init__(self, spark_session, classification_model, stacking, data, path_model, path_prediction):
         self.spark = spark_session
         self.model_classifier = classification_model
-        self.test_stacking = stacking
+        self.stacking_test = stacking
         self.data = data  
         self.path_model = path_model
         self.path_prediction = path_prediction
+
+        self.label_prediction = None
+        self.transform = None
     
     def __str__(self):
         pass
     
     def run(self):
-        if (not self.test_stacking):
+        if not self.stacking_test:
             self.transform_model(self.data)
             self.save_prediction(self.transform.select("id", "label", "prediction"))
         else:
@@ -40,15 +39,15 @@ class FirstRound:
                              StructField("country", StringType(), True)])
         return self.spark.read.csv("./data/common/en.teams.tsv", sep="\t", header=False, schema=schema)
 
-    def get_string_indexer(self):
-        return StringIndexerModel.load("./test/string_indexer")
-
     def get_data(self):
-        return self.data        
+        return self.data
 
-    def apply_intdex_to_string(self):
+    def get_transform(self):
+        return self.transform
+
+    def apply_index_to_string(self):
         teams = self.load_data_teams()
-        labels = self.get_string_indexer().labels
+        labels = StringIndexerModel.load("./test/string_indexer").labels
         model = IndexToString(inputCol="id", outputCol="matches", labels=labels)
 
         udf_get_team_1 = udf(lambda x: x.split("_")[0].split("/")[0], StringType())
@@ -56,9 +55,9 @@ class FirstRound:
         udf_get_date = udf(lambda x: x.split("_")[1], StringType())         
 
         def result_team_2(result):
-            if (result == 2):
+            if result == 2:
                 return 1.0
-            elif (result == 1):
+            elif result == 1:
                 return 2.0
             else:
                 return 0.0
@@ -77,9 +76,6 @@ class FirstRound:
                 .withColumnRenamed("country", "country_1").drop("team")
                 .join(teams, self.data.team_2 == teams.team)
                 .withColumnRenamed("country", "country_2").drop("team"))
-
-    def get_transform(self):
-        return self.transform
 
     def join_label_prediction(self, label, prediction):
         udf_matches = udf(lambda team_1,team_2: team_1 + "/" + team_2, StringType())

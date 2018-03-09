@@ -3,7 +3,7 @@
  Get the schema for the dataste used in the world cup prediction project 
 """
 
-from pyspark.sql.types import StructType, StructField, StringType, FloatType, IntegerType
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 
 def get_data_schema(data_schema):
     if data_schema == "qualifying_start":

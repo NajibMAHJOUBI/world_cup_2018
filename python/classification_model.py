@@ -1,13 +1,16 @@
 
-# pyspark libraries
-from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, MultilayerPerceptronClassifier, OneVsRest, LinearSVC, GBTClassifier
-from pyspark.ml.classification import LogisticRegressionModel, DecisionTreeClassificationModel, RandomForestClassificationModel,  MultilayerPerceptronClassificationModel, OneVsRestModel
-from pyspark.ml.evaluation import MulticlassClassificationEvaluator
-from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBuilder
+# Pyspark libraries
 # python libraries
 import os
-from itertools import product
 import unittest
+from itertools import product
+from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, \
+    MultilayerPerceptronClassifier, OneVsRest, LinearSVC
+from pyspark.ml.classification import LogisticRegressionModel, DecisionTreeClassificationModel, \
+    RandomForestClassificationModel, MultilayerPerceptronClassificationModel, OneVsRestModel
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
+from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBuilder
+
 
 # Class Classification Model
 class ClassificationModel(unittest.TestCase):
@@ -21,6 +24,12 @@ class ClassificationModel(unittest.TestCase):
         self.featuresCol = "features"
         self.labelCol = "label"
         self.predictionCol = "prediction"
+
+        self.transform = None # prediction
+        self.model = None # classifier model
+        self.param_grid = None # parameters grid builder
+        self.estimator = None # model estimator
+        self.evaluator = None # evaluator multi label prediction
 
     def __str__(self):
         s = "\nClassification model: {0}\n".format(self.model_classifier)
@@ -42,6 +51,24 @@ class ClassificationModel(unittest.TestCase):
 
     def get_path_transform(self):
         return os.path.join(self.root_path_transform, self.model_classifier)
+
+    def get_best_model(self):
+        if self.model_classifier == "logistic_regression":
+            return LogisticRegressionModel.load(self.get_path_save_model())
+        elif self.model_classifier == "decision_tree":
+            return DecisionTreeClassificationModel.load(self.get_path_save_model())
+        elif self.model_classifier == "random_forest":
+            return RandomForestClassificationModel.load(self.get_path_save_model())
+        elif self.model_classifier == "multilayer_perceptron":
+            return MultilayerPerceptronClassificationModel.load(self.get_path_save_model())
+        elif self.model_classifier == "one_vs_rest":
+            return OneVsRestModel.load(self.get_path_save_model())
+
+    def get_nb_input_layers(self):
+        return self.data.select(self.featuresCol).rdd.map(lambda x: x[self.featuresCol]).first().values.size
+
+    def get_nb_output_layers(self):
+        return self.data.select(self.labelCol).distinct().count()
 
     def set_model(self, model):
         self.model = model
@@ -79,13 +106,13 @@ class ClassificationModel(unittest.TestCase):
         elif self.model_classifier == "one_vs_rest":
             list_classifier = []
             # logistic regression classifier
-            regParam = [0.0, 0.01, 0.1, 1.0, 10.0]
-            elasticNetParam = [0.0, 0.25, 0.5, 0.75, 1.0]
-            for reg,elastic in product(regParam, elasticNetParam):
+            reg_param = [0.0, 0.01, 0.1, 1.0, 10.0]
+            elastic_param = [0.0, 0.25, 0.5, 0.75, 1.0]
+            for reg,elastic in product(reg_param, elastic_param):
                 list_classifier.append(LogisticRegression(regParam=reg, elasticNetParam=elastic, family="binomial"))
             # linerSVC
             intercept = [True, False]
-            for reg, inter in product(regParam, intercept):
+            for reg, inter in product(reg_param, intercept):
                 list_classifier.append(LinearSVC(regParam=reg, fitIntercept=inter))            
 
             self.param_grid = (ParamGridBuilder()
@@ -116,7 +143,6 @@ class ClassificationModel(unittest.TestCase):
                                             evaluator=self.evaluator, 
                                             numFolds=4)
         elif self.validator == "train_validation":
-#            print(self.get_grid_builder())
             self.validator =  TrainValidationSplit(estimator=self.estimator, 
                                                    estimatorParamMaps=self.param_grid, 
                                                    evaluator=self.evaluator, 
@@ -140,22 +166,6 @@ class ClassificationModel(unittest.TestCase):
          .coalesce(1)
          .write.csv(self.get_path_transform(), mode="overwrite", sep=",", header=True))
 
-    def get_best_model(self):
-        if self.model_classifier == "logistic_regression":
-            return LogisticRegressionModel.load(self.get_path_save_model())
-        elif self.model_classifier == "decision_tree":
-            return DecisionTreeClassificationModel.load(self.get_path_save_model())
-        elif self.model_classifier == "random_forest":
-            return RandomForestClassificationModel.load(self.get_path_save_model())
-        elif self.model_classifier == "multilayer_perceptron":
-            return MultilayerPerceptronClassificationModel.load(self.get_path_save_model())
-        elif self.model_classifier == "one_vs_rest":
-            return OneVsRestModel.load(self.get_path_save_model())
-        
-    def get_nb_input_layers(self):
-        return self.data.select(self.featuresCol).rdd.map(lambda x: x[self.featuresCol]).first().values.size
 
-    def get_nb_output_layers(self):
-        return self.data.select(self.labelCol).distinct().count()
 
    
