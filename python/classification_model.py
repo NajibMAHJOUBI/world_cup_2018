@@ -50,7 +50,7 @@ class ClassificationModel(unittest.TestCase):
         self.transform = data
 
     def define_grid_builder(self):
-        if (self.model_classifier =="logistic_regression"):
+        if self.model_classifier == "logistic_regression":
             self.param_grid = (ParamGridBuilder()
                                .addGrid(self.estimator.maxIter, [5, 10, 15, 20])
                                .addGrid(self.estimator.regParam, [0.0, 0.01, 0.1, 1.0, 10.0])
@@ -58,25 +58,25 @@ class ClassificationModel(unittest.TestCase):
                                .addGrid(self.estimator.fitIntercept, [True, False])
                                .addGrid(self.estimator.aggregationDepth, [2, 4, 8, 16])
                                .build())    
-        elif(self.model_classifier == "decision_tree"):
+        elif self.model_classifier == "decision_tree":
             self.param_grid = (ParamGridBuilder()
                                .addGrid(self.estimator.maxDepth, [5, 10, 15, 20, 25])
                                .addGrid(self.estimator.maxBins, [4, 8, 16, 32])
                                .build())
-        elif(self.model_classifier == "random_forest"):
+        elif self.model_classifier == "random_forest":
             self.param_grid = (ParamGridBuilder()
                                .addGrid(self.estimator.numTrees, [5, 10, 15, 20, 25])
                                .addGrid(self.estimator.maxDepth, [5, 10, 15, 20])
                                .addGrid(self.estimator.maxBins, [4, 8, 16, 32])
                                .build())
-        elif(self.model_classifier == "multilayer_perceptron"):
+        elif self.model_classifier == "multilayer_perceptron":
             if self.layers is None:
                 self.layers = [[8, 7, 6, 5, 4, 3], [8, 10, 3], [8, 8, 5, 3],  [8, 12, 12, 5, 3]]
             
             self.param_grid = (ParamGridBuilder()
                                .addGrid(self.estimator.layers, self.layers)
                                .build())
-        elif(self.model_classifier == "one_vs_rest"):
+        elif self.model_classifier == "one_vs_rest":
             list_classifier = []
             # logistic regression classifier
             regParam = [0.0, 0.01, 0.1, 1.0, 10.0]
@@ -93,27 +93,29 @@ class ClassificationModel(unittest.TestCase):
                                .build())
 
     def define_estimator(self):
-        if (self.model_classifier == "logistic_regression"):
-            self.estimator = LogisticRegression(featuresCol=self.featuresCol, labelCol=self.labelCol, family="multinomial")
-        elif(self.model_classifier == "decision_tree"):
+        if self.model_classifier == "logistic_regression":
+            self.estimator = LogisticRegression(featuresCol=self.featuresCol, labelCol=self.labelCol,
+                                                family="multinomial")
+        elif self.model_classifier == "decision_tree":
             self.estimator = DecisionTreeClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
-        elif(self.model_classifier == "random_forest"):
+        elif self.model_classifier == "random_forest":
             self.estimator = RandomForestClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
-        elif(self.model_classifier == "multilayer_perceptron"):
+        elif self.model_classifier == "multilayer_perceptron":
             self.estimator = MultilayerPerceptronClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
-        elif(self.model_classifier == "one_vs_rest"):
+        elif self.model_classifier == "one_vs_rest":
             self.estimator = OneVsRest(featuresCol=self.featuresCol, labelCol=self.labelCol)
     
     def define_evaluator(self):
-        self.evaluator = MulticlassClassificationEvaluator(predictionCol=self.predictionCol, labelCol=self.labelCol, metricName="accuracy")
+        self.evaluator = MulticlassClassificationEvaluator(predictionCol=self.predictionCol, labelCol=self.labelCol,
+                                                           metricName="accuracy")
 
     def define_validator(self):
-        if (self.validator == "cross_validation"):
+        if self.validator == "cross_validation":
             self.validator = CrossValidator(estimator=self.estimator, 
                                             estimatorParamMaps=self.param_grid, 
                                             evaluator=self.evaluator, 
                                             numFolds=4)
-        elif (self.validator == "train_validation"):
+        elif self.validator == "train_validation":
 #            print(self.get_grid_builder())
             self.validator =  TrainValidationSplit(estimator=self.estimator, 
                                                    estimatorParamMaps=self.param_grid, 
@@ -139,15 +141,15 @@ class ClassificationModel(unittest.TestCase):
          .write.csv(self.get_path_transform(), mode="overwrite", sep=",", header=True))
 
     def get_best_model(self):
-        if (self.model_classifier == "logistic_regression"):
+        if self.model_classifier == "logistic_regression":
             return LogisticRegressionModel.load(self.get_path_save_model())
-        elif(self.model_classifier == "decision_tree"):
+        elif self.model_classifier == "decision_tree":
             return DecisionTreeClassificationModel.load(self.get_path_save_model())
-        elif(self.model_classifier == "random_forest"):
+        elif self.model_classifier == "random_forest":
             return RandomForestClassificationModel.load(self.get_path_save_model())
-        elif(self.model_classifier == "multilayer_perceptron"):
+        elif self.model_classifier == "multilayer_perceptron":
             return MultilayerPerceptronClassificationModel.load(self.get_path_save_model())
-        elif(self.model_classifier == "one_vs_rest"):
+        elif self.model_classifier == "one_vs_rest":
             return OneVsRestModel.load(self.get_path_save_model())
         
     def get_nb_input_layers(self):
