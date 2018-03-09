@@ -1,13 +1,14 @@
 
 # Pyspark libraries
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType, BooleanType
-from pyspark.sql.functions import col, udf
-from pyspark.ml.linalg import Vectors, VectorUDT
 from pyspark.ml.feature import StringIndexer
+from pyspark.ml.linalg import Vectors, VectorUDT
+from pyspark.sql.functions import col, udf
+from pyspark.sql.types import StructType, StructField, StringType, FloatType, BooleanType
+
+import numpy as np
+
 # My libraries
 from get_data_schema import get_data_schema
-
-
 
 
 class FeaturizationData:
@@ -47,7 +48,7 @@ class FeaturizationData:
 
         names_start_to_convert = get_data_schema("qualifying_start").names
         names_start_to_convert.remove("teamGroup_team")
-        path = "./data/{0}/2014_World_Cup_{1}_qualifying_start.tsv".format(confederation, confederation)
+        path = "../data/{0}/2014_World_Cup_{1}_qualifying_start.tsv".format(confederation, confederation)
         return self.spark.read.csv(path, sep="\t", 
                                       schema=get_data_schema("qualifying_start"), header=False)\
                                  .select([udf_convert_string_to_float(col(name)).alias(name) for name in names_start_to_convert] + ["teamGroup_team"])\
@@ -74,12 +75,12 @@ class FeaturizationData:
 
         udf_win_team_1 = udf(lambda team_1, team_2: win_team_1(team_1, team_2), FloatType()) 
 
-	def convert_string_to_float(x):
-	    x_replace_minus = x.replace(u'\u2212', '-')
-	    if x_replace_minus == '-':
-		return np.nan
-	    else:
-		return float(x_replace_minus)
+    def convert_string_to_float(x):
+        x_replace_minus = x.replace(u'\u2212', '-')
+        if x_replace_minus == '-':
+            return np.nan
+        else:
+            return float(x_replace_minus)
 
         udf_convert_string_to_float = udf(lambda x: convert_string_to_float(x), FloatType())
 
@@ -91,7 +92,7 @@ class FeaturizationData:
 	names_results_to_convert = get_data_schema("qualifying_results").names
 	names_results_to_remove = ["year", "month", "date",  "team_1", "team_2", "score_team_1", "score_team_2", "tournament", "country_played"]
 	for name in names_results_to_remove: names_results_to_convert.remove(name)
-        path = "./data/{0}/2014_World_Cup_{1}_qualifying_results.tsv".format(confederation, confederation)
+        path = "../data/{0}/2014_World_Cup_{1}_qualifying_results.tsv".format(confederation, confederation)
         data = self.spark.read.csv(path, sep="\t", schema=get_data_schema("qualifying_results"), header=False)\
                               .select([udf_convert_string_to_float(col(name)).alias(name) for name in names_results_to_convert] + names_results_to_remove)\
                               .withColumn("label", udf_win_team_1(col("score_team_1"), col("score_team_2")))\
