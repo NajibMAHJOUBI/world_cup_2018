@@ -1,6 +1,5 @@
 
-# Pyspark libraries
-# python libraries
+# Import libraries
 import os
 import unittest
 from itertools import product
@@ -17,19 +16,19 @@ class ClassificationModel(unittest.TestCase):
     def __init__(self, data, classification_model, path_model, path_transform, validator=None, list_layers=None):
         self.data = data
         self.model_classifier = classification_model
-        self.root_path_model = path_model #"./test/classification_model"
+        self.root_path_model = path_model
         self.root_path_transform = path_transform
-        self.validator= validator
+        self.validator = validator
         self.layers = list_layers
-        self.featuresCol = "features"
-        self.labelCol = "label"
-        self.predictionCol = "prediction"
+        self.features_column = "features"
+        self.label_column = "label"
+        self.prediction_column = "prediction"
 
-        self.transform = None # prediction
-        self.model = None # classifier model
-        self.param_grid = None # parameters grid builder
-        self.estimator = None # model estimator
-        self.evaluator = None # evaluator multi label prediction
+        self.transform = None  # prediction
+        self.model = None  # classifier model
+        self.param_grid = None  # parameters grid builder
+        self.estimator = None  # model estimator
+        self.evaluator = None  # evaluator multi label prediction
 
     def __str__(self):
         s = "\nClassification model: {0}\n".format(self.model_classifier)
@@ -37,14 +36,14 @@ class ClassificationModel(unittest.TestCase):
         return s
 
     def run(self):
-       self.define_estimator()
-       self.define_evaluator()
-       self.define_grid_builder()
-       self.define_validator()
-       self.fit_validator()
-       self.save_best_model()
-       self.transform_model()
-       self.save_transform()
+        self.define_estimator()
+        self.define_evaluator()
+        self.define_grid_builder()
+        self.define_validator()
+        self.fit_validator()
+        self.save_best_model()
+        self.transform_model()
+        self.save_transform()
 
     def get_path_save_model(self):
         return os.path.join(self.root_path_model, self.model_classifier)
@@ -84,7 +83,7 @@ class ClassificationModel(unittest.TestCase):
                                .addGrid(self.estimator.elasticNetParam, [0.0, 0.25, 0.5, 0.75, 1.0])
                                .addGrid(self.estimator.fitIntercept, [True, False])
                                .addGrid(self.estimator.aggregationDepth, [2, 4, 8, 16])
-                               .build())    
+                               .build())
         elif self.model_classifier == "decision_tree":
             self.param_grid = (ParamGridBuilder()
                                .addGrid(self.estimator.maxDepth, [5, 10, 15, 20, 25])
@@ -99,7 +98,7 @@ class ClassificationModel(unittest.TestCase):
         elif self.model_classifier == "multilayer_perceptron":
             if self.layers is None:
                 self.layers = [[8, 7, 6, 5, 4, 3], [8, 10, 3], [8, 8, 5, 3],  [8, 12, 12, 5, 3]]
-            
+
             self.param_grid = (ParamGridBuilder()
                                .addGrid(self.estimator.layers, self.layers)
                                .build())
@@ -108,12 +107,12 @@ class ClassificationModel(unittest.TestCase):
             # logistic regression classifier
             reg_param = [0.0, 0.01, 0.1, 1.0, 10.0]
             elastic_param = [0.0, 0.25, 0.5, 0.75, 1.0]
-            for reg,elastic in product(reg_param, elastic_param):
+            for reg, elastic in product(reg_param, elastic_param):
                 list_classifier.append(LogisticRegression(regParam=reg, elasticNetParam=elastic, family="binomial"))
             # linerSVC
             intercept = [True, False]
             for reg, inter in product(reg_param, intercept):
-                list_classifier.append(LinearSVC(regParam=reg, fitIntercept=inter))            
+                list_classifier.append(LinearSVC(regParam=reg, fitIntercept=inter))
 
             self.param_grid = (ParamGridBuilder()
                                .addGrid(self.estimator.classifier, list_classifier)
@@ -121,19 +120,20 @@ class ClassificationModel(unittest.TestCase):
 
     def define_estimator(self):
         if self.model_classifier == "logistic_regression":
-            self.estimator = LogisticRegression(featuresCol=self.featuresCol, labelCol=self.labelCol,
+            self.estimator = LogisticRegression(featuresCol=self.features_column, labelCol=self.label_column,
                                                 family="multinomial")
         elif self.model_classifier == "decision_tree":
-            self.estimator = DecisionTreeClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
+            self.estimator = DecisionTreeClassifier(featuresCol=self.features_column, labelCol=self.label_column)
         elif self.model_classifier == "random_forest":
-            self.estimator = RandomForestClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
+            self.estimator = RandomForestClassifier(featuresCol=self.features_column, labelCol=self.label_column)
         elif self.model_classifier == "multilayer_perceptron":
-            self.estimator = MultilayerPerceptronClassifier(featuresCol=self.featuresCol, labelCol=self.labelCol)
+            self.estimator = MultilayerPerceptronClassifier(featuresCol=self.features_column,
+                                                            labelCol=self.label_column)
         elif self.model_classifier == "one_vs_rest":
-            self.estimator = OneVsRest(featuresCol=self.featuresCol, labelCol=self.labelCol)
-    
+            self.estimator = OneVsRest(featuresCol=self.features_column, labelCol=self.label_column)
+
     def define_evaluator(self):
-        self.evaluator = MulticlassClassificationEvaluator(predictionCol=self.predictionCol, labelCol=self.labelCol,
+        self.evaluator = MulticlassClassificationEvaluator(predictionCol=self.prediction_column, labelCol=self.labelCol,
                                                            metricName="accuracy")
 
     def define_validator(self):
@@ -143,10 +143,10 @@ class ClassificationModel(unittest.TestCase):
                                             evaluator=self.evaluator, 
                                             numFolds=4)
         elif self.validator == "train_validation":
-            self.validator =  TrainValidationSplit(estimator=self.estimator, 
-                                                   estimatorParamMaps=self.param_grid, 
-                                                   evaluator=self.evaluator, 
-                                                   trainRatio=0.75)
+            self.validator = TrainValidationSplit(estimator=self.estimator,
+                                                  estimatorParamMaps=self.param_grid,
+                                                  evaluator=self.evaluator,
+                                                  trainRatio=0.75)
 
     def fit_validator(self):
         self.model = self.validator.fit(self.data)
@@ -165,7 +165,3 @@ class ClassificationModel(unittest.TestCase):
          .select("id", "label", "prediction")
          .coalesce(1)
          .write.csv(self.get_path_transform(), mode="overwrite", sep=",", header=True))
-
-
-
-   
