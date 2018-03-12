@@ -6,7 +6,7 @@ The world cup 2014 took place in Brazil from 12 June to 13 July 2014. Initially,
 
  - **Groups**:
 
- Eight groups with for team by group have been engaged. The first and second of each groups are allowed to pursue the competition to the second stage. The matches took place from 2014/06/12 to2014/06/26. Each team played three matches during this stage.
+ Eight groups with for team by group have been engaged. The first and second of each groups are allowed to pursue the competition to the second stage. The matches took place from 2014/06/12 to 2014/06/26. Each team played three matches during this stage.
 
 | Group A  | Group B     | Group C     | Group D    | Group E     | Group F                | Group G       | Group H     |
 | -------  | -------     | ------      | -------    | -------     | -------                | ------        | -------     |
