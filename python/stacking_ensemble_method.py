@@ -3,6 +3,7 @@ from classification_model import ClassificationModel
 from pyspark.ml.linalg import Vectors, VectorUDT
 from pyspark.sql.functions import col, udf
 from pyspark.sql.types import StructField, StructType, FloatType
+from get_data_schema import get_data_schema
 
 
 class Stacking:
@@ -28,17 +29,17 @@ class Stacking:
         self.stacking_models(self.new_data)
         self.save_best_model()
 
-    def get_schema(self):
-        return (StructType([
-            StructField("id", FloatType(), True),
-            StructField("label", FloatType(), True),
-            StructField("prediction", FloatType(), True)]))
+    # def get_schema(self):
+    #     return (StructType([
+    #         StructField("id", FloatType(), True),
+    #         StructField("label", FloatType(), True),
+    #         StructField("prediction", FloatType(), True)]))
 
     def load_all_data(self):
         dic_data = {
             self.classifier_available[0]:  (self.spark.read
                                             .csv(os.path.join(self.path, self.classifier_available[0]),
-                                                 sep=",", header=True, schema=self.get_schema())
+                                                 sep=",", header=True, schema=get_data_schema("prediction"))
                                             .withColumnRenamed("prediction", self.classifier_available[0]))
         }
 
@@ -103,3 +104,4 @@ class Stacking:
 
     def stacking_transform(self):
         return self.stacking_model.transform(self.new_data)
+
