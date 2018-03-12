@@ -28,20 +28,21 @@ class ResultStatistic:
         return s
 
     def run(self):
-        dic_result_group_team = self.global_result_by_team(False)
-        dic_first_by_group, dic_second_by_group = self.first_second_by_group(dic_result_group_team)
+        self.data.show()
+#        dic_result_group_team = self.global_result_by_team(False)
+#        dic_first_by_group, dic_second_by_group = self.first_second_by_group(dic_result_group_team)
 #        print(dic_first_by_group)
 #        print(dic_second_by_group)
-        print_first_second_by_group(dic_first_by_group, dic_second_by_group)
-        print_matches_next_stage(dic_first_by_group, dic_second_by_group)
-        accuracy_global, accuracy_1st, accuracy_2nd = self.accuracy_teams_qualified(dic_first_by_group, dic_second_by_group)
-        print("Global accuracy: {0}\n 1st accuracy: {1}\n 2nd accuracy: {2}".format(accuracy_global, accuracy_1st, accuracy_2nd))
+#        print_first_second_by_group(dic_first_by_group, dic_second_by_group)
+#        print_matches_next_stage(dic_first_by_group, dic_second_by_group)
+#        accuracy_global, accuracy_1st, accuracy_2nd = self.accuracy_teams_qualified(dic_first_by_group, dic_second_by_group)
+#        print("Global accuracy: {0}\n 1st accuracy: {1}\n 2nd accuracy: {2}".format(accuracy_global, accuracy_1st, accuracy_2nd))
 
     def load_results_top_groups(self):
         schema = StructType([StructField("group", StringType(), True),
                              StructField("1st", StringType(), True),
                              StructField("2nd", StringType(), True)])
-        return self.spark.read.csv("./data/first_round_top_groups.csv", sep=",", schema=schema, header=False)
+        return self.spark.read.csv("../data/first_round_top_groups.csv", sep=",", schema=schema, header=False)
 
     def load_data_groups(self):
         udf_strip = udf(lambda x: x.strip(), StringType())
@@ -50,7 +51,7 @@ class ResultStatistic:
                              StructField("country_2", StringType(), True),
                              StructField("country_3", StringType(), True),
                              StructField("country_4", StringType(), True)])
-        return (self.spark.read.csv("./data/groups.csv", sep=",", schema=schema, header=False)
+        return (self.spark.read.csv("../data/groups.csv", sep=",", schema=schema, header=False)
                 .select(col("group"), udf_strip(col("country_1")).alias("country_1"), 
                                       udf_strip(col("country_2")).alias("country_2"),
                                       udf_strip(col("country_3")).alias("country_3"),                                      
