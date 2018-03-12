@@ -3,6 +3,7 @@
 import os
 import unittest
 from itertools import product
+from get_spark_session import get_spark_session
 from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, \
     MultilayerPerceptronClassifier, OneVsRest, LinearSVC
 from pyspark.ml.classification import LogisticRegressionModel, DecisionTreeClassificationModel, \
@@ -13,9 +14,12 @@ from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBui
 
 # Class Classification Model
 class ClassificationModel(unittest.TestCase):
-    def __init__(self, data, classification_model, path_model, path_transform, validator=None, list_layers=None):
-        self.data = data
+    def __init__(self, spark_session, year, classification_model, path_data, path_model, path_transform,
+                 validator=None, list_layers=None):
+        self.spark = spark_session
+        self.year = year
         self.model_classifier = classification_model
+        self.root_path_data = path_data
         self.root_path_model = path_model
         self.root_path_transform = path_transform
         self.validator = validator
@@ -24,6 +28,7 @@ class ClassificationModel(unittest.TestCase):
         self.label_column = "label"
         self.prediction_column = "prediction"
 
+        self.data = None  # data - training
         self.transform = None  # prediction
         self.model = None  # classifier model
         self.param_grid = None  # parameters grid builder
@@ -36,6 +41,7 @@ class ClassificationModel(unittest.TestCase):
         return s
 
     def run(self):
+        self.load_data()
         self.define_estimator()
         self.define_evaluator()
         self.define_grid_builder()
@@ -46,10 +52,10 @@ class ClassificationModel(unittest.TestCase):
         self.save_transform()
 
     def get_path_save_model(self):
-        return os.path.join(self.root_path_model, self.model_classifier)
+        return os.path.join(self.root_path_model, self.year, self.model_classifier)
 
     def get_path_transform(self):
-        return os.path.join(self.root_path_transform, self.model_classifier)
+        return os.path.join(self.root_path_transform, self.year, self.model_classifier)
 
     def get_best_model(self):
         if self.model_classifier == "logistic_regression":
@@ -64,16 +70,19 @@ class ClassificationModel(unittest.TestCase):
             return OneVsRestModel.load(self.get_path_save_model())
 
     def get_nb_input_layers(self):
-        return self.data.select(self.featuresCol).rdd.map(lambda x: x[self.featuresCol]).first().values.size
+        return self.data.select(self.features_column).rdd.map(lambda x: x[self.features_column]).first().values.size
 
     def get_nb_output_layers(self):
-        return self.data.select(self.labelCol).distinct().count()
+        return self.data.select(self.label_column).distinct().count()
 
     def set_model(self, model):
         self.model = model
 
     def set_transform(self, data):
         self.transform = data
+
+    def load_data(self):
+        self.data = (self.spark.read.parquet(os.path.join(self.root_path_data, self.year)))
 
     def define_grid_builder(self):
         if self.model_classifier == "logistic_regression":
@@ -133,7 +142,8 @@ class ClassificationModel(unittest.TestCase):
             self.estimator = OneVsRest(featuresCol=self.features_column, labelCol=self.label_column)
 
     def define_evaluator(self):
-        self.evaluator = MulticlassClassificationEvaluator(predictionCol=self.prediction_column, labelCol=self.labelCol,
+        self.evaluator = MulticlassClassificationEvaluator(predictionCol=self.prediction_column,
+                                                           labelCol=self.label_column,
                                                            metricName="accuracy")
 
     def define_validator(self):
@@ -165,3 +175,28 @@ class ClassificationModel(unittest.TestCase):
          .select("id", "label", "prediction")
          .coalesce(1)
          .write.csv(self.get_path_transform(), mode="overwrite", sep=",", header=True))
+
+
+if __name__ == "__main__":
+    spark = get_spark_session("simul stage")
+    # years = ["2014", "2010", "2006"]
+    years = ["2014"]
+    classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
+                            "one_vs_rest"]
+    dic_evaluate_model = {}
+    # classification_models = ["decision_tree"]
+    for year in years:
+        print("Year: {0}".format(year))
+        dic_evaluate_model[year] = {}
+        for model in classification_models:
+            print("  Model classification: {0}".format(model))
+            classification_model = ClassificationModel(spark, year, model,
+                                                       "./test/training",
+                                                       "./test/classification_model",
+                                                       "./test/transform",
+                                                       validator="train_validation", list_layers=None)
+            classification_model.run()
+            dic_evaluate_model[year][model] = classification_model.evaluate_evaluator()
+
+    for year in years:
+        print(dic_evaluate_model[year])
