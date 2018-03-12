@@ -12,6 +12,7 @@ import os
 # My libraries
 from get_data_schema import get_data_schema
 from get_spark_session import get_spark_session
+from get_competition_dates import get_competition_dates
 
 
 class FeaturizationData:
@@ -72,7 +73,7 @@ class FeaturizationData:
 
         names_start_to_convert = get_data_schema("qualifying_start").names
         names_start_to_convert.remove("teamGroup_team")
-        path = "./data/{0}/2014_World_Cup_{1}_qualifying_start.tsv".format(confederation, confederation)
+        path = "./data/{0}/{1}_World_Cup_{2}_qualifying_start.tsv".format(confederation, self.year, confederation)
         return (self.spark.read.csv(path, sep="\t", schema=get_data_schema("qualifying_start"), header=False)
         .select([udf_convert_string_to_float(col(name)).alias(name) for name in names_start_to_convert] + ["teamGroup_team"])
         .withColumn("features", udf_create_features(
@@ -113,7 +114,7 @@ class FeaturizationData:
         names_results_to_remove = ["year", "month", "date",  "team_1", "team_2", "score_team_1", "score_team_2",
                                    "tournament", "country_played"]
         for name in names_results_to_remove: names_results_to_convert.remove(name)
-        path = "./data/{0}/2014_World_Cup_{1}_qualifying_results.tsv".format(confederation, confederation)
+        path = "./data/{0}/{1}_World_Cup_{2}_qualifying_results.tsv".format(confederation, self.year, confederation)
         data = self.spark.read.csv(path, sep="\t", schema=get_data_schema("qualifying_results"), header=False)\
                               .select([udf_convert_string_to_float(col(name)).alias(name)
                                        for name in names_results_to_convert] + names_results_to_remove)\
@@ -173,22 +174,11 @@ class FeaturizationData:
 
 if __name__ == "__main__":
     spark = get_spark_session("World_Cup")
-
-    years = ["2014", "2010"]
-
-    dic_date = {year: {} for year in years}
-    dic_date["2014"] = {
-        "1st_stage": ["2014/06/12", "2014/06/26"],  # First stage
-        "2nd_stage": ["2014/06/28", "2014/07/01"],  # Round of 16
-        "3rd_stage": ["2014/07/04", "2014/07/05"],  # Quarter-finals
-        "4th_stage": ["2014/07/08", "2014/07/09"],  # Semi-finals
-        "5th_stage": ["2014/07/13", "2014/07/13"],  # Final
-        "6th_stage": ["2014/07/12", "2014/07/12"]   # Third place
-        }
-
+    years = ["2014", "2010", "2006"]
     confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA", "WCP"]
 
     for year in years:
         print("Year: {0}".format(year))
+        # dic_date = get_competition_dates(year)
         featurization_data = FeaturizationData(spark, year, confederations, "./test/training", "./test/string_indexer")
         featurization_data.run()
