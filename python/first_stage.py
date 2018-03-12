@@ -28,16 +28,16 @@ class FirstRound:
             self.save_prediction(self.transform.select("id", "label", "prediction"))
         else:
             classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron", "one_vs_rest"]
-            stacking = Stacking(self.spark, classification_model, self.model_classifier, "train_validation", "./test/prediction")
+            stacking = Stacking(self.spark, classification_model, self.model_classifier, "train_validation", "../test/prediction")
             stacking.run()
             self.transform = stacking.stacking_transform()
             self.save_prediction(self.transform.select("id", "label", "prediction"))
-            self.apply_intdex_to_string()
+            self.apply_index_to_string()
 
     def load_data_teams(self):
         schema = StructType([StructField("team", StringType(), True),
                              StructField("country", StringType(), True)])
-        return self.spark.read.csv("./data/common/en.teams.tsv", sep="\t", header=False, schema=schema)
+        return self.spark.read.csv("../data/common/en.teams.tsv", sep="\t", header=False, schema=schema)
 
     def get_data(self):
         return self.data
@@ -47,7 +47,7 @@ class FirstRound:
 
     def apply_index_to_string(self):
         teams = self.load_data_teams()
-        labels = StringIndexerModel.load("./test/string_indexer").labels
+        labels = StringIndexerModel.load("../test/string_indexer").labels
         model = IndexToString(inputCol="id", outputCol="matches", labels=labels)
 
         udf_get_team_1 = udf(lambda x: x.split("_")[0].split("/")[0], StringType())
@@ -64,6 +64,8 @@ class FirstRound:
 
         udf_result_team_2 = udf(lambda result: result_team_2(result), FloatType())
 
+        self.transform.show()
+        model.transform(self.transform).show()
         self.data = (model.transform(self.transform)
                      .withColumn("team_1", udf_get_team_1(col("matches")))
                      .withColumn("team_2", udf_get_team_2(col("matches")))
@@ -73,9 +75,9 @@ class FirstRound:
                      .select("date", "team_1", "team_2", "result_team_1", "result_team_2"))
 
         self.data = (self.data.join(teams, self.data.team_1 == teams.team)
-                .withColumnRenamed("country", "country_1").drop("team")
-                .join(teams, self.data.team_2 == teams.team)
-                .withColumnRenamed("country", "country_2").drop("team"))
+                    .withColumnRenamed("country", "country_1").drop("team")
+                    .join(teams, self.data.team_2 == teams.team)
+                    .withColumnRenamed("country", "country_2").drop("team"))
 
     def join_label_prediction(self, label, prediction):
         udf_matches = udf(lambda team_1,team_2: team_1 + "/" + team_2, StringType())
