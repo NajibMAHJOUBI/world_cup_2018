@@ -143,6 +143,6 @@ class FeaturizationData:
         string_indexer =  StringIndexer(inputCol="matches", outputCol="id")
         model = string_indexer.fit(self.data_union)
         self.data_union = model.transform(self.data_union).drop("matches")
-        model.write().overwrite().save("./test/string_indexer")  
+        model.write().overwrite().save("../test/string_indexer")  
 
 
