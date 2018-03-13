@@ -1,38 +1,77 @@
+
+import os
+
 from pyspark.ml.feature import IndexToString, StringIndexerModel
 from pyspark.ml.linalg import VectorUDT
 from pyspark.sql.functions import udf, col
 from pyspark.sql.types import StructType, StructField, StringType, FloatType
 
 from classification_model import ClassificationModel
+from featurization_data import FeaturizationData
 from stacking_ensemble_method import Stacking
+from get_spark_session import get_spark_session
+from get_competition_dates import get_competition_dates
 
 
-class FirstRound:
-    def __init__(self, spark_session, classification_model, stacking, data, path_model, path_prediction):
+class FirstStage:
+
+    schema = StructType([
+        StructField("matches", StringType(), True),
+        StructField("label", FloatType(), True),
+        StructField("prediction", FloatType(), True)])
+
+    def __init__(self, spark_session, year, classification_model, stacking, stage, list_date, path_data, path_model,
+                 path_prediction):
         self.spark = spark_session
+        self.year = year
         self.model_classifier = classification_model
         self.stacking_test = stacking
-        self.data = data  
+        self.stage = stage
+        self.list_date = list_date
+        self.path_data = path_data
         self.path_model = path_model
         self.path_prediction = path_prediction
 
         self.label_prediction = None
         self.transform = None
+        self.evaluate = None
     
     def __str__(self):
-        pass
+        s = "FirstStage\n"
+        s += "Spark session: {0}\n".format(self.spark)
+        s += "Year: {0}".format(self.year)
+        s += "Model classifier: {0}\n".format(self.model_classifier)
+        s += "Stacking model: {0}\n".format(self.stacking_test)
+        s += "List dates: {0}\n".format(self.list_date)
+        s += "Path data: {0}\n".format(self.path_data)
+        s += "Path model: {0}\n".format(self.path_model)
+        s += "Path prediction: {0}\n".format(self.path_prediction)
+        return s
     
     def run(self):
+        data = self.load_data_stage()
         if not self.stacking_test:
-            self.transform_model(self.data)
-            self.save_prediction(self.transform.select("id", "label", "prediction"))
+            self.transform_model(data)
+            self.save_prediction()
         else:
-            classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron", "one_vs_rest"]
-            stacking = Stacking(self.spark, classification_model, self.model_classifier, "train_validation", "../test/prediction")
-            stacking.run()
-            self.transform = stacking.stacking_transform()
-            self.save_prediction(self.transform.select("id", "label", "prediction"))
-            self.apply_index_to_string()
+            available_classifier = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
+                                    "one_vs_rest"]
+            stacking = Stacking(self.spark, self.year, self.stage, available_classifier, self.model_classifier, "train_validation",
+                                self.path_data, self.path_model)
+            stacking.merge_all_data(schema=self.schema, id_column="matches")
+            stacking.create_features()
+            # stacking.get_data().show(10)
+            # stacking.get_data_features().show(10)
+            self.transform_model(stacking.get_data_features())
+            self.save_prediction()
+
+    def load_data_stage(self):
+        featurization_data = FeaturizationData(self.spark, self.year, ["WCF"], None, None,
+                                               stage=self.stage, list_date=self.list_date)
+        featurization_data.get_dates()
+        featurization_data.loop_all_confederations()
+        featurization_data.union_all_confederation()
+        return featurization_data.get_data_union()
 
     def load_data_teams(self):
         schema = StructType([StructField("team", StringType(), True),
@@ -44,6 +83,15 @@ class FirstRound:
 
     def get_transform(self):
         return self.transform
+
+    def get_evaluate(self):
+        return self.evaluate
+
+    def get_prediction_path(self):
+        if self.stacking_test:
+            return os.path.join(self.path_prediction, self.year, self.stage, "stacking", self.model_classifier)
+        else:
+            return os.path.join(self.path_prediction, self.year, self.stage, self.model_classifier)
 
     def apply_index_to_string(self):
         teams = self.load_data_teams()
@@ -96,18 +144,13 @@ class FirstRound:
                 .join(team_features, col("team_2") == col("team"))
                 .drop("team").withColumnRenamed("features", "features_2")
                 .withColumn("features", udf_diff_features(col("features_1"), col("features_2"))))
-
-    def load_classifier_model(self):
-        return ClassificationModel(None, self.model_classifier, self.path_model, None).get_best_model()
         
     def transform_model(self, data):
-        self.transform = self.load_classifier_model().transform(data)
-
-    def evaluate_evaluator(self, data):
-        classification_model = ClassificationModel(None, None, None, None)
+        classification_model = ClassificationModel(None, self.year, self.model_classifier, None, self.path_model, None)
+        self.transform = classification_model.get_best_model().transform(data)
         classification_model.define_evaluator()
-        classification_model.set_transform(data)         
-        return classification_model.evaluate_evaluator()
+        classification_model.set_transform(self.transform)
+        self.evaluate = classification_model.evaluate_evaluator()
 
     def save_matches_next_stage(self, dic_first_by_group, dic_second_by_group):
         data = []
@@ -118,8 +161,31 @@ class FirstRound:
          .write
          .csv("./test/matches_next_stage/{0}".format(self.model_classifier), mode="overwrite", sep=",", header=True))
 
-    def save_prediction(self, prediction):
-        (prediction
+    def save_prediction(self):
+        (self.transform
+         .select("matches", "label", "prediction")
          .coalesce(1)
-         .write.csv("{0}/{1}".format(self.path_prediction, self.model_classifier), mode="overwrite", sep=",", header=True))
-  
+         .write.csv(self.get_prediction_path(), mode="overwrite", sep=",", header=True))
+
+
+if __name__ == "__main__":
+    spark = get_spark_session("First Stage")
+    years = ["2014", "2010", "2006"]
+    classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
+                            "one_vs_rest"]
+    for year in years:
+        print("Year: {0}".format(year))
+        for classifier_model in classification_model:
+            for stage in get_competition_dates(year).keys():
+                print("  Classifier model: {0}".format(classifier_model))
+                first_stage = FirstStage(spark, year, classifier_model, False, stage,
+                                         get_competition_dates(year)[stage],
+                                     None, "./test/classification_model", "./test/prediction")
+                # print(first_stage)
+                first_stage.run()
+
+        for stage in get_competition_dates(year).keys():
+            first_stage = FirstStage(spark, year, "decision_tree", True, stage,
+                                     get_competition_dates(year)[stage],
+                                     "./test/prediction", "./test/stacking_model", "./test/prediction")
+            first_stage.run()
