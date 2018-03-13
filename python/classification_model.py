@@ -69,17 +69,14 @@ class ClassificationModel(unittest.TestCase):
         elif self.model_classifier == "one_vs_rest":
             return OneVsRestModel.load(self.get_path_save_model())
 
-    def get_nb_input_layers(self):
-        return self.data.select(self.features_column).rdd.map(lambda x: x[self.features_column]).first().values.size
+    def set_model(self, model_to_set):
+        self.model = model_to_set
 
-    def get_nb_output_layers(self):
-        return self.data.select(self.label_column).distinct().count()
+    def set_transform(self, transform_to_set):
+        self.transform = transform_to_set
 
-    def set_model(self, model):
-        self.model = model
-
-    def set_transform(self, data):
-        self.transform = data
+    def set_data(self, data_to_set):
+        self.data = data_to_set
 
     def load_data(self):
         self.data = (self.spark.read.parquet(os.path.join(self.root_path_data, self.year)))
@@ -179,8 +176,8 @@ class ClassificationModel(unittest.TestCase):
 
 if __name__ == "__main__":
     spark = get_spark_session("simul stage")
-    # years = ["2014", "2010", "2006"]
-    years = ["2014"]
+    years = ["2014", "2010", "2006"]
+    # years = ["2014"]
     classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
                             "one_vs_rest"]
     dic_evaluate_model = {}
