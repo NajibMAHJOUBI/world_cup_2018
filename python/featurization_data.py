@@ -1,18 +1,15 @@
 
 # Pyspark libraries
 import numpy as np
+# Python libraries
+import os
 from pyspark.ml.feature import StringIndexer
 from pyspark.ml.linalg import Vectors, VectorUDT
 from pyspark.sql.functions import col, udf
 from pyspark.sql.types import StructType, StructField, StringType, FloatType, BooleanType
-
-# Python libraries
-import os
-
 # My libraries
 from get_data_schema import get_data_schema
 from get_spark_session import get_spark_session
-from get_competition_dates import get_competition_dates
 
 
 class FeaturizationData:
@@ -51,6 +48,9 @@ class FeaturizationData:
 
     def get_data_union(self):
         return self.data_union
+
+    def get_confederation(self):
+        return self.confederations
 
     def save_data(self):
         return (self.data_union
@@ -179,6 +179,5 @@ if __name__ == "__main__":
 
     for year in years:
         print("Year: {0}".format(year))
-        # dic_date = get_competition_dates(year)
         featurization_data = FeaturizationData(spark, year, confederations, "./test/training", "./test/string_indexer")
         featurization_data.run()
