@@ -175,17 +175,17 @@ if __name__ == "__main__":
                             "one_vs_rest"]
     for year in years:
         print("Year: {0}".format(year))
-        for classifier_model in classification_model:
+        # for classifier_model in classification_model:
+        #     for stage in get_competition_dates(year).keys():
+        #         print("  Classifier model: {0}".format(classifier_model))
+        #         first_stage = FirstStage(spark, year, classifier_model, False, stage,
+        #                                  get_competition_dates(year)[stage],
+        #                              None, "./test/classification_model", "./test/prediction")
+        #         # print(first_stage)
+        #         first_stage.run()
+        for classifier in ["logistic_regression", "decision_tree", "random_forest"]:
             for stage in get_competition_dates(year).keys():
-                print("  Classifier model: {0}".format(classifier_model))
-                first_stage = FirstStage(spark, year, classifier_model, False, stage,
+                first_stage = FirstStage(spark, year, classifier, True, stage,
                                          get_competition_dates(year)[stage],
-                                     None, "./test/classification_model", "./test/prediction")
-                # print(first_stage)
+                                         "./test/prediction", "./test/stacking_model", "./test/prediction")
                 first_stage.run()
-
-        for stage in get_competition_dates(year).keys():
-            first_stage = FirstStage(spark, year, "decision_tree", True, stage,
-                                     get_competition_dates(year)[stage],
-                                     "./test/prediction", "./test/stacking_model", "./test/prediction")
-            first_stage.run()
