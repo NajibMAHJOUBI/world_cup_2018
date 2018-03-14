@@ -130,7 +130,7 @@ if __name__ == "__main__":
                             "one_vs_rest"]
     dic_evaluate = {}
     for year in years:
-        stacking = Stacking(spark, year, None, classification_model, "decision_tree", "train_validation", "./test/transform",
+        stacking = Stacking(spark, year, None, classification_model, "one_vs_rest", "train_validation", "./test/transform",
                             "./test/stacking_model")
         stacking.run()
         dic_evaluate[year] = stacking.get_evaluate()
