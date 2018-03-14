@@ -28,3 +28,12 @@ def get_competition_dates(year):
             "5th_stage": ["2006/07/09", "2006/07/09"],  # Final
             "6th_stage": ["2006/07/08", "2006/07/08"]   # Third place
         }
+    elif year == "2018":
+        return {
+            "1st_stage": ["2018/06/14", "2018/06/28"],  # First stage
+            "2nd_stage": ["2018/06/30", "2018/07/03"],  # Second stage
+            "3rd_stage": ["2018/07/06", "2018/07/07"],  # Third stage
+            "4th_stage": ["2018/07/10", "2018/07/11"],  # Semi-finals
+            "5th_stage": ["2018/07/15", "2018/07/15"],  # Finals
+            "6th_stage": ["2018/07/14", "2018/07/14"]   # Third place
+        }
