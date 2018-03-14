@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 
-from pyspark.sql.types import StructType, StructField, StringType, FloatType, DoubleType
+from pyspark.sql.types import StructType, StructField, StringType, FloatType, DoubleType, IntegerType
+from pyspark.sql.functions import col, udf
 
 from get_spark_session import get_spark_session
 from get_competition_dates import get_competition_dates
@@ -17,13 +18,25 @@ def team_result(results):
 
 class ResultStatistic:
 
-    def __init__(self, spark_session, year, stage, classifier_model, stacking, path_data):
+    schema = StructType([StructField("matches", StringType(), True),
+                         StructField("label", DoubleType(), True),
+                         StructField("prediction", DoubleType(), True)])
+    schema_groups = StructType([StructField("group", StringType(), True),
+                                StructField("country_1", StringType(), True),
+                                StructField("country_2", StringType(), True),
+                                StructField("country_3", StringType(), True),
+                                StructField("country_4", StringType(), True)])
+    schema_teams = StructType([StructField("team", StringType(), True),
+                               StructField("country", StringType(), True)])
+    stages = ["1st_stage", "2nd_stage", "3rd_stage", "4th_stage", "5th_stage", "6th_stage"]
+
+    def __init__(self, spark_session, year, classifier_model, stacking, path_data, stage=None):
         self.spark = spark_session
         self.year = year
-        self.stage = stage
         self.classifier_model = classifier_model
         self.stacking = stacking
         self.path_data = path_data
+        self.stage = stage
 
         self.vs_groups = [("A", "B"), ("C", "D"), ("E", "F"), ("G", "H")]
 
@@ -39,6 +52,9 @@ class ResultStatistic:
     def run(self):
         self.load_label_prediction()
 
+    def set_stage(self, stage_to_set):
+        self.stage = stage_to_set
+
     def get_path_label_prediction(self):
         if self.stacking:
             return os.path.join(self.path_data, self.year, self.stage, "stacking", self.classifier_model)
@@ -46,19 +62,28 @@ class ResultStatistic:
             return os.path.join(self.path_data, self.year, self.stage, self.classifier_model)
 
     def load_label_prediction(self):
-        schema = StructType([StructField("matches", StringType(), True),
-                             StructField("label", DoubleType(), True),
-                             StructField("prediction", DoubleType(), True)])
         self.label_prediction = self.spark.read.csv(self.get_path_label_prediction(), header=True, sep=",",
-                                                    schema=schema)
+                                                    schema=self.schema)
+
+    def merge_label_prediction(self):
+        self.label_prediction = self.spark.createDataFrame(self.spark.sparkContext.emptyRDD(), self.schema)
+        for stage in self.stages:
+            self.set_stage(stage)
+            data = self.spark.read.csv(self.get_path_label_prediction(), header=True, sep=",", schema=self.schema)
+            self.label_prediction = self.label_prediction.union(data)
+        self.label_prediction.count()
+
+    def load_data_teams(self):
+        return self.spark.read.csv("./data/common/en.teams.tsv", sep="\t", header=False, schema=self.schema_teams)
 
     def load_data_groups(self):
-        schema = StructType([StructField("group", StringType(), True),
-                             StructField("country_1", StringType(), True),
-                             StructField("country_2", StringType(), True),
-                             StructField("country_3", StringType(), True),
-                             StructField("country_4", StringType(), True)])
-        return self.spark.read.csv("../data/groups.csv", sep=",", schema=schema, header=False)
+        teams = self.load_data_teams()
+        data = (self.spark.read.csv("./data/groups/{0}_groups.csv".format(self.year), sep=",",
+                                    schema=self.schema_groups, header=False)
+                .rdd
+                .map(lambda x: (x["group"], x["country_1"], x["country_2"], x["country_3"], x["country_4"]))
+                .map(lambda tp: [(tp[0], item) for item in tp[1:]]).reduce(lambda x, y: x + y))
+        return self.spark.createDataFrame(data, ["group", "country"]).join(teams, on="country")
 
     def compute_accuracy(self):
         classification_model = ClassificationModel(None, None, None, None, None, None)
@@ -66,143 +91,106 @@ class ResultStatistic:
         classification_model.define_evaluator()
         return classification_model.evaluate_evaluator()
 
-    # def load_results_top_groups(self):
-    #     schema = StructType([StructField("group", StringType(), True),
-    #                          StructField("1st", StringType(), True),
-    #                          StructField("2nd", StringType(), True)])
-    #     return self.spark.read.csv("../data/first_round_top_groups.csv", sep=",", schema=schema, header=False)
-    #
-    # def load_data_groups(self):
-    #     udf_strip = udf(lambda x: x.strip(), StringType())
-    #     schema = StructType([StructField("group", StringType(), True),
-    #                          StructField("country_1", StringType(), True),
-    #                          StructField("country_2", StringType(), True),
-    #                          StructField("country_3", StringType(), True),
-    #                          StructField("country_4", StringType(), True)])
-    #     return (self.spark.read.csv("../data/groups.csv", sep=",", schema=schema, header=False)
-    #             .select(col("group"),
-    #                     udf_strip(col("country_1")).alias("country_1"),
-    #                     udf_strip(col("country_2")).alias("country_2"),
-    #                     udf_strip(col("country_3")).alias("country_3"),
-    #                     udf_strip(col("country_4")).alias("country_4")))
-    #
-    # def win_losse_drawn_count_by_group(self, data):
-    #     data.groupBy("prediction").count().show()
-    #
-    # def win_losse_drawn_by_team(self):
-    #     rdd_team_1 = (self.data
-    #                   .groupBy(["country_1", "result_team_1"]).count()
-    #                   .rdd
-    #                   .map(lambda x: ((x["country_1"], x["result_team_1"]), x["count"])))
-    #
-    #     rdd_team_2 = (self.data
-    #                   .groupBy(["country_2", "result_team_2"]).count()
-    #                   .rdd
-    #                   .map(lambda x: ((x["country_2"], x["result_team_2"]), x["count"])))
-    #
-    #     teams_results =  (rdd_team_1
-    #                       .union(rdd_team_2)
-    #                       .reduceByKey(lambda x,y: x + y)
-    #                       .map(lambda x: (x[0][0], [(x[0][1], x[1])]))
-    #                       .reduceByKey(lambda x,y: x + y)
-    #                       .map(lambda x: (x[0], sorted(x[1], key=lambda tup: tup[0], reverse=True))).collect())
-    #
-    #     return {key: value for (key,value) in teams_results}
-    #
-    # def global_result_by_team(self, bool_print):
-    #     dic_data_groups = self.get_dic_data_groups()
-    #     groups = sorted(dic_data_groups.keys())
-    #     result_by_team = self.win_losse_drawn_by_team()
-    #     dic_result_group_team = {group: {} for group in groups}
-    #     if bool_print:
-    #         for group in groups:
-    #             print("Group: {0}".format(group))
-    #             for country in dic_data_groups[group]:
-    #                 result = team_result(result_by_team[country])
-    #                 dic_result_group_team[group][country] = result
-    #                 print("Country {0}: {1}".format(country, result))
-    #             print("")
-    #     return dic_result_group_team
-    #
-    # def get_dic_data_groups(self):
-    #     udf_get_countries = udf(lambda country_1, country_2, country_3, country_4:
-    #                             [country_1, country_2, country_3, country_4], ArrayType(StringType()))
-    #     data_collect = (self.load_data_groups()
-    #                     .withColumn("countries",
-    #                                 udf_get_countries(col("country_1"), col("country_2"),
-    #                                                   col("country_3"), col("country_4")))
-    #                     .select("group", "countries")
-    #                     .rdd.map(lambda x: (x["group"], x["countries"]))
-    #                     .collect())
-    #     return {key: value for (key, value) in data_collect}
-    #
-    # def first_second_by_group(self, dic_result_group_team):
-    #     dic_first_by_group, dic_second_by_group = {}, {}
-    #     groups = sorted(dic_result_group_team.keys())
-    #     for group in groups:
-    #         country_result = list(dic_result_group_team[group].iteritems())
-    #         country_result.sort(key=lambda tp: tp[1], reverse=True)
-    #         results = list(np.unique(map(lambda tp: tp[1], country_result)))
-    #         results.sort(reverse=True)
-    #
-    #         first_teams = filter(lambda tp: tp[1] == results[0], country_result)
-    #         dic_first_by_group[group] = map(lambda tp: tp[0], first_teams)
-    #
-    #         if len(results) >= 2:
-    #             second_teams = filter(lambda tp: tp[1] == results[1], country_result)
-    #             dic_second_by_group[group] = map(lambda tp: tp[0], second_teams)
-    #         else:
-    #             dic_second_by_group[group] = None
-    #     return dic_first_by_group, dic_second_by_group
-    #
-    # def accuracy_teams_qualified(self, dic_first_by_group, dic_second_by_group):
-    #     data = self.load_results_top_groups()
-    #     label_1st = data.select("1st").rdd.map(lambda x: x["1st"]).collect()
-    #     label_2nd = data.select("2nd").rdd.map(lambda x: x["2nd"]).collect()
-    #     set_label = set(label_1st + label_2nd)
-    #
-    #     prediction_1st = [dic_first_by_group[key] for key in dic_first_by_group.keys()]
-    #     prediction_2nd = [dic_second_by_group[key] for key in dic_second_by_group.keys()]
-    #     prediction_1st = filter(lambda x: len(x) == 1, prediction_1st)
-    #     prediction_2nd = filter(lambda x: len(x) == 1, prediction_2nd)
-    #     prediction_1st = list(chain(*prediction_1st))
-    #     prediction_2nd = list(chain(*prediction_2nd))
-    #     set_prediction = set(prediction_1st + prediction_2nd)
-    #
-    #     accuracy_global = float(len(set_label.intersection(set_prediction))) / len(set_label)
-    #     accuracy_1st = float(len(set(label_1st).intersection(set(prediction_1st)))) / len(label_1st)
-    #     accuracy_2nd = float(len(set(label_2nd).intersection(set(prediction_2nd)))) / len(label_2nd)
-    #
-    #     return accuracy_global, accuracy_1st, accuracy_2nd
+    def compute_accuracy_by_stage(self):
+        self.load_label_prediction()
+        return self.compute_accuracy()
 
+    def compute_accuracy_global(self):
+        self.merge_label_prediction()
+        return self.compute_accuracy()
 
-# Statistique
+    def scores_first_stage(self):
+        self.set_stage("1st_stage")
+        self.load_label_prediction()
+        groups = self.load_data_groups()
 
-# par stage
-# globale
+        udf_team1 = udf(lambda x: x.split("_")[0].split("/")[0], StringType())
+        udf_team2 = udf(lambda x: x.split("_")[0].split("/")[1], StringType())
+
+        def prediction_team2(x):
+            if x == 2.0:
+                return 1.0
+            elif x == 1.0:
+                return 2.0
+            else:
+                return 0.0
+        udf_prediction_team2 = udf(lambda x: prediction_team2(x), FloatType())
+
+        def score_point(x):
+            if x == 2.0:
+                return 3
+            elif x == 1.0:
+                return 0
+            elif x == 0.0:
+                return 1
+        udf_points = udf(lambda x: score_point(x), IntegerType())
+
+        return (self.label_prediction
+                 .withColumn("team_1", udf_team1(col("matches")))
+                 .withColumn("team_2", udf_team2(col("matches")))
+                 .withColumn("prediction_2", udf_prediction_team2(col("prediction")))
+                 .withColumnRenamed("prediction", "prediction_1")
+                 .withColumn("points_1", udf_points(col("prediction_1")))
+                 .withColumn("points_2", udf_points(col("prediction_2")))
+                 .join(groups, col("team_1") == col("team")).drop("group").drop("team")
+                 .withColumnRenamed("country", "country_1")
+                 .join(groups, col("team_2") == col("team")).drop("team")
+                 .withColumnRenamed("country", "country_2")
+                 .select("country_1", "points_1", "country_2", "points_2", "group"))
+
+    def print_scores_by_group(self):
+        points = self.scores_first_stage()
+        groups = points.select("group").distinct().rdd.map(lambda x: x["group"]).collect()
+
+        rdd_team_1 = (points
+                      .rdd
+                      .map(lambda x: ((x["country_1"], x["group"]), x["points_1"]))
+                      .reduceByKey(lambda x, y: x + y))
+        rdd_team_2 = (points
+                      .rdd
+                      .map(lambda x: ((x["country_2"], x["group"]), x["points_2"]))
+                      .reduceByKey(lambda x, y: x + y))
+        rdd_points = (rdd_team_1
+                      .union(rdd_team_2)
+                      .reduceByKey(lambda x, y: x + y)
+                      .map(lambda x: (x[0][0], x[0][1], x[1])))
+        countries_points = self.spark.createDataFrame(rdd_points, ["country", "group", "points"])
+        for group in sorted(groups):
+            print("Group: {0}".format(group))
+            countries_points.filter(col("group") == group).sort("points", ascending=False).select("country", "points").show()
 
 
 if __name__ == "__main__":
     spark = get_spark_session("First Stage")
     years = ["2014", "2010", "2006"]
     classification_models = ["logistic_regression", "decision_tree", "random_forest"]
-    accuracy = {}
+    accuracy_by_stage, accuracy_global = {}, {}
     for year in years:
-        accuracy[year] = {}
+        accuracy_by_stage[year], accuracy_global[year] = {}, {}
         print("Year: {0}".format(year))
         for classifier in classification_models:
-            accuracy[year][classifier] = {}
+            accuracy_by_stage[year][classifier] = {}
             print("  Classifier: {0}".format(classifier))
             for stage in sorted(get_competition_dates(year).keys()):
-                result_statistic = ResultStatistic(spark, year, stage, classifier, True, "./test/prediction")
-                result_statistic.run()
-                accuracy[year][classifier][stage] = result_statistic.compute_accuracy()
+                accuracy_by_stage[year][classifier][stage] = (ResultStatistic(spark, year, classifier, True,
+                                                                              "./test/prediction", stage=stage)
+                                                              .compute_accuracy_by_stage())
+            accuracy_global[year][classifier] = (ResultStatistic(spark, year, classifier, True, "./test/prediction")
+                                                 .compute_accuracy_global())
 
-for classifier in classification_models:
-    print("Classifier: {0}".format(classifier))
+    for classifier in classification_models:
+        print("Classifier: {0}".format(classifier))
+        for year in years:
+            print("  Year: {0}".format(year))
+            keys = accuracy_by_stage[year][classifier].keys()
+            keys.sort()
+            for key, value in sorted(list(accuracy_by_stage[year][classifier].iteritems()), key=lambda p: p[0]):
+                print("   {0}: {1}".format(key, value))
+    print("\n"*3)
     for year in years:
         print("  Year: {0}".format(year))
-        keys = accuracy[year][classifier].keys()
-        keys.sort()
-        for key, value in sorted(list(accuracy[year][classifier].iteritems()), key=lambda p: p[0]):
-            print("   {0}: {1}".format(key, value))
+        for key, value in sorted(accuracy_global[year].iteritems(), key=lambda p: p[0]):
+            print("   {0}: {1}, ".format(key, value)),
+        print("")
+        
+    ResultStatistic(spark, "2014", "decision_tree", True, "./test/prediction").print_scores_by_group()
