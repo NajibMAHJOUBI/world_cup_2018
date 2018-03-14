@@ -176,8 +176,8 @@ class ClassificationModel(unittest.TestCase):
 
 if __name__ == "__main__":
     spark = get_spark_session("simul stage")
-    years = ["2014", "2010", "2006"]
-    # years = ["2014"]
+    # years = ["2014", "2010", "2006"]
+    years = ["2018"]
     classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
                             "one_vs_rest"]
     dic_evaluate_model = {}
