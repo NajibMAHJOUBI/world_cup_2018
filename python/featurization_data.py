@@ -75,7 +75,8 @@ class FeaturizationData:
         names_start_to_convert.remove("teamGroup_team")
         path = "./data/{0}/{1}_World_Cup_{2}_qualifying_start.tsv".format(confederation, self.year, confederation)
         return (self.spark.read.csv(path, sep="\t", schema=get_data_schema("qualifying_start"), header=False)
-        .select([udf_convert_string_to_float(col(name)).alias(name) for name in names_start_to_convert] + ["teamGroup_team"])
+        .select([udf_convert_string_to_float(col(name)).alias(name) for name in names_start_to_convert] +
+                ["teamGroup_team"])
         .withColumn("features", udf_create_features(
                                         udf_get_percentage_game(col("matchesGroup_home"), col("matchesGroup_total")),
                                         udf_get_percentage_game(col("matchesGroup_away"), col("matchesGroup_total")),
@@ -174,9 +175,10 @@ class FeaturizationData:
 
 if __name__ == "__main__":
     spark = get_spark_session("World_Cup")
-    years = ["2014", "2010", "2006"]
-    confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA", "WCP"]
-
+    # years = ["2014", "2010", "2006"]
+    # confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA", "WCP"]
+    years = ["2018"]
+    confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA"]
     for year in years:
         print("Year: {0}".format(year))
         featurization_data = FeaturizationData(spark, year, confederations, "./test/training", "./test/string_indexer")
