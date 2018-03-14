@@ -7,11 +7,13 @@ from get_spark_session import get_spark_session
 from get_competition_dates import get_competition_dates
 from classification_model import ClassificationModel
 
+
 def team_result(results):
     resu = 0.0
     for tp in results:
         resu += tp[0] * tp[1]
     return resu
+
 
 class ResultStatistic:
 
@@ -31,7 +33,7 @@ class ResultStatistic:
         s = "Result Statistic\n"
         s += "Spark session: {0}\n".format(self.spark)
         s += "Year: {0}\n".format(self.year)
-        s += "Satge: {0}\n".format(self.stage)
+        s += "Stage: {0}\n".format(self.stage)
         return s
 
     def run(self):
@@ -49,6 +51,14 @@ class ResultStatistic:
                              StructField("prediction", DoubleType(), True)])
         self.label_prediction = self.spark.read.csv(self.get_path_label_prediction(), header=True, sep=",",
                                                     schema=schema)
+
+    def load_data_groups(self):
+        schema = StructType([StructField("group", StringType(), True),
+                             StructField("country_1", StringType(), True),
+                             StructField("country_2", StringType(), True),
+                             StructField("country_3", StringType(), True),
+                             StructField("country_4", StringType(), True)])
+        return self.spark.read.csv("../data/groups.csv", sep=",", schema=schema, header=False)
 
     def compute_accuracy(self):
         classification_model = ClassificationModel(None, None, None, None, None, None)
@@ -168,26 +178,31 @@ class ResultStatistic:
 
 # Statistique
 
-# Nombre d'équipes qualifiées
-# Equipe qualifiées avec le bon rank (1er et 2nd)
-# Nombre de matches avec les bonnes équipes détectées
-
+# par stage
+# globale
 
 
 if __name__ == "__main__":
     spark = get_spark_session("First Stage")
     years = ["2014", "2010", "2006"]
+    classification_models = ["logistic_regression", "decision_tree", "random_forest"]
     accuracy = {}
     for year in years:
         accuracy[year] = {}
         print("Year: {0}".format(year))
-        for stage in sorted(get_competition_dates(year).keys()):
-            result_statistic = ResultStatistic(spark, year, stage, "decision_tree", True, "./test/prediction")
-            result_statistic.run()
-            accuracy[year][stage] = result_statistic.compute_accuracy()
+        for classifier in classification_models:
+            accuracy[year][classifier] = {}
+            print("  Classifier: {0}".format(classifier))
+            for stage in sorted(get_competition_dates(year).keys()):
+                result_statistic = ResultStatistic(spark, year, stage, classifier, True, "./test/prediction")
+                result_statistic.run()
+                accuracy[year][classifier][stage] = result_statistic.compute_accuracy()
 
-
-for year in years:
-    print("Year: {0}".format(year))
-    for stage in sorted(get_competition_dates(year).keys()):
-        print("  {0}: {1}".format(stage, accuracy[year][stage]))
+for classifier in classification_models:
+    print("Classifier: {0}".format(classifier))
+    for year in years:
+        print("  Year: {0}".format(year))
+        keys = accuracy[year][classifier].keys()
+        keys.sort()
+        for key, value in sorted(list(accuracy[year][classifier].iteritems()), key=lambda p: p[0]):
+            print("   {0}: {1}".format(key, value))
