@@ -21,6 +21,7 @@ class Stacking:
         self.data = None
         self.new_data = None
         self.evaluate = None
+        self.stacking_model = None
 
     def __str__(self):
         s = "Stacking model\n"
@@ -116,6 +117,7 @@ class Stacking:
         classifier_model.save_best_model()
         classifier_model.transform_model()
         self.evaluate = classifier_model.evaluate_evaluator()
+        self.stacking_model = classifier_model.get_best_model()
 
     def stacking_transform(self):
         return self.stacking_model.transform(self.new_data)
@@ -123,17 +125,19 @@ class Stacking:
 
 if __name__ == "__main__":
     spark = get_spark_session("Stacking")
-    years = ["2014", "2010", "2006"]
-    # years = ["2014"]
+    # years = ["2014", "2010", "2006"]
+    years = ["2018"]
     # Stacking classification models
     classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
                             "one_vs_rest"]
     dic_evaluate = {}
     for year in years:
-        stacking = Stacking(spark, year, None, classification_model, "one_vs_rest", "train_validation", "./test/transform",
-                            "./test/stacking_model")
+        stacking = Stacking(spark, year, None, classification_model, "random_forest", "train_validation",
+                            "./test/transform", "./test/stacking_model")
         stacking.run()
         dic_evaluate[year] = stacking.get_evaluate()
+
+        stacking.stacking_transform().show(5)
 
     for key, value in dic_evaluate.iteritems():
         print("{0}: {1}".format(key, value))
