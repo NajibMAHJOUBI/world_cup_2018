@@ -1,7 +1,6 @@
 
 # Import libraries
 import os
-import unittest
 from itertools import product
 from get_spark_session import get_spark_session
 from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, \
@@ -13,7 +12,7 @@ from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBui
 
 
 # Class Classification Model
-class ClassificationModel(unittest.TestCase):
+class ClassificationModel():
     def __init__(self, spark_session, year, classification_model, path_data, path_model, path_transform,
                  validator=None, list_layers=None):
         self.spark = spark_session
