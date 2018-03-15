@@ -1,1 +1,1 @@
-{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1520935388630,"sparkVersion":"2.3.0","uid":"StringIndexer_4f21a19d93dbfb40d365","paramMap":{"inputCol":"matches","handleInvalid":"error","stringOrderType":"frequencyDesc","outputCol":"id"}}
+{"class":"org.apache.spark.ml.feature.StringIndexerModel","timestamp":1521122623478,"sparkVersion":"2.3.0","uid":"StringIndexer_4c8b98e54e8bc699457e","paramMap":{"handleInvalid":"error","inputCol":"matches","stringOrderType":"frequencyDesc","outputCol":"id"}}
