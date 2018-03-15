@@ -8,7 +8,7 @@ from pyspark.sql.types import StructType, StructField, StringType, FloatType
 
 from classification_model import ClassificationModel
 from featurization_data import FeaturizationData
-from stacking_ensemble_method import Stacking
+from stacking_classification_method import Stacking
 from get_spark_session import get_spark_session
 from get_competition_dates import get_competition_dates
 
