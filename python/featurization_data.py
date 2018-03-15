@@ -97,7 +97,6 @@ class FeaturizationData:
                 return 1.0
             else:
                 return 0.0
-
         udf_win_team_1 = udf(lambda team_1, team_2: win_team_1(team_1, team_2), FloatType())
 
         def convert_string_to_float(x):
@@ -106,8 +105,9 @@ class FeaturizationData:
                 return np.nan
             else:
                 return float(x_replace_minus)
-
         udf_convert_string_to_float = udf(lambda x: convert_string_to_float(x), FloatType())
+
+        udf_diff_points = udf(lambda goals_1, goals_2: float(goals_1 - goals_2), FloatType())
 
         udf_get_date = udf(lambda date, month, year:  str(year) + "/" + str(month) + "/" + str(date), StringType())
 
@@ -120,8 +120,10 @@ class FeaturizationData:
                               .select([udf_convert_string_to_float(col(name)).alias(name)
                                        for name in names_results_to_convert] + names_results_to_remove)\
                               .withColumn("label", udf_win_team_1(col("score_team_1"), col("score_team_2")))\
+                              .withColumn("diff_points", udf_diff_points(col("score_team_1"), col("score_team_2")))\
                               .withColumn("new_date", udf_get_date(col("date"), col("month"), col("year")))\
-                              .select(col("team_1"), col("team_2"), col("label"), col("new_date").alias("date"))
+                              .select(col("team_1"), col("team_2"), col("label"), col("diff_points"),
+                                      col("new_date").alias("date"))
 
         if (self.start_date is not None) and (self.end_date is not None):
             def filter_date(date, start_date, end_date):
@@ -146,8 +148,9 @@ class FeaturizationData:
                 .join(df_qualifying_start, df_qualifying_results.team_2 == df_qualifying_start.team)
                 .withColumnRenamed("features", "features_2").drop("team")
                 .withColumn("features", udf_diff_features(col("features_1"), col("features_2")))
-                .select(col("label"), col("features"), udf_team1_team2(col("team_1"), col("team_2"),
-                                                                       col("date")).alias("matches")))
+                .select(col("label"), col("diff_points"), col("features"), udf_team1_team2(col("team_1"), col("team_2"),
+                                                                                           col("date")).alias("matches")
+                        ))
 
     def loop_all_confederations(self):
         for confederation in self.confederations:
@@ -156,6 +159,7 @@ class FeaturizationData:
     def union_all_confederation(self):
         schema = StructType([
             StructField("label", FloatType(), True),
+            StructField("diff_points", FloatType(), True),
             StructField("features", VectorUDT(), True),
             StructField("matches", StringType(), True)])
 
@@ -175,10 +179,10 @@ class FeaturizationData:
 
 if __name__ == "__main__":
     spark = get_spark_session("World_Cup")
-    # years = ["2014", "2010", "2006"]
-    # confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA", "WCP"]
-    years = ["2018"]
-    confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA"]
+    years = ["2014", "2010", "2006"]
+    confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA", "WCP"]
+    # years = ["2014"]
+    # confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA"]
     for year in years:
         print("Year: {0}".format(year))
         featurization_data = FeaturizationData(spark, year, confederations, "./test/training", "./test/string_indexer")
