@@ -14,4 +14,4 @@ def get_stacking_approach():
     for n_permutation in range(2, len(available_models)+1):
         approaches += list(permutations(available_models, n_permutation))
 
-    return {"{0}_approach".format(index+1): approach for index, approach in enumerate(approaches)}
+    return {"stacking_{0}".format(index+1): approach for index, approach in enumerate(approaches)}
