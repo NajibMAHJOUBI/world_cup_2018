@@ -177,17 +177,21 @@ class ClassificationModel:
 
 if __name__ == "__main__":
     spark = get_spark_session("Classification Model")
-    # years = ["2018", "2014", "2010", "2006"]
-    # classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
-    #                         "one_vs_rest"]
-    years, classification_models = ["2006"], ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
-                                              "one_vs_rest"]
+    classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
+                            "one_vs_rest"]
+    dic_year_model = {
+        "2018": classification_models,
+        "2014": classification_models,
+        "2010": classification_models,
+        "2006": classification_models,
+    }
+
     dic_evaluate_model = {}
     # classification_models = ["one_vs_rest"]
-    for year in years:
+    for year, models in dic_year_model.iteritems():
         print("Year: {0}".format(year))
         dic_evaluate_model[year] = {}
-        for model in classification_models:
+        for model in models:
             print("  Model classification: {0}".format(model))
             classification_model = ClassificationModel(spark, year, model,
                                                        "./test/training",
@@ -197,5 +201,5 @@ if __name__ == "__main__":
             classification_model.run()
             dic_evaluate_model[year][model] = classification_model.evaluate_evaluator()
 
-    for year in years:
+    for year in sorted(dic_year_model.keys()):
         print(dic_evaluate_model[year])
