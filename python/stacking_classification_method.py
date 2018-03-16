@@ -4,19 +4,19 @@ from pyspark.ml.linalg import Vectors, VectorUDT
 from pyspark.sql.functions import col, udf
 from get_data_schema import get_data_schema
 from get_spark_session import get_spark_session
+from get_stacking_approach import get_stacking_approach
 
 
-class Stacking:
-    def __init__(self, spark_session, year, stage, available_classifier, stacking_classifier, validator, path_transform,
-                 path_model):
+class StackingModels:
+    def __init__(self, spark_session, year, stacking, classifiers, validator, path_transform, path_model, model_name):
         self.spark = spark_session
         self.year = year
-        self.stage = stage
-        self.classifier_available = available_classifier
-        self.classifier_stacking = stacking_classifier
+        self.stacking = stacking
+        self.classifiers = classifiers
         self.validator = validator
         self.path_transform = path_transform  # "./test/transform"
         self.path_model = path_model
+        self.model_name = model_name
 
         self.data = None
         self.new_data = None
@@ -25,8 +25,7 @@ class Stacking:
 
     def __str__(self):
         s = "Stacking model\n"
-        s += "Available classifier: {0}".format(self.classifier_available)
-        s += "Stacking classifier: {0}".format(self.stacking_classifier)
+        s += "Stacking classifier: {0}".format(self.classifiers)
         return s
 
     def run(self):
@@ -34,14 +33,11 @@ class Stacking:
         self.create_features()
         self.stacking_models()
 
-    def get_path_transform(self, classifier_model):
-        if self.stage is None:
-            return os.path.join(self.path_transform, self.year, classifier_model)
-        else:
-            return os.path.join(self.path_transform, self.year, self.stage, classifier_model)
+    def get_path_transform(self, method, model):
+        return os.path.join(self.path_transform, method, self.year, model)
 
     def get_path_save_model(self):
-        return os.path.join(self.path_model)
+        return os.path.join(self.path_model, "stacking", self.year, self.model_name)
 
     def get_evaluate(self):
         return self.evaluate
@@ -53,18 +49,18 @@ class Stacking:
         return self.new_data
 
     def load_all_data(self, schema):
-        dic_data = {
-            self.classifier_available[0]:  (self.spark.read.csv(self.get_path_transform(self.classifier_available[0]),
-                                                                sep=",", header=True,
-                                                                schema=schema)
-                                            .withColumnRenamed("prediction", self.classifier_available[0]))
-        }
+        dic_data = {}
+        features_name = '_'.join([self.classifiers[0][0], self.classifiers[0][1]])
+        dic_data[features_name] = (self.spark.read.csv(self.get_path_transform(
+            self.classifiers[0][0], self.classifiers[0][1]), sep=",", header=True, schema=schema)
+                .withColumnRenamed("prediction", features_name))
 
-        for classifier in self.classifier_available[1:]:
-            dic_data[classifier] = (self.spark.read.csv(self.get_path_transform(classifier), sep=",", header=True,
-                                                        schema=schema)
-                                    .drop("label")
-                                    .withColumnRenamed("prediction", classifier))
+        for method, model in self.classifiers[1:]:
+            features_name = '_'.join([method, model])
+            dic_data[features_name] = (self.spark.read.csv(self.get_path_transform(method, model), sep=",", header=True,
+                                                           schema=schema)
+                                           .drop("label")
+                                           .withColumnRenamed("prediction", features_name))
         return dic_data
 
     def merge_all_data(self, schema=get_data_schema("prediction"), id_column="id"):
@@ -76,76 +72,74 @@ class Stacking:
         self.data.count()
 
     def create_features(self):
-        if len(self.classifier_available) == 2:
+        if len(self.classifiers) == 2:
             udf_features = udf(lambda x, y: Vectors.dense([x, y]), VectorUDT())
-            self.new_data = self.data.withColumn("features", udf_features(col(self.classifier_models[0]),
-                                                                          col(self.classifier_models[1])))
-        elif len(self.classifier_available) == 3:
+            self.new_data = self.data.withColumn("features", udf_features(col('_'.join([self.classifiers[0][0], self.classifiers[0][1]])),
+                                                                          col('_'.join([self.classifiers[1][0], self.classifiers[1][1]]))))
+        elif len(self.classifiers) == 3:
             udf_features = udf(lambda x, y, z: Vectors.dense([x, y, z]), VectorUDT())
-            self.new_data = self.data.withColumn("features", udf_features(col(self.classifier_available[0]),
-                                                                          col(self.classifier_available[1]),
-                                                                          col(self.classifier_available[2])))
-        elif len(self.classifier_available) == 4:
+            self.new_data = self.data.withColumn("features", udf_features(col(self.classifiers[0][1]),
+                                                                          col(self.classifiers[1][1]),
+                                                                          col(self.classifiers[2][1])))
+        elif len(self.classifiers) == 4:
             udf_features = udf(lambda t, x, y, z: Vectors.dense([t, x, y, z]), VectorUDT())
-            self.new_data = self.data.withColumn("features", udf_features(col(self.classifier_available[0]),
-                                                                          col(self.classifier_available[1]),
-                                                                          col(self.classifier_available[2]),
-                                                                          col(self.classifier_available[3])))
-        elif len(self.classifier_available) == 5:
+            self.new_data = self.data.withColumn("features", udf_features(col(self.classifiers[0][1]),
+                                                                          col(self.classifiers[1][1]),
+                                                                          col(self.classifiers[2][1]),
+                                                                          col(self.classifiers[3][1])))
+        elif len(self.classifiers) == 5:
             udf_features = udf(lambda s, t, x, y, z: Vectors.dense([s, t, x, y, z]), VectorUDT())
-            self.new_data = self.data.withColumn("features", udf_features(col(self.classifier_available[0]),
-                                                                          col(self.classifier_available[1]),
-                                                                          col(self.classifier_available[2]),
-                                                                          col(self.classifier_available[3]),
-                                                                          col(self.classifier_available[4])))
-        elif len(self.classifier_available) == 6:
+            self.new_data = self.data.withColumn("features", udf_features(col(self.classifiers[0][1]),
+                                                                          col(self.classifiers[1][1]),
+                                                                          col(self.classifiers[2][1]),
+                                                                          col(self.classifiers[3][1]),
+                                                                          col(self.classifiers[4][1])))
+        elif len(self.classifiers) == 6:
             udf_features = udf(lambda r, s, t, x, y, z: Vectors.dense([r, s, t, x, y, z]), VectorUDT())
-            self.new_data = self.data.withColumn("features", udf_features(col(self.classifier_available[0]),
-                                                                          col(self.classifier_available[1]),
-                                                                          col(self.classifier_available[2]),
-                                                                          col(self.classifier_available[3]),
-                                                                          col(self.classifier_available[4]),
-                                                                          col(self.classifier_available[5])))
-        elif len(self.classifier_available) == 7:
+            self.new_data = self.data.withColumn("features", udf_features(col(self.classifiers[0][1]),
+                                                                          col(self.classifiers[1][1]),
+                                                                          col(self.classifiers[2][1]),
+                                                                          col(self.classifiers[3][1]),
+                                                                          col(self.classifiers[4][1]),
+                                                                          col(self.classifiers[5][1])))
+        elif len(self.classifiers) == 7:
             udf_features = udf(lambda q, r, s, t, x, y, z: Vectors.dense([q, r, s, t, x, y, z]), VectorUDT())
-            self.new_data = self.data.withColumn("features", udf_features(col(self.classifier_available[0]),
-                                                                          col(self.classifier_available[1]),
-                                                                          col(self.classifier_available[2]),
-                                                                          col(self.classifier_available[3]),
-                                                                          col(self.classifier_available[4]),
-                                                                          col(self.classifier_available[5]),
-                                                                          col(self.classifier_available[6])))
-        elif len(self.classifier_available) == 8:
+            self.new_data = self.data.withColumn("features", udf_features(col(self.classifiers[0]),
+                                                                          col(self.classifiers[1]),
+                                                                          col(self.classifiers[2]),
+                                                                          col(self.classifiers[3]),
+                                                                          col(self.classifiers[4]),
+                                                                          col(self.classifiers[5]),
+                                                                          col(self.classifiers[6])))
+        elif len(self.classifiers) == 8:
             udf_features = udf(lambda p, q, r, s, t, x, y, z: Vectors.dense([p, q, r, s, t, x, y, z]), VectorUDT())
-            self.new_data = self.data.withColumn("features", udf_features(col(self.classifier_available[0]),
-                                                                          col(self.classifier_available[1]),
-                                                                          col(self.classifier_available[2]),
-                                                                          col(self.classifier_available[3]),
-                                                                          col(self.classifier_available[4]),
-                                                                          col(self.classifier_available[5]),
-                                                                          col(self.classifier_available[6]),
-                                                                          col(self.classifier_available[7])))
-        elif len(self.classifier_available) == 9:
+            self.new_data = self.data.withColumn("features", udf_features(col(self.classifiers[0]),
+                                                                          col(self.classifiers[1]),
+                                                                          col(self.classifiers[2]),
+                                                                          col(self.classifiers[3]),
+                                                                          col(self.classifiers[4]),
+                                                                          col(self.classifiers[5]),
+                                                                          col(self.classifiers[6]),
+                                                                          col(self.classifiers[7])))
+        elif len(self.classifiers) == 9:
             udf_features = udf(lambda o, p, q, r, s, t, x, y, z: Vectors.dense([o, p, q, r, s, t, x, y, z]), VectorUDT())
-            self.new_data = self.data.withColumn("features", udf_features(col(self.classifier_available[0]),
-                                                                          col(self.classifier_available[1]),
-                                                                          col(self.classifier_available[2]),
-                                                                          col(self.classifier_available[3]),
-                                                                          col(self.classifier_available[4]),
-                                                                          col(self.classifier_available[5]),
-                                                                          col(self.classifier_available[6]),
-                                                                          col(self.classifier_available[7]),
-                                                                          col(self.classifier_available[8])))
+            self.new_data = self.data.withColumn("features", udf_features(col(self.classifiers[0]),
+                                                                          col(self.classifiers[1]),
+                                                                          col(self.classifiers[2]),
+                                                                          col(self.classifiers[3]),
+                                                                          col(self.classifiers[4]),
+                                                                          col(self.classifiers[5]),
+                                                                          col(self.classifiers[6]),
+                                                                          col(self.classifiers[7]),
+                                                                          col(self.classifiers[8])))
 
-        for classifier in self.classifier_available:
-            self.new_data = self.new_data.drop(classifier)
+        for method, model in self.classifiers:
+            self.new_data = self.new_data.drop('_'.join([method, model]))
         self.new_data.drop("matches").drop("team_1").drop("team_2")
 
     def stacking_models(self):
-        classifier_model = ClassificationModel(self.spark, self.year, self.classifier_stacking, None,
-                                               self.get_path_save_model(), None,
-                                               validator="train_validation",
-                                               list_layers=[[5, 3], [5, 4, 3], [5, 7, 7, 5, 7, 5, 3]])
+        classifier_model = ClassificationModel(self.spark, self.year, self.stacking, None,
+                                               self.get_path_save_model(), None, "train_validation",)
         classifier_model.set_data(self.new_data)
         classifier_model.define_estimator()
         classifier_model.define_evaluator()
@@ -163,19 +157,18 @@ class Stacking:
 
 if __name__ == "__main__":
     spark = get_spark_session("Stacking")
-    # years = ["2014", "2010", "2006"]
-    years = ["2018"]
-    # Stacking classification models
-    classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
-                            "one_vs_rest"]
+    years = ["2014", "2010", "2006"]
+    stacking_approaches = get_stacking_approach()
     dic_evaluate = {}
-    for year in years:
-        stacking = Stacking(spark, year, None, classification_model, "random_forest", "train_validation",
-                            "./test/transform", "./test/stacking_model")
-        stacking.run()
-        dic_evaluate[year] = stacking.get_evaluate()
-
-        stacking.stacking_transform().show(5)
+    for model_name, classifiers in stacking_approaches.iteritems():
+        if len(classifiers) == 2:
+            print(classifiers)
+            dic_evaluate[model_name] = {}
+            for year in years:
+                stacking_model = StackingModels(spark, year, "decision_tree", classifiers, "train_validation",
+                                                "./test/transform", "./test/model", model_name)
+                stacking_model.run()
+                dic_evaluate[model_name][year] = stacking_model.get_evaluate()
 
     for key, value in dic_evaluate.iteritems():
         print("{0}: {1}".format(key, value))
