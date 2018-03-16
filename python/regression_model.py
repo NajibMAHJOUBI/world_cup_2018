@@ -4,6 +4,8 @@ import numpy as np
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.regression import LinearRegression, DecisionTreeRegressor, RandomForestRegressor, \
     GeneralizedLinearRegression, GBTRegressor
+from pyspark.ml.regression import LinearRegressionModel, DecisionTreeRegressionModel, RandomForestRegressionModel, \
+    GBTRegressionModel, GeneralizedLinearRegressionModel
 from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBuilder
 from pyspark.sql.functions import col, udf
 from pyspark.sql.types import DoubleType
@@ -14,14 +16,14 @@ from get_spark_session import get_spark_session
 
 class RegressionModel:
 
-    def __init__(self, spark, year, model_classifier, validator, path_training, path_model, path_transform):
+    def __init__(self, spark, year, model_classifier, path_training, path_model, path_transform, validator):
         self.spark = spark
         self.year = year
         self.model_classifier = model_classifier
-        self.validator_method = validator
         self.path_training = path_training
         self.path_model = path_model
         self.path_transform = path_transform
+        self.validator_method = validator
 
         self.prediction_column = "prediction_diff_points"
         self.label_column = "diff_points"
@@ -35,7 +37,12 @@ class RegressionModel:
         self.param_grid = None
 
     def __str__(self):
-        pass
+        s = "RegressionModel\n"
+        s += "model classifier: {0}\n".format(self.model_classifier)
+        s += "path training: {0}\n".format(self.path_training)
+        s += "path transform: {0}\n".format(self.path_transform)
+        s += "path model: {0}\n".format(self.path_model)
+        return s
 
     def run(self):
         self.load_data()
@@ -58,11 +65,44 @@ class RegressionModel:
     def get_path_transform(self):
         return os.path.join(self.path_transform, self.year, self.model_classifier)
 
+    def get_best_model(self):
+        if self.model_classifier == "linear_regression":
+            return LinearRegressionModel.load(self.get_path_model())
+        elif self.model_classifier == "decision_tree":
+            return DecisionTreeRegressionModel.load(self.get_path_model())
+        elif self.model_classifier == "random_forest":
+            return RandomForestRegressionModel.load(self.get_path_model())
+        elif self.model_classifier == "generalized_linear_regression":
+            return GeneralizedLinearRegressionModel.load(self.get_path_model())
+        elif self.model_classifier == "gbt_regressor":
+            return GBTRegressionModel.load(self.get_path_model())
+
+    def get_transform(self):
+        return self.transform
+
     def set_prediction_column(self, prediction):
         self.prediction_column = prediction
 
+    def set_data(self, data):
+        self.data = data
+
+    def set_transform(self, transform_to_set):
+        self.transform = transform_to_set
+
     def load_data(self):
         self.data = (self.spark.read.parquet(os.path.join(self.path_training, self.year)))
+
+    def load_best_model(self):
+        if self.model_classifier == "linear_regression":
+            self.model = LinearRegressionModel.load(self.get_path_model())
+        elif self.model_classifier == "decision_tree":
+            self.model = DecisionTreeRegressionModel.load(self.get_path_model())
+        elif self.model_classifier == "random_forest":
+            self.model = RandomForestRegressionModel.load(self.get_path_model())
+        elif self.model_classifier == "generalized_linear_regression":
+            self.model = GeneralizedLinearRegressionModel.load(self.get_path_model())
+        elif self.model_classifier == "gbt_regressor":
+            self.model = GBTRegressionModel.load(self.get_path_model())
 
     def save_best_model(self):
         self.model.bestModel.write().overwrite().save(self.get_path_model())
@@ -159,25 +199,31 @@ class RegressionModel:
 
 if __name__ == "__main__":
     spark = get_spark_session("Regression Model")
-    classification_model = ClassificationModel(None, None, None, None, None, None)
+    classification_model = ClassificationModel(None, None, None, None, None, None, None)
     classification_model.define_evaluator()
-    years = ["2018", "2014", "2010", "2006"]
     regression_models = ["linear_regression", "decision_tree", "random_forest", "gbt_regressor"]
+    dic_year_model = {
+        "2018": regression_models,
+        "2014": regression_models,
+        "2010": regression_models,
+        "2006": regression_models
+    }
     dic_evaluate_model = {}
-    for year in years:
+    for year, models in dic_year_model.iteritems():
         print("Year: {0}".format(year))
         dic_evaluate_model[year] = {}
-        for model in regression_models:
+        for model in models:
             print("  Model classification: {0}".format(model))
-            regression_model = RegressionModel(spark, year, model, "train_validation",
+            regression_model = RegressionModel(spark, year, model,
                                                "./test/training", "./test/model/regression_model",
-                                               "./test/transform/regression_model")
+                                               "./test/transform/regression_model", "train_validation")
             # spark, year, model_classifier, validator, path_training, path_model, path_transform
             regression_model.run()
 
             classification_model.set_transform(regression_model.get_transform())
             dic_evaluate_model[year][model] = classification_model.evaluate_evaluator()
 
-    for year in years:
+    for year in sorted(dic_year_model.keys()):
         print("Year: {0}".format(year))
         print(dic_evaluate_model[year])
+
