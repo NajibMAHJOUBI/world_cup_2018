@@ -7,8 +7,8 @@ def get_stacking_approach():
                              "one_vs_rest"]
     regression_models = ["linear_regression", "decision_tree", "random_forest", "gbt_regressor"]
 
-    available_models = [("classification_model", model) for model in classification_models]
-    available_models += [("regression_model", model) for model in regression_models]
+    available_models = [("classification", model) for model in classification_models]
+    available_models += [("regression", model) for model in regression_models]
 
     approaches = []
     for n_permutation in range(2, len(available_models)+1):
