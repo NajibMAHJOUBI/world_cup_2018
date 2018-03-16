@@ -65,14 +65,6 @@ class ResultStatistic:
         self.label_prediction = self.spark.read.csv(self.get_path_label_prediction(), header=True, sep=",",
                                                     schema=self.schema)
 
-    def merge_label_prediction(self):
-        self.label_prediction = self.spark.createDataFrame(self.spark.sparkContext.emptyRDD(), self.schema)
-        for stage in self.stages:
-            self.set_stage(stage)
-            data = self.spark.read.csv(self.get_path_label_prediction(), header=True, sep=",", schema=self.schema)
-            self.label_prediction = self.label_prediction.union(data)
-        self.label_prediction.count()
-
     def load_data_teams(self):
         return self.spark.read.csv("./data/common/en.teams.tsv", sep="\t", header=False, schema=self.schema_teams)
 
@@ -84,6 +76,14 @@ class ResultStatistic:
                 .map(lambda x: (x["group"], x["country_1"], x["country_2"], x["country_3"], x["country_4"]))
                 .map(lambda tp: [(tp[0], item) for item in tp[1:]]).reduce(lambda x, y: x + y))
         return self.spark.createDataFrame(data, ["group", "country"]).join(teams, on="country")
+
+    def merge_label_prediction(self):
+        self.label_prediction = self.spark.createDataFrame(self.spark.sparkContext.emptyRDD(), self.schema)
+        for stage in self.stages:
+            self.set_stage(stage)
+            data = self.spark.read.csv(self.get_path_label_prediction(), header=True, sep=",", schema=self.schema)
+            self.label_prediction = self.label_prediction.union(data)
+        self.label_prediction.count()
 
     def compute_accuracy(self):
         classification_model = ClassificationModel(None, None, None, None, None, None)
