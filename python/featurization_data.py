@@ -179,11 +179,14 @@ class FeaturizationData:
 
 if __name__ == "__main__":
     spark = get_spark_session("World_Cup")
-    # years = ["2014", "2010", "2006"]
-    # confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA", "WCP"]
-    years = ["2018"]
-    confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA"]
-    for year in years:
+    all_confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA", "WCP"]
+    dic_year_confederation = {
+        "2018": ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA"],
+        "2014": all_confederations,
+        "2010": all_confederations,
+        "2006": all_confederations,
+    }
+    for year, confederations in dic_year_confederation.iteritems():
         print("Year: {0}".format(year))
         featurization_data = FeaturizationData(spark, year, confederations, "./test/training", "./test/indexer")
         featurization_data.run()
