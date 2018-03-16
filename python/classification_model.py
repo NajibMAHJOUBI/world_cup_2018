@@ -16,7 +16,7 @@ from get_spark_session import get_spark_session
 # Class Classification Model
 class ClassificationModel:
     def __init__(self, spark_session, year, classification_model, path_data, path_model, path_transform,
-                 validator=None, list_layers=None):
+                 validator, list_layers=None):
         self.spark = spark_session
         self.year = year
         self.model_classifier = classification_model
@@ -70,6 +70,9 @@ class ClassificationModel:
         elif self.model_classifier == "one_vs_rest":
             return OneVsRestModel.load(self.get_path_save_model())
 
+    def get_transform(self):
+        return self.transform
+
     def set_model(self, model_to_set):
         self.model = model_to_set
 
@@ -81,6 +84,18 @@ class ClassificationModel:
 
     def load_data(self):
         self.data = (self.spark.read.parquet(os.path.join(self.root_path_data, self.year)))
+
+    def load_best_model(self):
+        if self.model_classifier == "logistic_regression":
+            self.model = LogisticRegressionModel.load(self.get_path_save_model())
+        elif self.model_classifier == "decision_tree":
+            self.model = DecisionTreeClassificationModel.load(self.get_path_save_model())
+        elif self.model_classifier == "random_forest":
+            self.model = RandomForestClassificationModel.load(self.get_path_save_model())
+        elif self.model_classifier == "multilayer_perceptron":
+            self.model = MultilayerPerceptronClassificationModel.load(self.get_path_save_model())
+        elif self.model_classifier == "one_vs_rest":
+            self.model = OneVsRestModel.load(self.get_path_save_model())
 
     def define_grid_builder(self):
         if self.model_classifier == "logistic_regression":
