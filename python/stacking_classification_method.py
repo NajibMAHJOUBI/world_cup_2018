@@ -98,6 +98,44 @@ class Stacking:
                                                                           col(self.classifier_available[2]),
                                                                           col(self.classifier_available[3]),
                                                                           col(self.classifier_available[4])))
+        elif len(self.classifier_available) == 6:
+            udf_features = udf(lambda r, s, t, x, y, z: Vectors.dense([r, s, t, x, y, z]), VectorUDT())
+            self.new_data = self.data.withColumn("features", udf_features(col(self.classifier_available[0]),
+                                                                          col(self.classifier_available[1]),
+                                                                          col(self.classifier_available[2]),
+                                                                          col(self.classifier_available[3]),
+                                                                          col(self.classifier_available[4]),
+                                                                          col(self.classifier_available[5])))
+        elif len(self.classifier_available) == 7:
+            udf_features = udf(lambda q, r, s, t, x, y, z: Vectors.dense([q, r, s, t, x, y, z]), VectorUDT())
+            self.new_data = self.data.withColumn("features", udf_features(col(self.classifier_available[0]),
+                                                                          col(self.classifier_available[1]),
+                                                                          col(self.classifier_available[2]),
+                                                                          col(self.classifier_available[3]),
+                                                                          col(self.classifier_available[4]),
+                                                                          col(self.classifier_available[5]),
+                                                                          col(self.classifier_available[6])))
+        elif len(self.classifier_available) == 8:
+            udf_features = udf(lambda p, q, r, s, t, x, y, z: Vectors.dense([p, q, r, s, t, x, y, z]), VectorUDT())
+            self.new_data = self.data.withColumn("features", udf_features(col(self.classifier_available[0]),
+                                                                          col(self.classifier_available[1]),
+                                                                          col(self.classifier_available[2]),
+                                                                          col(self.classifier_available[3]),
+                                                                          col(self.classifier_available[4]),
+                                                                          col(self.classifier_available[5]),
+                                                                          col(self.classifier_available[6]),
+                                                                          col(self.classifier_available[7])))
+        elif len(self.classifier_available) == 9:
+            udf_features = udf(lambda o, p, q, r, s, t, x, y, z: Vectors.dense([o, p, q, r, s, t, x, y, z]), VectorUDT())
+            self.new_data = self.data.withColumn("features", udf_features(col(self.classifier_available[0]),
+                                                                          col(self.classifier_available[1]),
+                                                                          col(self.classifier_available[2]),
+                                                                          col(self.classifier_available[3]),
+                                                                          col(self.classifier_available[4]),
+                                                                          col(self.classifier_available[5]),
+                                                                          col(self.classifier_available[6]),
+                                                                          col(self.classifier_available[7]),
+                                                                          col(self.classifier_available[8])))
 
         for classifier in self.classifier_available:
             self.new_data = self.new_data.drop(classifier)
