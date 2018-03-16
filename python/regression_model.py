@@ -1,8 +1,14 @@
 import os
+
+import numpy as np
+from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.regression import LinearRegression, DecisionTreeRegressor, RandomForestRegressor, \
     GeneralizedLinearRegression, GBTRegressor
-from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBuilder
+from pyspark.sql.functions import col, udf
+from pyspark.sql.types import DoubleType
+
+from classification_model import ClassificationModel
 from get_spark_session import get_spark_session
 
 
@@ -17,11 +23,12 @@ class RegressionModel:
         self.path_model = path_model
         self.path_transform = path_transform
 
-        self.prediction_column = "prediction"
+        self.prediction_column = "prediction_diff_points"
         self.label_column = "diff_points"
         self.features_column = "features"
         self.data = None
         self.model = None
+        self.transform = None
         self.estimator = None
         self.evaluator = None
         self.validator = None
@@ -38,6 +45,7 @@ class RegressionModel:
         self.define_validator()
         self.fit_validator()
         self.transform_model()
+        self.define_match_issue()
         self.save_best_model()
         self.save_transform()
 
@@ -49,6 +57,9 @@ class RegressionModel:
 
     def get_path_transform(self):
         return os.path.join(self.path_transform, self.year, self.model_classifier)
+
+    def set_prediction_column(self, prediction):
+        self.prediction_column = prediction
 
     def load_data(self):
         self.data = (self.spark.read.parquet(os.path.join(self.path_training, self.year)))
@@ -131,25 +142,42 @@ class RegressionModel:
     def evaluate_evaluator(self):
         return self.evaluator.evaluate(self.transform)
 
+    def define_match_issue(self):
+        def get_prediction(x):
+            threshold = 0.25
+            if float(np.abs(x)) <= threshold:
+                return 0.0
+            elif x > threshold:
+                return 2.0
+            elif x < -1.0 * threshold:
+                return 1.0
+        udf_prediction = udf(lambda x: get_prediction(x), DoubleType())
+        self.transform = (self.transform
+                          .withColumn("prediction", udf_prediction(col(self.prediction_column)))
+                          .drop(self.prediction_column))
+
 
 if __name__ == "__main__":
     spark = get_spark_session("Regression Model")
-    years = ["2014", "2010", "2006"]
-    # years = ["2014"]
+    classification_model = ClassificationModel(None, None, None, None, None, None)
+    classification_model.define_evaluator()
+    years = ["2018", "2014", "2010", "2006"]
     regression_models = ["linear_regression", "decision_tree", "random_forest", "gbt_regressor"]
     dic_evaluate_model = {}
-    # classification_models = ["decision_tree"]
     for year in years:
         print("Year: {0}".format(year))
         dic_evaluate_model[year] = {}
         for model in regression_models:
             print("  Model classification: {0}".format(model))
             regression_model = RegressionModel(spark, year, model, "train_validation",
-                                               "./test/training", "./test/regression_model",
+                                               "./test/training", "./test/model/regression_model",
                                                "./test/transform/regression_model")
             # spark, year, model_classifier, validator, path_training, path_model, path_transform
             regression_model.run()
-            dic_evaluate_model[year][model] = regression_model.evaluate_evaluator()
+
+            classification_model.set_transform(regression_model.get_transform())
+            dic_evaluate_model[year][model] = classification_model.evaluate_evaluator()
 
     for year in years:
+        print("Year: {0}".format(year))
         print(dic_evaluate_model[year])
