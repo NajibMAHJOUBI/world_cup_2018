@@ -30,12 +30,12 @@ class ResultStatistic:
                                StructField("country", StringType(), True)])
     stages = ["1st_stage", "2nd_stage", "3rd_stage", "4th_stage", "5th_stage", "6th_stage"]
 
-    def __init__(self, spark_session, year, classifier_model, stacking, path_data, stage=None):
+    def __init__(self, spark_session, year, method_model, model, path_prediction, stage=None):
         self.spark = spark_session
         self.year = year
-        self.classifier_model = classifier_model
-        self.stacking = stacking
-        self.path_data = path_data
+        self.method_model = method_model
+        self.model = model
+        self.path_prediction = path_prediction
         self.stage = stage
 
         self.vs_groups = [("A", "B"), ("C", "D"), ("E", "F"), ("G", "H")]
@@ -56,10 +56,7 @@ class ResultStatistic:
         self.stage = stage_to_set
 
     def get_path_label_prediction(self):
-        if self.stacking:
-            return os.path.join(self.path_data, self.year, self.stage, "stacking", self.classifier_model)
-        else:
-            return os.path.join(self.path_data, self.year, self.stage, self.classifier_model)
+        return os.path.join(self.path_prediction, self.method_model, self.year, self.stage, self.model)
 
     def load_label_prediction(self):
         self.label_prediction = self.spark.read.csv(self.get_path_label_prediction(), header=True, sep=",",
@@ -86,7 +83,7 @@ class ResultStatistic:
         self.label_prediction.count()
 
     def compute_accuracy(self):
-        classification_model = ClassificationModel(None, None, None, None, None, None)
+        classification_model = ClassificationModel(None, None, None, None, None, None, None)
         classification_model.set_transform(self.label_prediction)
         classification_model.define_evaluator()
         return classification_model.evaluate_evaluator()
@@ -161,36 +158,47 @@ class ResultStatistic:
 
 
 if __name__ == "__main__":
-    spark = get_spark_session("First Stage")
+    spark = get_spark_session("Result Statistic")
+    methods = ["classification", "regression"]
     years = ["2014", "2010", "2006"]
-    classification_models = ["logistic_regression", "decision_tree", "random_forest"]
-    accuracy_by_stage, accuracy_global = {}, {}
-    for year in years:
-        accuracy_by_stage[year], accuracy_global[year] = {}, {}
-        print("Year: {0}".format(year))
-        for classifier in classification_models:
-            accuracy_by_stage[year][classifier] = {}
-            print("  Classifier: {0}".format(classifier))
-            for stage in sorted(get_competition_dates(year).keys()):
-                accuracy_by_stage[year][classifier][stage] = (ResultStatistic(spark, year, classifier, True,
-                                                                              "./test/prediction", stage=stage)
-                                                              .compute_accuracy_by_stage())
-            accuracy_global[year][classifier] = (ResultStatistic(spark, year, classifier, True, "./test/prediction")
-                                                 .compute_accuracy_global())
 
-    for classifier in classification_models:
-        print("Classifier: {0}".format(classifier))
+    models = {
+        "classification": ["logistic_regression", "decision_tree", "random_forest"],
+        "regression": ["linear_regression", "decision_tree", "random_forest", "gbt_regressor"]
+    }
+
+    accuracy_by_stage, accuracy_global = {}, {}
+    for method in methods:
+        accuracy_by_stage[method], accuracy_global[method] = {}, {}
         for year in years:
-            print("  Year: {0}".format(year))
-            keys = accuracy_by_stage[year][classifier].keys()
-            keys.sort()
-            for key, value in sorted(list(accuracy_by_stage[year][classifier].iteritems()), key=lambda p: p[0]):
-                print("   {0}: {1}".format(key, value))
+            accuracy_by_stage[method][year], accuracy_global[method][year] = {}, {}
+            print("Year: {0}".format(year))
+            for classifier in models[method]:
+                accuracy_by_stage[method][year][classifier] = {}
+                print("  {0}: {1}".format(method, classifier))
+                result_statistic = ResultStatistic(spark, year, method, classifier, "./test/prediction")
+                for stage in sorted(get_competition_dates(year).keys()):
+                    result_statistic.set_stage(stage)
+                    accuracy_by_stage[method][year][classifier][stage] = result_statistic.compute_accuracy_by_stage()
+                accuracy_global[method][year][classifier] = result_statistic.compute_accuracy_global()
+
+    for method in methods:
+        print("Methods: {0}".format(method))
+        for year in years:
+            print("Year: {0}".format(year))
+            for classifier in models[method]:
+                print("Classifier: {0}".format(classifier))
+                print(accuracy_by_stage[method][year][classifier])
+
     print("\n"*3)
-    for year in years:
-        print("  Year: {0}".format(year))
-        for key, value in sorted(accuracy_global[year].iteritems(), key=lambda p: p[0]):
-            print("   {0}: {1}, ".format(key, value)),
+
+    for method in methods:
+        print("Methods: {0}".format(method))
+        for year in years:
+            print("Year: {0}".format(year))
+            for key, value in sorted(accuracy_global[method][year].iteritems(), key=lambda p: p[0]):
+                print("   {0}: {1}, ".format(key, value)),
+            print("")
         print("")
-        
-    ResultStatistic(spark, "2014", "decision_tree", True, "./test/prediction").print_scores_by_group()
+    #
+    # ResultStatistic(spark, "2014", "decision_tree", True, "./test/prediction").print_scores_by_group()
