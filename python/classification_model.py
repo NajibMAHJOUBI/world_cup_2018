@@ -2,7 +2,7 @@
 # Import libraries
 import os
 from itertools import product
-from get_spark_session import get_spark_session
+
 from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, \
     MultilayerPerceptronClassifier, OneVsRest, LinearSVC
 from pyspark.ml.classification import LogisticRegressionModel, DecisionTreeClassificationModel, \
@@ -10,9 +10,11 @@ from pyspark.ml.classification import LogisticRegressionModel, DecisionTreeClass
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBuilder
 
+from get_spark_session import get_spark_session
+
 
 # Class Classification Model
-class ClassificationModel():
+class ClassificationModel:
     def __init__(self, spark_session, year, classification_model, path_data, path_model, path_transform,
                  validator=None, list_layers=None):
         self.spark = spark_session
@@ -174,13 +176,14 @@ class ClassificationModel():
 
 
 if __name__ == "__main__":
-    spark = get_spark_session("simul stage")
-    # years = ["2014", "2010", "2006"]
-    years = ["2018"]
-    classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
-                            "one_vs_rest"]
+    spark = get_spark_session("Classification Model")
+    # years = ["2018", "2014", "2010", "2006"]
+    # classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
+    #                         "one_vs_rest"]
+    years, classification_models = ["2006"], ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
+                                              "one_vs_rest"]
     dic_evaluate_model = {}
-    # classification_models = ["decision_tree"]
+    # classification_models = ["one_vs_rest"]
     for year in years:
         print("Year: {0}".format(year))
         dic_evaluate_model[year] = {}
@@ -188,8 +191,8 @@ if __name__ == "__main__":
             print("  Model classification: {0}".format(model))
             classification_model = ClassificationModel(spark, year, model,
                                                        "./test/training",
-                                                       "./test/classification_model",
-                                                       "./test/transform",
+                                                       "./test/model/classification_model",
+                                                       "./test/transform/classification_model",
                                                        validator="train_validation", list_layers=None)
             classification_model.run()
             dic_evaluate_model[year][model] = classification_model.evaluate_evaluator()
