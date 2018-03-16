@@ -7,25 +7,26 @@ from pyspark.sql.functions import udf, col
 from pyspark.sql.types import StructType, StructField, StringType, FloatType
 
 from classification_model import ClassificationModel
+from regression_model import RegressionModel
 from featurization_data import FeaturizationData
 from stacking_classification_method import Stacking
 from get_spark_session import get_spark_session
 from get_competition_dates import get_competition_dates
 
 
-class FirstStage:
+class CompleteStage:
 
     schema = StructType([
         StructField("matches", StringType(), True),
         StructField("label", FloatType(), True),
         StructField("prediction", FloatType(), True)])
 
-    def __init__(self, spark_session, year, classification_model, stacking, stage, list_date, path_data, path_model,
+    def __init__(self, spark_session, year, model, model_method, stage, list_date, path_data, path_model,
                  path_prediction):
         self.spark = spark_session
         self.year = year
-        self.model_classifier = classification_model
-        self.stacking_test = stacking
+        self.model = model
+        self.model_method = model_method  # "classification", "regression", "stacking"
         self.stage = stage
         self.list_date = list_date
         self.path_data = path_data
@@ -50,7 +51,7 @@ class FirstStage:
     
     def run(self):
         data = self.load_data_stage()
-        if not self.stacking_test:
+        if self.model_method in ["classification", "regression"]:
             self.transform_model(data)
             self.save_prediction()
         else:
@@ -88,10 +89,10 @@ class FirstStage:
         return self.evaluate
 
     def get_prediction_path(self):
-        if self.stacking_test:
-            return os.path.join(self.path_prediction, self.year, self.stage, "stacking", self.model_classifier)
+        if self.model_method == "stacking":
+            return os.path.join(self.path_prediction, self.year, self.stage, "stacking", self.model)
         else:
-            return os.path.join(self.path_prediction, self.year, self.stage, self.model_classifier)
+            return os.path.join(self.path_prediction, self.year, self.stage, self.model)
 
     def apply_index_to_string(self):
         teams = self.load_data_teams()
@@ -146,11 +147,22 @@ class FirstStage:
                 .withColumn("features", udf_diff_features(col("features_1"), col("features_2"))))
         
     def transform_model(self, data):
-        classification_model = ClassificationModel(None, self.year, self.model_classifier, None, self.path_model, None)
-        self.transform = classification_model.get_best_model().transform(data)
-        classification_model.define_evaluator()
-        classification_model.set_transform(self.transform)
-        self.evaluate = classification_model.evaluate_evaluator()
+        if self.model_method == "classification":
+            model = ClassificationModel(None, self.year, self.model, None, self.path_model, None, None)
+        elif self.model_method == "regression":
+            model = RegressionModel(None, self.year, self.model, None, self.path_model, None, None)
+        model.load_best_model()
+        model.set_data(data)
+        model.transform_model()
+        if self.model_method == "regression":
+            model.define_match_issue()
+        model.define_evaluator()
+        self.transform = model.get_transform()
+
+        evaluator = ClassificationModel(None, None, None, None, None, None, None)
+        evaluator.define_evaluator()
+        evaluator.set_transform(self.transform)
+        self.evaluate = evaluator.evaluate_evaluator()
 
     def save_matches_next_stage(self, dic_first_by_group, dic_second_by_group):
         data = []
@@ -170,22 +182,46 @@ class FirstStage:
 
 if __name__ == "__main__":
     spark = get_spark_session("First Stage")
+    model_methods = ["classification", "regression"]  # stacking
+
     years = ["2014", "2010", "2006"]
-    classification_model = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
+    classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
                             "one_vs_rest"]
-    for year in years:
-        print("Year: {0}".format(year))
-        # for classifier_model in classification_model:
+    regression_models = ["linear_regression", "decision_tree", "random_forest", "gbt_regressor"]
+    dic_model_methods = {method: None for method in model_methods}
+    dic_model_methods["classification"] = {year: classification_models for year in years}
+    dic_model_methods["regression"] = {year: regression_models for year in years}
+    dic_path_models = {
+        "classification": "./test/model/classification_model",
+        "regression": "./test/model/regression_model"
+    }
+    dic_path_prediction = {
+        "classification": "./test/prediction/classification_model",
+        "regression": "./test/prediction/regression_model"
+    }
+
+    dic_evaluate = {}
+    for method in dic_model_methods.keys():
+        dic_evaluate[method] = {}
+        print("Method: {0}".format(method))
+        for year in dic_model_methods[method].keys():
+            dic_evaluate[method][year] = {}
+            print("  Year: {0}".format(year))
+            for model in dic_model_methods[method][year]:
+                dic_evaluate[method][year][model] = {}
+                for stage in get_competition_dates(year).keys():
+                    print("  Model: {0}".format(model))
+                    complete_stage = CompleteStage(spark, year, model, method, stage, get_competition_dates(year)[stage],
+                                                   None, dic_path_models[method], dic_path_prediction[method])
+                    # print(first_stage)
+                    complete_stage.run()
+                    dic_evaluate[method][year][model][stage] = complete_stage.get_evaluate()
+
+
+
+        # for classifier in ["logistic_regression", "decision_tree", "random_forest"]:
         #     for stage in get_competition_dates(year).keys():
-        #         print("  Classifier model: {0}".format(classifier_model))
-        #         first_stage = FirstStage(spark, year, classifier_model, False, stage,
+        #         first_stage = FirstStage(spark, year, classifier, True, stage,
         #                                  get_competition_dates(year)[stage],
-        #                              None, "./test/classification_model", "./test/prediction")
-        #         # print(first_stage)
+        #                                  "./test/prediction", "./test/stacking_model", "./test/prediction")
         #         first_stage.run()
-        for classifier in ["logistic_regression", "decision_tree", "random_forest"]:
-            for stage in get_competition_dates(year).keys():
-                first_stage = FirstStage(spark, year, classifier, True, stage,
-                                         get_competition_dates(year)[stage],
-                                         "./test/prediction", "./test/stacking_model", "./test/prediction")
-                first_stage.run()
