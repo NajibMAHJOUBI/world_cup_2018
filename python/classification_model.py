@@ -195,10 +195,10 @@ if __name__ == "__main__":
     classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
                             "one_vs_rest"]
     dic_year_model = {
-        "2018": classification_models,
-        "2014": classification_models,
+        # "2018": classification_models,
+        # "2014": classification_models,
         "2010": classification_models,
-        "2006": classification_models,
+        # "2006": classification_models,
     }
 
     dic_evaluate_model = {}
@@ -210,8 +210,8 @@ if __name__ == "__main__":
             print("  Model classification: {0}".format(model))
             classification_model = ClassificationModel(spark, year, model,
                                                        "./test/training",
-                                                       "./test/model/classification_model",
-                                                       "./test/transform/classification_model",
+                                                       "./test/model/classification",
+                                                       "./test/transform/classification",
                                                        validator="train_validation", list_layers=None)
             classification_model.run()
             dic_evaluate_model[year][model] = classification_model.evaluate_evaluator()
