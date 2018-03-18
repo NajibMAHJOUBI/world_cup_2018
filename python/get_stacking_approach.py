@@ -1,5 +1,5 @@
 
-from itertools import permutations
+from itertools import combinations
 
 
 def get_stacking_approach():
@@ -12,6 +12,7 @@ def get_stacking_approach():
 
     approaches = []
     for n_permutation in range(2, len(available_models)+1):
-        approaches += list(permutations(available_models, n_permutation))
+        approaches += list(combinations(available_models, n_permutation))
 
-    return {"stacking_{0}".format(index+1): approach for index, approach in enumerate(approaches)}
+    n_zfill = len(str(len(approaches)))
+    return {"stacking_{0}".format(str(index+1).zfill(n_zfill)): approach for index, approach in enumerate(approaches)}
