@@ -215,8 +215,8 @@ if __name__ == "__main__":
         for model in models:
             print("  Model classification: {0}".format(model))
             regression_model = RegressionModel(spark, year, model,
-                                               "./test/training", "./test/model/regression_model",
-                                               "./test/transform/regression_model", "train_validation")
+                                               "./test/training", "./test/model/regression",
+                                               "./test/transform/regression", "train_validation")
             # spark, year, model_classifier, validator, path_training, path_model, path_transform
             regression_model.run()
 
