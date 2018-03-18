@@ -9,9 +9,12 @@ from pyspark.sql.types import StructType, StructField, StringType, FloatType
 from classification_model import ClassificationModel
 from regression_model import RegressionModel
 from featurization_data import FeaturizationData
-from stacking_classification_method import Stacking
+from stacking_classification_method import StackingModels
 from get_spark_session import get_spark_session
 from get_competition_dates import get_competition_dates
+from get_regression_approach import get_regression_approach
+from get_classification_approach import get_classification_approach
+from get_stacking_approach import get_stacking_approach
 
 
 class CompleteStage:
@@ -33,6 +36,7 @@ class CompleteStage:
         self.path_model = path_model
         self.path_prediction = path_prediction
 
+        self.data = None
         self.label_prediction = None
         self.transform = None
         self.evaluate = None
@@ -57,8 +61,8 @@ class CompleteStage:
         else:
             available_classifier = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
                                     "one_vs_rest"]
-            stacking = Stacking(self.spark, self.year, self.stage, available_classifier, self.model_classifier, "train_validation",
-                                self.path_data, self.path_model)
+            stacking = StackingModels(self.spark, self.year, self.stage, available_classifier, self.model_classifier,
+                                "train_validation", self.path_data, self.path_model)
             stacking.merge_all_data(schema=self.schema, id_column="matches")
             stacking.create_features()
             # stacking.get_data().show(10)
@@ -124,12 +128,12 @@ class CompleteStage:
                      .select("date", "team_1", "team_2", "result_team_1", "result_team_2"))
 
         self.data = (self.data.join(teams, self.data.team_1 == teams.team)
-                    .withColumnRenamed("country", "country_1").drop("team")
-                    .join(teams, self.data.team_2 == teams.team)
-                    .withColumnRenamed("country", "country_2").drop("team"))
+                              .withColumnRenamed("country", "country_1").drop("team")
+                              .join(teams, self.data.team_2 == teams.team)
+                              .withColumnRenamed("country", "country_2").drop("team"))
 
     def join_label_prediction(self, label, prediction):
-        udf_matches = udf(lambda team_1,team_2: team_1 + "/" + team_2, StringType())
+        udf_matches = udf(lambda team_1, team_2: team_1 + "/" + team_2, StringType())
         label = label.withColumn("matches", udf_matches(col("team_1"), col("team_2")))
         prediction = (prediction
                       .withColumn("matches", udf_matches(col("team_1"), col("team_2")))
@@ -181,24 +185,18 @@ class CompleteStage:
 
 
 if __name__ == "__main__":
-    spark = get_spark_session("First Stage")
-    model_methods = ["classification", "regression"]  # stacking
+    spark = get_spark_session("Complete Stage")
+    path_model, path_prediction = "./test/model", "./test/prediction"
+    model_methods = ["classification", "regression", "stacking"]  # stacking
+    years = ["2014"]
 
-    years = ["2014", "2010", "2006"]
-    classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
-                            "one_vs_rest"]
-    regression_models = ["linear_regression", "decision_tree", "random_forest", "gbt_regressor"]
-    dic_model_methods = {method: None for method in model_methods}
-    dic_model_methods["classification"] = {year: classification_models for year in years}
-    dic_model_methods["regression"] = {year: regression_models for year in years}
-    dic_path_models = {
-        "classification": "./test/model/classification_model",
-        "regression": "./test/model/regression_model"
-    }
-    dic_path_prediction = {
-        "classification": "./test/prediction/classification_model",
-        "regression": "./test/prediction/regression_model"
-    }
+    dic_model_methods = {
+        "classification": {year: get_classification_approach() for year in years},
+        "regression": {year: get_regression_approach() for year in years},
+        "stacking": {year: get_stacking_approach().keys() for year in years}
+        }
+    dic_path_models = {model: os.path.join(path_model, model) for model in model_methods}
+    dic_path_prediction = {model: os.path.join(path_prediction, model) for model in model_methods}
 
     dic_evaluate = {}
     for method in dic_model_methods.keys():
@@ -216,8 +214,6 @@ if __name__ == "__main__":
                     # print(first_stage)
                     complete_stage.run()
                     dic_evaluate[method][year][model][stage] = complete_stage.get_evaluate()
-
-
 
         # for classifier in ["logistic_regression", "decision_tree", "random_forest"]:
         #     for stage in get_competition_dates(year).keys():
