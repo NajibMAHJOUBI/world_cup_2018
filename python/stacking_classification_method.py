@@ -168,18 +168,22 @@ class StackingModels:
 
 if __name__ == "__main__":
     spark = get_spark_session("Stacking")
+    model_stacking = "logistic_regression"
+    if not os.path.isdir("./test/accuracy/{0}".format(model_stacking)):
+        os.system("mkdir ./test/accuracy/{0}".format(model_stacking))
     years = ["2014"]
     stacking_approaches = get_stacking_approach()
     # dic_evaluate = {}
     for year in years:
         number_classifiers = 9
-        f = open("./test/accuracy/{0}_{1}_stacking_accuracy.csv".format(year, number_classifiers), "a+")
+        f = open("./test/accuracy/{0}/{1}_{2}_stacking_accuracy.csv".format(model_stacking, year, number_classifiers),
+                 "a+")
         for index, value in enumerate(filter(lambda x: len(x[1]) == number_classifiers, stacking_approaches.items())):
             model_name, classifiers = value[0], value[1]
-            if not os.path.isdir("./test/model/stacking/{0}".format(model_name)):
+            if not os.path.isdir("./test/model/stacking/{0}/{1}/{2}".format(model_name, year, model_stacking)):
                 print(index, model_name)
                 # dic_evaluate[model_name] = {}
-                stacking_model = StackingModels(spark, year, "decision_tree", classifiers, "train_validation",
+                stacking_model = StackingModels(spark, year, model_stacking, classifiers, "train_validation",
                                                 "./test/transform", "./test/model", model_name)
                 stacking_model.run()
                 # dic_evaluate[model_name][year] = stacking_model.get_evaluate()
