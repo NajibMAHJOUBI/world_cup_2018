@@ -25,7 +25,8 @@ class StackingModels:
         self.data = None
         self.new_data = None
         self.evaluate = None
-        self.stacking_model = None
+        self.model = None
+        self.transform = None
 
     def __str__(self):
         s = "Stacking model\n"
@@ -54,6 +55,12 @@ class StackingModels:
 
     def get_data_features(self):
         return self.new_data
+
+    def get_transform(self):
+        return self.transform
+
+    def set_data(self, data):
+        self.new_data = data
 
     def load_all_data(self, schema):
         dic_data = {}
@@ -165,15 +172,16 @@ class StackingModels:
         classifier_model.save_best_model()
         classifier_model.transform_model()
         self.evaluate = classifier_model.evaluate_evaluator()
-        self.stacking_model = classifier_model.get_best_model()
+        self.model = classifier_model.get_best_model()
 
-    def stacking_transform(self):
-        return self.stacking_model.transform(self.new_data)
+    def transform_model(self):
+        self.transform = self.model.transform(self.new_data)
 
     def load_best_model(self):
         classifier_model = ClassificationModel(self.spark, self.year, self.stacking, None,
                                                self.get_path_save_model(), None, "train_validation",)
-        return classifier_model.load_best_model()
+        classifier_model.load_best_model()
+        self.model = classifier_model.get_model()
 
 
 if __name__ == "__main__":
