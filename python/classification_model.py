@@ -73,6 +73,9 @@ class ClassificationModel:
     def get_transform(self):
         return self.transform
 
+    def get_model(self):
+        return self.model
+
     def set_model(self, model_to_set):
         self.model = model_to_set
 
