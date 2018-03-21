@@ -10,7 +10,8 @@ from get_stacking_approach import get_stacking_approach
 
 
 class StackingModels:
-    def __init__(self, spark_session, year, stacking, classifiers, validator, path_transform, path_model, model_name):
+    def __init__(self, spark_session, year, stacking, classifiers, validator, path_transform, path_model, model_name,
+                 stage=None):
         self.spark = spark_session
         self.year = year
         self.stacking = stacking
@@ -19,6 +20,7 @@ class StackingModels:
         self.path_transform = path_transform  # "./test/transform"
         self.path_model = path_model
         self.model_name = model_name
+        self.stage = stage
 
         self.data = None
         self.new_data = None
@@ -36,7 +38,10 @@ class StackingModels:
         self.stacking_models()
 
     def get_path_transform(self, method, model):
-        return os.path.join(self.path_transform, method, self.year, model)
+        if self.stage is not None:
+            return os.path.join(self.path_transform, method, self.year, self.stage, model)
+        else:
+            return os.path.join(self.path_transform, method, self.year, model)
 
     def get_path_save_model(self):
         return os.path.join(self.path_model, "stacking", self.model_name)
@@ -164,6 +169,11 @@ class StackingModels:
 
     def stacking_transform(self):
         return self.stacking_model.transform(self.new_data)
+
+    def load_best_model(self):
+        classifier_model = ClassificationModel(self.spark, self.year, self.stacking, None,
+                                               self.get_path_save_model(), None, "train_validation",)
+        return classifier_model.load_best_model()
 
 
 if __name__ == "__main__":
