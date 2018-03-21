@@ -24,17 +24,19 @@ class CompleteStage:
         StructField("label", FloatType(), True),
         StructField("prediction", FloatType(), True)])
 
-    def __init__(self, spark_session, year, model, model_method, stage, list_date, path_data, path_model,
-                 path_prediction):
+    def __init__(self, spark_session, year, model, model_method, stage, list_date,
+                 path_model, path_prediction,
+                 model_name=None, classifiers=None):
         self.spark = spark_session
         self.year = year
         self.model = model
         self.model_method = model_method  # "classification", "regression", "stacking"
         self.stage = stage
         self.list_date = list_date
-        self.path_data = path_data
         self.path_model = path_model
         self.path_prediction = path_prediction
+        self.model_name = model_name
+        self.classifiers = classifiers
 
         self.data = None
         self.label_prediction = None
@@ -45,24 +47,24 @@ class CompleteStage:
         s = "FirstStage\n"
         s += "Spark session: {0}\n".format(self.spark)
         s += "Year: {0}".format(self.year)
-        s += "Model classifier: {0}\n".format(self.model_classifier)
-        s += "Stacking model: {0}\n".format(self.stacking_test)
+        s += "Model: {0}\n".format(self.model)
+        s += "Model method: {0}\n".format(self.model_method)
+        s += "Stage: {0}\n".format(self.stage)
         s += "List dates: {0}\n".format(self.list_date)
-        s += "Path data: {0}\n".format(self.path_data)
         s += "Path model: {0}\n".format(self.path_model)
         s += "Path prediction: {0}\n".format(self.path_prediction)
+        s += "Model name: {0}".format(self.model_name)
         return s
     
     def run(self):
-        data = self.load_data_stage()
         if self.model_method in ["classification", "regression"]:
+            data = self.load_data_stage()
             self.transform_model(data)
             self.save_prediction()
         else:
-            available_classifier = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
-                                    "one_vs_rest"]
-            stacking = StackingModels(self.spark, self.year, self.stage, available_classifier, self.model_classifier,
-                                "train_validation", self.path_data, self.path_model)
+            stacking = StackingModels(self.spark, self.year, self.model, self.classifiers, None,
+                                      self.path_prediction, self.path_model, self.model_name, self.stage)
+                                     # (spark_session, year, stacking, classifiers, validator, path_transform, path_model, model_name)
             stacking.merge_all_data(schema=self.schema, id_column="matches")
             stacking.create_features()
             # stacking.get_data().show(10)
@@ -155,6 +157,8 @@ class CompleteStage:
             model = ClassificationModel(None, self.year, self.model, None, self.path_model, None, None)
         elif self.model_method == "regression":
             model = RegressionModel(None, self.year, self.model, None, self.path_model, None, None)
+        elif self.model_method == "stacking":
+            pass
         model.load_best_model()
         model.set_data(data)
         model.transform_model()
@@ -187,16 +191,16 @@ class CompleteStage:
 if __name__ == "__main__":
     spark = get_spark_session("Complete Stage")
     path_model, path_prediction = "./test/model", "./test/prediction"
-    model_methods = ["classification", "regression", "stacking"]  # stacking
     years = ["2014"]
-
+    stacking_classifier = "decision_tree"
     dic_model_methods = {
-        "classification": {year: get_classification_approach() for year in years},
-        "regression": {year: get_regression_approach() for year in years},
-        "stacking": {year: get_stacking_approach().keys() for year in years}
+        # "classification": {year: get_classification_approach() for year in years},
+        # "regression": {year: get_regression_approach() for year in years},
+        "stacking": {year: ["decision_tree"] for year in years}
         }
-    dic_path_models = {model: os.path.join(path_model, model) for model in model_methods}
-    dic_path_prediction = {model: os.path.join(path_prediction, model) for model in model_methods}
+    dic_path_models = {model: os.path.join(path_model, model) for model in dic_model_methods.keys()}
+    dic_path_prediction = {model: os.path.join(path_prediction, model) for model in ["classification", "regression"]}
+    dic_path_prediction.update({"stacking": path_prediction})
 
     dic_evaluate = {}
     for method in dic_model_methods.keys():
@@ -207,13 +211,25 @@ if __name__ == "__main__":
             print("  Year: {0}".format(year))
             for model in dic_model_methods[method][year]:
                 dic_evaluate[method][year][model] = {}
+                print("   Model: {0}".format(model))
                 for stage in get_competition_dates(year).keys():
-                    print("  Model: {0}".format(model))
-                    complete_stage = CompleteStage(spark, year, model, method, stage, get_competition_dates(year)[stage],
-                                                   None, dic_path_models[method], dic_path_prediction[method])
-                    # print(first_stage)
-                    complete_stage.run()
-                    dic_evaluate[method][year][model][stage] = complete_stage.get_evaluate()
+                    print("    Stage: {0}".format(stage))
+                    if method is not "stacking":
+                        complete_stage = CompleteStage(spark, year, model, method, stage,
+                                                       get_competition_dates(year)[stage],
+                                                       dic_path_models[method], dic_path_prediction[method])
+                        complete_stage.run()
+                    else:
+                        for model_name, classifiers in get_stacking_approach().iteritems():
+                            print("model: {0}".format(model))
+                            print("classifiers: {0}".format(classifiers))
+                            complete_stage = CompleteStage(spark, year, model, method, stage,
+                                                           get_competition_dates(year)[stage],
+                                                           dic_path_models[method], dic_path_prediction[method],
+                                                           model_name=model_name, classifiers=classifiers)
+                            print(complete_stage)
+                            complete_stage.run()
+                    # dic_evaluate[method][year][model][stage] = complete_stage.get_evaluate()
 
         # for classifier in ["logistic_regression", "decision_tree", "random_forest"]:
         #     for stage in get_competition_dates(year).keys():
