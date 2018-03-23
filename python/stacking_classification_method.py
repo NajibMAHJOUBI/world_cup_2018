@@ -193,7 +193,7 @@ if __name__ == "__main__":
     stacking_approaches = get_stacking_approach()
     # dic_evaluate = {}
     for year in years:
-        number_classifiers = 5
+        number_classifiers = 9
         f = open("./test/accuracy/{0}/{1}_{2}_stacking_accuracy.csv".format(model_stacking, year, number_classifiers),
                  "a+")
         for index, value in enumerate(filter(lambda x: len(x[1]) == number_classifiers, stacking_approaches.items())):
