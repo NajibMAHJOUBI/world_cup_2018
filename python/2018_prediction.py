@@ -82,7 +82,7 @@ class WorldCup:
 
         names_start_to_convert = get_data_schema("qualifying_start").names
         names_start_to_convert.remove("teamGroup_team")
-        path = "./data/2018_World_Cup.tsv"
+        # path = "./data/2018_World_Cup.tsv"
         self.start = (self.spark.read.csv(path, sep="\t", schema=get_data_schema("qualifying_start"), header=False)
                 .select([udf_convert_string_to_float(col(name)).alias(name) for name in names_start_to_convert] +
                         ["teamGroup_team"])
