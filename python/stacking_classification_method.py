@@ -186,10 +186,10 @@ class StackingModels:
 
 if __name__ == "__main__":
     spark = get_spark_session("Stacking")
-    model_stacking = "logistic_regression"
+    model_stacking = "decision_tree"
     if not os.path.isdir("./test/accuracy/{0}".format(model_stacking)):
         os.system("mkdir ./test/accuracy/{0}".format(model_stacking))
-    years = ["2014"]
+    years = ["2010"]
     stacking_approaches = get_stacking_approach()
     # dic_evaluate = {}
     for year in years:
