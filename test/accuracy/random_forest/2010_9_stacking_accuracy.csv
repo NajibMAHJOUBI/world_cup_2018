@@ -1,0 +1,1 @@
+(('classification', 'logistic_regression'), ('classification', 'decision_tree'), ('classification', 'random_forest'), ('classification', 'multilayer_perceptron'), ('classification', 'one_vs_rest'), ('regression', 'linear_regression'), ('regression', 'decision_tree'), ('regression', 'random_forest'), ('regression', 'gbt_regressor'));0.824524312896
