@@ -147,12 +147,14 @@ if __name__ == "__main__":
     from get_stacking_approach import get_stacking_approach
     spark = get_spark_session("Classification Model")
 
-    # average_predictions = AveragingPredictions(spark, 2014, "./test/prediction",
-    #                                            None, None, ["decision_tree"], sorted(get_stacking_approach().keys()))
+    average_predictions = AveragingPredictions(spark, 2010, "./test/prediction",
+                                               get_classification_approach(), None, None, None)
+    average_predictions.run()
+    print("Accuracy {0}".format(average_predictions.get_accuracy()))
     # get_classification_approach(), get_regression_approach(), ["logistic_regression"], get_stacking_approach().keys())
 
-    for model_name in sorted(get_stacking_approach().keys()):
-        average_predictions = AveragingPredictions(spark, 2014, "./test/prediction",
-                                                   None, None, ["logistic_regression"], [model_name])
-        average_predictions.run()
-        print("Stacking - LR {0}: {1}".format(model_name, average_predictions.get_accuracy()))
+    # for model_name in sorted(get_stacking_approach().keys()):
+    #     average_predictions = AveragingPredictions(spark, 2014, "./test/prediction",
+    #                                                None, None, ["logistic_regression"], [model_name])
+    #     average_predictions.run()
+    #     print("Stacking - LR {0}: {1}".format(model_name, average_predictions.get_accuracy()))
