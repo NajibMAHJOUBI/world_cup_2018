@@ -3,10 +3,6 @@ import os
 
 from pyspark.sql.types import StructType, StructField, StringType, FloatType
 
-from get_spark_session import get_spark_session
-from get_classification_approach import get_classification_approach
-from get_regression_approach import get_regression_approach
-
 
 class AveragingPredictions:
 
@@ -38,6 +34,9 @@ class AveragingPredictions:
             dic_data["classification"] = self.merge_unitary_model("classification")
         if self.regression_models is not None:
             dic_data["regression"] = self.merge_unitary_model("regression")
+        if self.stacking_models is not None:
+            dic_data["stacking"] = self.merge_stacking()
+        self.average_prediction(dic_data["stacking"]).show(64)
 
     def get_path_classification(self, stage, model):
         return os.path.join(self.path_prediction, "classification", self.year, stage, model)
@@ -45,26 +44,29 @@ class AveragingPredictions:
     def get_path_regression(self, stage, model):
         return os.path.join(self.path_prediction, "regression", self.year, stage, model)
 
-    def get_path(self, type_, stage, model):
+    def get_path_stacking(self, stage, model, model_name):
+        return os.path.join(self.path_prediction, "stacking", self.year, stage, model_name, model)
+
+    def get_path(self, type_, stage, model, model_name=None):
         if type_ == "classification":
             return self.get_path_classification(stage, model)
         elif type_ == "regression":
             return self.get_path_regression(stage, model)
-
-    def get_path_stacking(self):
-        pass
+        elif type_ == "stacking":
+            return self.get_path_stacking(stage, model, model_name)
 
     def get_models_names(self, type_):
         if type_ == "classification":
             return self.classification_models
         elif type_ == "regression":
             return self.regression_models
+        elif type_ == "stacking":
+            return self.stacking_models
 
-    def union_stages(self, type_, model):
-        data = self.spark.read.csv(self.get_path(type_, self.stages[0], model), sep=",", header=True,
-                                   schema=self.schema)
-        for stage in self.stages[1:]:
-            temp = self.spark.read.csv(self.get_path(type_, stage, model), sep=",", header=True,
+    def union_stages(self, type_, model, model_name=None):
+        data = self.spark.createDataFrame(self.spark.sparkContext.emptyRDD(), self.schema)
+        for stage in self.stages[:]:
+            temp = self.spark.read.csv(self.get_path(type_, stage, model, model_name), sep=",", header=True,
                                        schema=self.schema)
             data = data.union(temp)
         return data
@@ -78,6 +80,19 @@ class AveragingPredictions:
                     .withColumnRenamed("prediction", "{0}_{1}".format(type_, model))
                     .drop("label"))
             data = data.join(temp, on="matches")
+        return data
+
+    def merge_stacking(self):
+        data = None
+        for index_model, model in enumerate(self.get_models_names("stacking")):
+            for index_name, model_name in enumerate(self.stacking_names):
+                temp = (self.union_stages("stacking", model, model_name)
+                        .withColumnRenamed("prediction", "{0}_{1}".format(model_name, model)))
+                if index_model == 0 and index_name == 0:
+                    data = temp
+                else:
+                    temp = temp.drop("label")
+                    data = data.join(temp, on="matches")
         return data
 
     def average_prediction(self, data):
@@ -97,9 +112,14 @@ class AveragingPredictions:
 
 
 if __name__ == "__main__":
+    from get_spark_session import get_spark_session
+    from get_classification_approach import get_classification_approach
+    from get_regression_approach import get_regression_approach
+    from get_stacking_approach import get_stacking_approach
     spark = get_spark_session("Classification Model")
 
     average_predictions = AveragingPredictions(spark, 2014, "./test/prediction",
-                                               get_classification_approach(), get_regression_approach())
+                                               None, None, ["decision_tree"], get_stacking_approach().keys())
+                                               # get_classification_approach(), get_regression_approach())
     # print(average_predictions)
     average_predictions.run()
