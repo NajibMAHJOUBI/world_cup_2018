@@ -1,71 +1,76 @@
 # -*- coding: utf-8 -*-
 import os
+
 import numpy as np
-from get_data_schema import get_data_schema
-from get_spark_session import get_spark_session
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 from pyspark.ml.linalg import Vectors, VectorUDT
 from pyspark.sql.functions import col, udf
 from pyspark.sql.types import FloatType
-from result_statistic import ResultStatistic
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+
 from classification_model import ClassificationModel
+from get_data_schema import get_data_schema
+from regression_model import RegressionModel
 
-class WorldCup:
 
-    matches = {"1st_stage": {}}
-    matches["1st_stage"]["A"] = ["Russia-Saudi Arabia", "Egypt-Uruguay", "Russia-Egypt", "Uruguay-Saudi Arabia",
-                                 "Uruguay-Russia", "Saudi Arabia-Egypt"]
-    matches["1st_stage"]["B"] = ["Morocco-Iran", "Portugal-Spain", "Portugal-Morocco", "Iran-Spain", "Iran-Portugal",
-                                 "Spain-Morocco"]
-    matches["1st_stage"]["C"] = ["France-Australia", "Peru-Denmark", "Denmark-Australia", "France-Peru",
-                                 "Denmark-France", "Australia-Peru"]
-    matches["1st_stage"]["D"] = ["Argentina-Iceland", "Croatia-Nigeria", "Argentina-Croatia", "Nigeria-Iceland",
-                                 "Nigeria-Argentina", "Iceland-Croatia"]
-    matches["1st_stage"]["E"] = ["Costa Rica-Serbia", "Brazil-Switzerland", "Brazil-Costa Rica", "Serbia-Switzerland",
-                                 "Serbia-Brazil", "Switzerland-Costa Rica"]
-    matches["1st_stage"]["F"] = ["Germany-Mexico", "Sweden-South Korea", "Germany-Sweden", "South Korea-Mexico",
-                                 "South Korea-Germany", "Mexico-Sweden"]
-    matches["1st_stage"]["G"] = ["Belgium-Panama", "Tunisia-England", "Belgium-Tunisia", "England-Panama",
-                                 "England-Belgium", "Panama-Tunisia"]
-    matches["1st_stage"]["H"] = ["Poland-Senegal", "Colombia-Japan", "Poland-Colombia", "Japan-Senegal", "Japan-Poland",
-                                 "Senegal-Colombia"]
+class MatchPrediction:
 
-    classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
-                             "one_vs_rest"]
+    schema_match = StructType([StructField("team_1", StringType(), False),
+                               StructField("team_2", StringType(), False)])
 
-    def __init__(self, spark_session, year, stage, model_classifier, stacking, path_model, path_prediction):
+    def __init__(self, spark_session, year, path_model,
+                 model_classification=None, model_regression=None, model_stacking=None, stacking_name=None):
         self.spark = spark_session
         self.year = year
-        self.stage = stage
-        self.model_classifier = model_classifier
-        self.stacking = stacking
         self.path_model = path_model
-        self.path_prediction = path_prediction
+        self.model_classification = model_classification
+        self.model_regression = model_regression
+        self.model_stacking = model_stacking
+        self.stacking_name = stacking_name
 
-        self.teams = None
-        self.list_matches = []
         self.start = None
+        self.teams = None
+        self.country_1, self.country_2 = None, None
+        self.team_1, self.team_2 = None, None
         self.data = None
         self.prediction = None
 
+        self.load_data_teams()
+        self.load_data_start()
+
     def __str__(self):
-        pass
+        s = "{0} - {1}".format(self.country_1, self.country_2)
+        return s
 
     def run(self):
-        if not self.stacking:
-            self.load_data_start()
-            self.define_matches_features()
-        else:
-            self.define_prediction_features()
+        self.define_matches_features()
         self.transform_model()
-        self.save_prediction()
-        self.score_prediction()
 
-    def get_path_prediction(self, stacking, classifier):
-        if stacking:
-            return os.path.join(self.path_prediction, self.year, self.stage, "stacking", classifier)
-        else:
-            return os.path.join(self.path_prediction, self.year, self.stage, classifier)
+    def get_teams(self):
+        return self.team_1, self.team_2
+
+    def get_country(self):
+        return self.country_1, self.country_2
+
+    def get_dic_teams(self):
+        return self.teams
+
+    def get_path_model(self):
+        if self.model_classification is not None:
+            return os.path.join(self.path_model, "classification")
+        elif self.model_regression is not None:
+            return os.path.join(self.path_model, "regression")
+
+    def get_prediction(self):
+        return self.prediction.rdd.map(lambda x: x["prediction"]).collect()[0]
+
+    def set_teams(self):
+        self.team_1 = str(self.teams[self.country_1])
+        self.team_2 = str(self.teams[self.country_2])
+
+    def set_country(self, country_1, country_2):
+        self.country_1 = country_1
+        self.country_2 = country_2
+        self.set_teams()
 
     def load_data_start(self):
         udf_get_percentage_game = udf(lambda x, y: x / y, FloatType())
@@ -82,11 +87,11 @@ class WorldCup:
 
         names_start_to_convert = get_data_schema("qualifying_start").names
         names_start_to_convert.remove("teamGroup_team")
-        # path = "./data/2018_World_Cup.tsv"
+        path = "./data/WCF/2018_World_Cup_WCP_qualifying_start.tsv"
         self.start = (self.spark.read.csv(path, sep="\t", schema=get_data_schema("qualifying_start"), header=False)
-                .select([udf_convert_string_to_float(col(name)).alias(name) for name in names_start_to_convert] +
-                        ["teamGroup_team"])
-                .withColumn("features", udf_create_features(
+        .select([udf_convert_string_to_float(col(name)).alias(name) for name in names_start_to_convert] +
+                ["teamGroup_team"])
+        .withColumn("features", udf_create_features(
             udf_get_percentage_game(col("matchesGroup_home"), col("matchesGroup_total")),
             udf_get_percentage_game(col("matchesGroup_away"), col("matchesGroup_total")),
             udf_get_percentage_game(col("matchesGroup_neutral"), col("matchesGroup_total")),
@@ -95,36 +100,23 @@ class WorldCup:
             udf_get_percentage_game(col("matchesGroup_draws"), col("matchesGroup_total")),
             udf_get_percentage_game(col("goalsGroup_for"), col("matchesGroup_total")),
             udf_get_percentage_game(col("goalsGroup_against"), col("matchesGroup_total"))))
-                .withColumnRenamed("teamGroup_team", "team")
-                .select("team", "features"))
+        .withColumnRenamed("teamGroup_team", "team")
+        .select("team", "features"))
 
-    def load_teams(self):
-        self.teams = ResultStatistic(self.spark, None, None, None, None).load_data_teams()
-
-    def save_prediction(self):
-        (self.prediction
-         .write
-         .csv(self.get_path_prediction(self.stacking, self.model_classifier), mode="overwrite", sep=",", header=True))
-
-    def append_matches(self):
-        for group in self.matches[self.stage].keys():
-            for match in self.matches[self.stage][group]:
-                team_1 = (self.teams.filter(col("country") == match.split("-")[0])
-                                    .rdd.map(lambda x: x["team"]).collect()[0])
-                team_2 = (self.teams.filter(col("country") == match.split("-")[1])
-                              .rdd.map(lambda x: x["team"]).collect()[0])
-                # print("{0}-{1}: {2}-{3}".format(matche.split("-")[0], matche.split("-")[1], team_1, team_2))
-                self.list_matches.append((group, team_1, team_2))
+    def load_data_teams(self):
+        data = (self.spark.read.csv("./data/common/en.teams.tsv", sep="\t", header=False,
+                                    schema=get_data_schema("teams"))
+                .select("country", "team")
+                .toPandas()
+                .to_dict('list'))
+        self.teams = {team: data["team"][index] for index,team in enumerate(data["country"])}
 
     def define_matches_features(self):
         udf_diff_features = udf(lambda features_1, features_2: features_1 - features_2, VectorUDT())
         udf_team1_team2 = udf(lambda team_1, team_2: team_1 + "/" + team_2, StringType())
-        schema = StructType([
-            StructField("group", StringType(), False),
-            StructField("team_1", StringType(), False),
-            StructField("team_2", StringType(), False)])
-        self.append_matches()
-        self.data = (self.spark.createDataFrame(self.list_matches, schema=schema)
+
+        rdd = self.spark.sparkContext.parallelize([(self.team_1, self.team_2)])
+        self.data = (self.spark.createDataFrame(rdd, schema=self.schema_match)
                       .join(self.start, col("team_1") == col("team"))
                       .drop("team")
                       .withColumnRenamed("features", "features_1")
@@ -178,11 +170,23 @@ class WorldCup:
         self.data.select("matches", "features")
 
     def transform_model(self):
-        classification_model = ClassificationModel(None, self.year, self.model_classifier, None, self.path_model, None)
-        self.prediction = (classification_model
+        if self.model_classification is not None:
+            self.model = ClassificationModel(None, self.year, self.model_classification, None, self.get_path_model(),
+                                              None, None)
+        elif self.model_regression is not None:
+            self.model = RegressionModel(None, self.year, self.model_regression, None, self.get_path_model(),
+                                         None, None)
+
+        self.prediction = (self.model
                            .get_best_model()
-                           .transform(self.data)
-                           .select("matches", "prediction"))
+                           .transform(self.data))
+
+        if self.model_regression is not None:
+            self.model.set_transform(self.prediction)
+            self.model.define_match_issue()
+            self.prediction = self.model.get_transform()
+
+        self.prediction = self.prediction.select("matches", "prediction")
 
     def score_prediction(self):
         self.load_teams()
@@ -226,15 +230,23 @@ class WorldCup:
 
 
 if __name__ == "__main__":
+    from get_spark_session import get_spark_session
+    from get_world_cup_matches import get_matches
+    year = "2018"
     spark = get_spark_session("2018 World Cup")
-    # classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
-    #                          "one_vs_rest"]
-    # for classifier in classification_models:
-    #     print("Classifer: {0}".format(classifier))
-    #     world_cup = WorldCup(spark, "2018", "1st_stage", classifier, False,
-    #                          "./test/classification_model", "./test/prediction")
-    #     world_cup.run()
+    matches = get_matches(year)
 
-    world_cup = WorldCup(spark, "2018", "1st_stage", "random_forest", True,
-                             "./test/stacking_model", "./test/prediction")
-    world_cup.run()
+    world_cup = MatchPrediction(spark, year, "./test/model",
+                                model_classification="logistic_regression",
+                                model_regression=None,
+                                model_stacking=None,
+                                stacking_name=None)
+
+    for group in sorted(matches["1st_stage"].keys()):
+        print("Group: {0}".format(group))
+        for match in matches["1st_stage"][group]:
+            country_1, country_2 = match
+            world_cup.set_country(country_1, country_2)
+            world_cup.run()
+            print("  {0}: {1}".format(world_cup.get_country(), world_cup.get_prediction()))
+        print("")
