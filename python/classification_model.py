@@ -10,8 +10,6 @@ from pyspark.ml.classification import LogisticRegressionModel, DecisionTreeClass
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBuilder
 
-from get_spark_session import get_spark_session
-
 
 # Class Classification Model
 class ClassificationModel:
@@ -194,13 +192,16 @@ class ClassificationModel:
 
 
 if __name__ == "__main__":
+    from get_spark_session import get_spark_session
+    from get_classification_approach import get_classification_approach
+
     spark = get_spark_session("Classification Model")
-    classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
-                            "one_vs_rest"]
+
+    classification_models = get_classification_approach()
     dic_year_model = {
-        # "2018": classification_models,
+        "2018": classification_models,
         # "2014": classification_models,
-        "2010": classification_models,
+        # "2010": classification_models,
         # "2006": classification_models,
     }
 
