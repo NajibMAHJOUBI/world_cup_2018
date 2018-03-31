@@ -10,9 +10,6 @@ from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBui
 from pyspark.sql.functions import col, udf
 from pyspark.sql.types import DoubleType
 
-from classification_model import ClassificationModel
-from get_spark_session import get_spark_session
-
 
 class RegressionModel:
 
@@ -198,15 +195,18 @@ class RegressionModel:
 
 
 if __name__ == "__main__":
+    from get_spark_session import get_spark_session
+    from classification_model import ClassificationModel
+    from get_regression_approach import get_regression_approach
     spark = get_spark_session("Regression Model")
     classification_model = ClassificationModel(None, None, None, None, None, None, None)
     classification_model.define_evaluator()
-    regression_models = ["linear_regression", "decision_tree", "random_forest", "gbt_regressor"]
+    regression_models = get_regression_approach()
     dic_year_model = {
         "2018": regression_models,
-        "2014": regression_models,
-        "2010": regression_models,
-        "2006": regression_models
+        # "2014": regression_models,
+        # "2010": regression_models,
+        # "2006": regression_models
     }
     dic_evaluate_model = {}
     for year, models in dic_year_model.iteritems():
