@@ -64,3 +64,6 @@ def get_data_schema(data_schema):
             StructField("id", FloatType(), True),
             StructField("label", FloatType(), True),
             StructField("prediction", FloatType(), True)])
+    elif data_schema == "teams":
+        return StructType([StructField("team", StringType(), True),
+                           StructField("country", StringType(), True)])
