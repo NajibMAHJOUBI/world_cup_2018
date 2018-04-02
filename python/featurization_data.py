@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
+sys.append("./pyspark")
+from get_competition_dates import get_competition_dates
 import pandas as pd
 
 from get_data_names import get_data_names
@@ -22,13 +25,16 @@ class FeaturizationData:
                       "matchesGroup_losses": "losses", "matchesGroup_draws": "draws",
                       "goalsGroup_for": "for", "goalsGroup_against": "against"}
 
-    def __init__(self, year, confederations, path_training):
+    def __init__(self, year, confederations, path_training, stage=None):
         self.year = year
         self.confederations = confederations
         self.path_training = path_training
+        self.stage = stage
 
         self.dic_data = None
         self.data_union = None
+        self.start_date = None
+        self.end_date = None
 
     def __str__(self):
         pass
@@ -37,6 +43,14 @@ class FeaturizationData:
         self.loop_all_confederations()
         self.union_all_confederation()
         self.save_training()
+
+    def get_data_union(self):
+        return self.data_union
+
+    def set_dates(self):
+        if self.list_date is not None:
+            self.start_date = get_competition_dates(self.year)[self.stage][0]
+            self.end_date = get_competition_dates(self.year)[self.stage][1]
 
     def load_start_data(self, confederation):
         path = "./data/{0}/{1}_World_Cup_{2}_qualifying_start.tsv".format(confederation, self.year, confederation)
@@ -53,7 +67,10 @@ class FeaturizationData:
         data["diff_points"] = data.apply(lambda row: float(row["score_team_1"]) - float(row["score_team_2"]), axis=1)
         data["new_date"] = data.apply(lambda row: str(row["year"]) + "/" + str(row["month"]) + "/" + str(row["date"]),
                                       axis=1)
-        return data[["team_1", "team_2", "label", "diff_points", "new_date"]].rename(columns={'new_date': 'date'})
+        data = data[["team_1", "team_2", "label", "diff_points", "new_date"]].rename(columns={'new_date': 'date'})
+        if (self.start_date is not None) and (self.end_date is not None):
+            data = data[(data.date >= self.start_date) & (data.date <= self.end_date)]
+        return data
 
     def compute_data_confederation(self, confederation):
         df_qualifying_results = self.load_results_data(confederation)
