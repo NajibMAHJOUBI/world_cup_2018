@@ -36,7 +36,6 @@ class FeaturizationData:
     def run(self):
         self.loop_all_confederations()
         self.union_all_confederation()
-        print(self.data_union.head(5))
         self.save_training()
 
     def load_start_data(self, confederation):
