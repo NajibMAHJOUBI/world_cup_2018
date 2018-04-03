@@ -1,0 +1,1444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="ff49caac-72ca-4231-899d-56d7474f750f" name="Default" comment="" />
+    <ignored mask="*.crc" />
+    <ignored mask="*.parquet" />
+    <ignored mask="_SUCCESS" />
+    <ignored path="test/string_indexer/2006/metadata/part-00000" />
+    <ignored mask="*.csv" />
+    <ignored mask="part-00000" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="classification_model.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python/classification_model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="144">
+              <caret line="134" column="78" lean-forward="false" selection-start-line="134" selection-start-column="41" selection-end-line="134" selection-end-column="78" />
+              <folding>
+                <element signature="e#1#10#0" expanded="true" />
+                <element signature="e#910#1164#0" expanded="false" />
+                <element signature="e#1535#1612#0" expanded="false" />
+                <element signature="e#1924#3064#0" expanded="false" />
+                <element signature="e#3716#4029#0" expanded="false" />
+                <element signature="e#4087#4498#0" expanded="false" />
+                <element signature="e#4572#4743#0" expanded="false" />
+                <element signature="e#4811#5142#0" expanded="false" />
+                <element signature="e#5210#5602#0" expanded="false" />
+                <element signature="e#6333#6616#0" expanded="false" />
+                <element signature="e#6679#6733#0" expanded="false" />
+                <element signature="e#6697#6733#0" expanded="false" />
+                <element signature="e#6797#6900#0" expanded="false" />
+                <element signature="e#6958#7443#0" expanded="false" />
+                <element signature="e#7485#7573#0" expanded="false" />
+                <element signature="e#7612#7658#0" expanded="false" />
+                <element signature="e#7699#7742#0" expanded="false" />
+                <element signature="e#7778#8061#0" expanded="false" />
+                <element signature="e#8097#8148#0" expanded="false" />
+                <element signature="e#8182#8257#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="featurization_data.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/python/featurization_data.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="398">
+              <caret line="72" column="19" lean-forward="true" selection-start-line="72" selection-start-column="19" selection-end-line="72" selection-end-column="19" />
+              <folding>
+                <element signature="e#25#34#0" expanded="true" />
+                <element signature="e#239#375#0" expanded="false" />
+                <element signature="e#425#735#0" expanded="false" />
+                <element signature="e#1103#1107#0" expanded="false" />
+                <element signature="e#1136#1234#0" expanded="false" />
+                <element signature="e#1571#2058#0" expanded="false" />
+                <element signature="e#3089#4350#0" expanded="false" />
+                <element signature="e#3889#4075#0" expanded="false" />
+                <element signature="e#4399#4544#0" expanded="false" />
+                <element signature="e#4415#4544#0" expanded="false" />
+                <element signature="e#4593#4644#0" expanded="false" />
+                <element signature="e#4683#5054#0" expanded="false" />
+                <element signature="e#5088#5397#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="featurization_data.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyspark/featurization_data.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-442">
+              <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="46" selection-end-column="45" />
+              <folding>
+                <element signature="e#584#963#0" expanded="false" />
+                <element signature="e#996#1172#0" expanded="false" />
+                <element signature="e#1201#1348#0" expanded="false" />
+                <element signature="e#1547#1569#0" expanded="false" />
+                <element signature="e#1612#1638#0" expanded="false" />
+                <element signature="e#1673#1837#0" expanded="false" />
+                <element signature="e#1893#3989#0" expanded="false" />
+                <element signature="e#2009#2185#0" expanded="false" />
+                <element signature="e#4103#4279#0" expanded="false" />
+                <element signature="e#4426#4602#0" expanded="false" />
+                <element signature="e#5022#5167#0" expanded="false" />
+                <element signature="e#5518#5646#0" expanded="false" />
+                <element signature="e#6330#6464#0" expanded="false" />
+                <element signature="e#6797#7888#0" expanded="false" />
+                <element signature="e#7937#8064#0" expanded="false" />
+                <element signature="e#8113#8621#0" expanded="false" />
+                <element signature="e#8133#8358#0" expanded="false" />
+                <element signature="e#8659#8942#0" expanded="false" />
+                <element signature="e#8976#9553#0" expanded="false" />
+                <element signature="e#9142#9299#0" expanded="false" />
+                <element signature="e#9188#9217#0" expanded="false" />
+                <element signature="e#9376#9553#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="regression_model.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python/regression_model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="613">
+              <caret line="83" column="0" lean-forward="false" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+                <element signature="e#531#760#0" expanded="false" />
+                <element signature="e#793#797#0" expanded="false" />
+                <element signature="e#826#999#0" expanded="false" />
+                <element signature="e#1038#1091#0" expanded="false" />
+                <element signature="e#1131#1222#0" expanded="false" />
+                <element signature="e#1253#1302#0" expanded="false" />
+                <element signature="e#1396#1460#0" expanded="false" />
+                <element signature="e#1873#1985#0" expanded="false" />
+                <element signature="e#2717#2799#0" expanded="false" />
+                <element signature="e#2838#2884#0" expanded="false" />
+                <element signature="e#3004#3055#0" expanded="false" />
+                <element signature="e#3091#3531#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="complete_stage.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyspark/complete_stage.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2150">
+              <caret line="179" column="0" lean-forward="false" selection-start-line="179" selection-start-column="0" selection-end-line="179" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="complete_stage.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python/complete_stage.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="220">
+              <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="get_competition_dates.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyspark/get_competition_dates.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="40">
+              <caret line="2" column="25" lean-forward="false" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="25" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="get_match_issue.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/python/get_match_issue.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="40">
+              <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="regression_model.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyspark/regression_model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="65">
+              <caret line="185" column="23" lean-forward="false" selection-start-line="183" selection-start-column="0" selection-end-line="189" selection-end-column="26" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>2014</find>
+      <find />
+      <find>join</find>
+      <find>self.teams</find>
+      <find>schema</find>
+      <find>show()</find>
+      <find>show</find>
+      <find>udf_te</find>
+      <find>split</find>
+      <find>ClassificationModel</find>
+      <find>path_data</find>
+      <find>model_method</find>
+      <find>new_data</find>
+      <find>stacking_classifier</find>
+      <find>average_prediction</find>
+      <find>, StringType(), True)</find>
+      <find>), col(</find>
+      <find>, IntegerType(), True)</find>
+      <find>mn</find>
+      <find>MN	PH</find>
+      <find>MM	BD</find>
+      <find>ma</find>
+      <find>matchesGroup_</find>
+      <find>row[</find>
+      <find>print</find>
+      <find>alpha</find>
+      <find>run</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>row[</replace>
+      <replace>] / float(row[</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>$PROJECT_DIR$/python</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GradleLocalSettings">
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/python/test.py" />
+        <option value="$PROJECT_DIR$/python/get_spark_session.py" />
+        <option value="$PROJECT_DIR$/python/main_first_stage.py" />
+        <option value="$PROJECT_DIR$/python/stacking_ensemble_method.py" />
+        <option value="$PROJECT_DIR$/data/2010_groups.csv" />
+        <option value="$PROJECT_DIR$/data/2006_groups.csv" />
+        <option value="$PROJECT_DIR$/data/2014_groups.csv" />
+        <option value="$PROJECT_DIR$/python/first_stage.py" />
+        <option value="$PROJECT_DIR$/python/averaging_regression_method.py" />
+        <option value="$PROJECT_DIR$/notebook/regression_model_prediction.ipynb" />
+        <option value="$PROJECT_DIR$/python/get_stacking_approach.py" />
+        <option value="$PROJECT_DIR$/test/model/stacking/stacking_306/get_regression_approach.py" />
+        <option value="$PROJECT_DIR$/test/model/stacking/stacking_306/get_classification_approach.py" />
+        <option value="$PROJECT_DIR$/python/get_classification_approach.py" />
+        <option value="$PROJECT_DIR$/python/stacking_classification_method.py" />
+        <option value="$PROJECT_DIR$/python/averaging_predictions.py" />
+        <option value="$PROJECT_DIR$/python/2018_prediction.py" />
+        <option value="$PROJECT_DIR$/python/result_statistic.py" />
+        <option value="$PROJECT_DIR$/python/get_data_schema.py" />
+        <option value="$PROJECT_DIR$/get_2018_world_cup_matches" />
+        <option value="$PROJECT_DIR$/python/get_world_cup_matches.py" />
+        <option value="$PROJECT_DIR$/python/match_prediction.py" />
+        <option value="$PROJECT_DIR$/pyspark/featurization_data.py" />
+        <option value="$PROJECT_DIR$/python/get_data_names.py" />
+        <option value="$PROJECT_DIR$/pyspark/classification_model.py" />
+        <option value="$PROJECT_DIR$/python/get_features.py" />
+        <option value="$PROJECT_DIR$/python/classification_model.py" />
+        <option value="$PROJECT_DIR$/python/get_match_issue.py" />
+        <option value="$PROJECT_DIR$/python/regression_model.py" />
+        <option value="$PROJECT_DIR$/python/complete_stage.py" />
+        <option value="$PROJECT_DIR$/python/featurization_data.py" />
+      </list>
+    </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <expand />
+      <select />
+    </treeState>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="133" />
+    <option name="y" value="45" />
+    <option name="width" value="674" />
+    <option name="height" value="646" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scratches" />
+      <pane id="AndroidView" />
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="world_cup_2018" type="b2602c69:ProjectViewProjectNode" />
+              <item name="world_cup_2018" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/README.md" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="preferences.updates" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/test/sklearn/model/classification" />
+      <recent name="$PROJECT_DIR$/python" />
+      <recent name="$PROJECT_DIR$/test/transform/classification_model" />
+      <recent name="$PROJECT_DIR$/test/transform/classification_model/2018" />
+      <recent name="$PROJECT_DIR$/test/model/classification_model/2018" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/data/WCF" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.2018_prediction">
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="WIDTH" value="0" />
+      <option name="HEIGHT" value="0" />
+      <module />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+    </configuration>
+    <configuration name="2018_prediction" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="world_cup_2018" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python/match_prediction.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="main_first_stage" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="" value="" />
+        <env name="PYSPARK_PYTHON" value="$USER_HOME$/anaconda2/bin/python" />
+        <env name="PYTHONPATH" value="$USER_HOME$/spark-2.3.0/python" />
+        <env name="PYTHON_SUBMIT_ARGS" value="pyspark" />
+        <env name="SPARK_HOME" value="$USER_HOME$/spark-2.3.0" />
+      </envs>
+      <option name="SDK_HOME" value="$USER_HOME$/anaconda2/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/python" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="world_cup_2018" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/python/main_first_stage.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="true" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
+    </configuration>
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <predefined_log_file id="idea.log" enabled="true" />
+    </configuration>
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="Python.2018_prediction" />
+      <item index="1" class="java.lang.String" itemvalue="Python.main_first_stage" />
+    </list>
+  </component>
+  <component name="SbtLocalSettings">
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ff49caac-72ca-4231-899d-56d7474f750f" name="Default" comment="" />
+      <created>1520548486441</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1520548486441</updated>
+    </task>
+    <task id="LOCAL-00032" summary="featurization for 2006, 2010, 2014, 2018">
+      <created>1521188049185</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1521188049185</updated>
+    </task>
+    <task id="LOCAL-00033" summary="add define_matche_issue method">
+      <created>1521188103396</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1521188103396</updated>
+    </task>
+    <task id="LOCAL-00034" summary="create all permutation for stacking methods">
+      <created>1521188151349</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1521188151349</updated>
+    </task>
+    <task id="LOCAL-00035" summary="test">
+      <created>1521188187774</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1521188187774</updated>
+    </task>
+    <task id="LOCAL-00036" summary="add option to take into account 6, 7, 8 and 9 methods in stacking">
+      <created>1521188237427</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1521188237427</updated>
+    </task>
+    <task id="LOCAL-00037" summary="test classification + regression">
+      <created>1521245238921</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1521245238921</updated>
+    </task>
+    <task id="LOCAL-00038" summary="first commit">
+      <created>1521387679724</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1521387679724</updated>
+    </task>
+    <task id="LOCAL-00039" summary="first commit">
+      <created>1521387761906</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1521387761906</updated>
+    </task>
+    <task id="LOCAL-00040" summary="modify path data">
+      <created>1521387957868</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1521387957898</updated>
+    </task>
+    <task id="LOCAL-00041" summary="use of combonations instead of permutations">
+      <created>1521388032607</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1521388032607</updated>
+    </task>
+    <task id="LOCAL-00042" summary="add stacking models form 2 to 9 models as features">
+      <created>1521406554859</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1521406554859</updated>
+    </task>
+    <task id="LOCAL-00043" summary="add variables and option to deal with stacking models">
+      <created>1521592339548</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1521592339549</updated>
+    </task>
+    <task id="LOCAL-00044" summary="add stage variable + method load_best_model">
+      <created>1521592404468</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1521592404468</updated>
+    </task>
+    <task id="LOCAL-00045" summary="add method get_model">
+      <created>1521670715225</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1521670715225</updated>
+    </task>
+    <task id="LOCAL-00046" summary="rename method stacking_transform to transform_model">
+      <created>1521670779968</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1521670779968</updated>
+    </task>
+    <task id="LOCAL-00047" summary="optimize imports">
+      <created>1521670827460</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1521670827460</updated>
+    </task>
+    <task id="LOCAL-00048" summary="add optoion to treat diiferent model approach">
+      <created>1521697633469</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1521697633469</updated>
+    </task>
+    <task id="LOCAL-00049" summary="averaging predictions first commit">
+      <created>1522347335779</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1522347335779</updated>
+    </task>
+    <task id="LOCAL-00050" summary="averaging predictions for stacking">
+      <created>1522394311767</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1522394311783</updated>
+    </task>
+    <task id="LOCAL-00051" summary="test data for 2018 world cup">
+      <created>1522490739954</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1522490739962</updated>
+    </task>
+    <task id="LOCAL-00052" summary="test data for 2018 world cup">
+      <created>1522490800518</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1522490800518</updated>
+    </task>
+    <task id="LOCAL-00053" summary="get matches by group">
+      <created>1522493778853</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1522493778853</updated>
+    </task>
+    <task id="LOCAL-00054" summary="world cup 2018 preparation start data">
+      <created>1522504969000</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1522504969001</updated>
+    </task>
+    <task id="LOCAL-00055" summary="world cup 2018 regression model">
+      <created>1522505169674</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1522505169678</updated>
+    </task>
+    <task id="LOCAL-00056" summary="add schema for teams data">
+      <created>1522505208140</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1522505208140</updated>
+    </task>
+    <task id="LOCAL-00057" summary="world cup 2018 featurization data data">
+      <created>1522505270901</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1522505270901</updated>
+    </task>
+    <task id="LOCAL-00058" summary="world cup 2018 classification models">
+      <created>1522505400867</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1522505400873</updated>
+    </task>
+    <task id="LOCAL-00059" summary="world cup 2018 match prediction classification + regression">
+      <created>1522505610277</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1522505610277</updated>
+    </task>
+    <task id="LOCAL-00060" summary="renamed dir from python to pyspark">
+      <created>1522506226415</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1522506226420</updated>
+    </task>
+    <task id="LOCAL-00061" summary="remove notebooks">
+      <created>1522584333007</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1522584333007</updated>
+    </task>
+    <task id="LOCAL-00062" summary="add missing index">
+      <created>1522585315508</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1522585315511</updated>
+    </task>
+    <task id="LOCAL-00063" summary="add missing index">
+      <created>1522585496549</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1522585496549</updated>
+    </task>
+    <task id="LOCAL-00064" summary="sklearn logistic regression tests">
+      <created>1522585645174</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1522585645176</updated>
+    </task>
+    <task id="LOCAL-00065" summary="sklearn logistic regression tests">
+      <created>1522585674359</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1522585674359</updated>
+    </task>
+    <task id="LOCAL-00066" summary="delete logistic_regression ipynb">
+      <created>1522585706219</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1522585706219</updated>
+    </task>
+    <task id="LOCAL-00067" summary="get data feature names for pandas read_csv">
+      <created>1522585749033</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1522585749033</updated>
+    </task>
+    <task id="LOCAL-00068" summary="featurized data sets with pandas library">
+      <created>1522585786852</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1522585786852</updated>
+    </task>
+    <task id="LOCAL-00069" summary="sklearn logistic regression ipynb">
+      <created>1522596955929</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1522596955929</updated>
+    </task>
+    <task id="LOCAL-00070" summary="sklearn logistic regression ipynb">
+      <created>1522624653732</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1522624653752</updated>
+    </task>
+    <task id="LOCAL-00071" summary="sklearn classification models for 2014">
+      <created>1522683038236</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1522683038237</updated>
+    </task>
+    <task id="LOCAL-00072" summary="sklearn regression lars models for 2014">
+      <created>1522685979744</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1522685979744</updated>
+    </task>
+    <task id="LOCAL-00073" summary="get label and feature names">
+      <created>1522686227944</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1522686227948</updated>
+    </task>
+    <task id="LOCAL-00074" summary="remove print statement">
+      <created>1522686298404</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1522686298404</updated>
+    </task>
+    <task id="LOCAL-00075" summary="first commit">
+      <created>1522688809099</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1522688809099</updated>
+    </task>
+    <task id="LOCAL-00076" summary="lars regression model 2014">
+      <created>1522689221791</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1522689221791</updated>
+    </task>
+    <task id="LOCAL-00077" summary="sklearn regression LR + ridge models for 2014">
+      <created>1522689277320</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1522689277320</updated>
+    </task>
+    <task id="LOCAL-00078" summary="sklearn regression model first commit">
+      <created>1522689341991</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1522689341991</updated>
+    </task>
+    <task id="LOCAL-00079" summary="add stage parameter">
+      <created>1522708549851</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1522708549852</updated>
+    </task>
+    <task id="LOCAL-00080" summary="first commit">
+      <created>1522708592434</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1522708592437</updated>
+    </task>
+    <option name="localTasksCounter" value="81" />
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="133" y="45" width="986" height="647" extended-state="6" />
+    <layout>
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3288201" sideWeight="0.49369085" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.7253385" sideWeight="0.74413645" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3251599" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5415861" sideWeight="0.69776875" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21083172" sideWeight="0.75236595" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.6286267" sideWeight="0.25586355" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26012793" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3288201" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20977917" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24840085" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24840085" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32889733" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32688588" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41586074" sideWeight="0.5157729" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32648402" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32889733" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20977917" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24961948" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3288201" sideWeight="0.49369085" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3282572" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3536379" sideWeight="0.4747634" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21083172" sideWeight="0.75236595" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23519458" sideWeight="0.48422712" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24048707" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3288201" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
+    </layout-to-restore>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="test data for 2018 world cup" />
+    <MESSAGE value="get matches by group" />
+    <MESSAGE value="world cup 2018 preparation start data" />
+    <MESSAGE value="world cup 2018 regression model" />
+    <MESSAGE value="add schema for teams data" />
+    <MESSAGE value="world cup 2018 featurization data data" />
+    <MESSAGE value="world cup 2018 classification models" />
+    <MESSAGE value="world cup 2018 match prediction classification + regression" />
+    <MESSAGE value="renamed dir from python to pyspark" />
+    <MESSAGE value="remove notebooks" />
+    <MESSAGE value="add missing index" />
+    <MESSAGE value="sklearn logistic regression tests" />
+    <MESSAGE value="delete logistic_regression ipynb" />
+    <MESSAGE value="get data feature names for pandas read_csv" />
+    <MESSAGE value="featurized data sets with pandas library" />
+    <MESSAGE value="sklearn logistic regression ipynb" />
+    <MESSAGE value="sklearn classification models for 2014" />
+    <MESSAGE value="sklearn regression lars models for 2014" />
+    <MESSAGE value="get label and feature names" />
+    <MESSAGE value="remove print statement" />
+    <MESSAGE value="lars regression model 2014" />
+    <MESSAGE value="sklearn regression LR + ridge models for 2014" />
+    <MESSAGE value="sklearn regression model first commit" />
+    <MESSAGE value="add stage parameter" />
+    <MESSAGE value="first commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="first commit" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="36" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/python/classification_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#1#10#0" expanded="true" />
+            <element signature="e#910#1164#0" expanded="false" />
+            <element signature="e#1535#1612#0" expanded="false" />
+            <element signature="e#1924#3064#0" expanded="false" />
+            <element signature="e#3716#4029#0" expanded="false" />
+            <element signature="e#4087#4498#0" expanded="false" />
+            <element signature="e#4572#4743#0" expanded="false" />
+            <element signature="e#4811#5142#0" expanded="false" />
+            <element signature="e#5210#5602#0" expanded="false" />
+            <element signature="e#6333#6616#0" expanded="false" />
+            <element signature="e#6679#6733#0" expanded="false" />
+            <element signature="e#6697#6733#0" expanded="false" />
+            <element signature="e#6797#6900#0" expanded="false" />
+            <element signature="e#6958#7443#0" expanded="false" />
+            <element signature="e#7485#7573#0" expanded="false" />
+            <element signature="e#7612#7658#0" expanded="false" />
+            <element signature="e#7699#7742#0" expanded="false" />
+            <element signature="e#7778#8061#0" expanded="false" />
+            <element signature="e#8097#8148#0" expanded="false" />
+            <element signature="e#8182#8257#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/featurization_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="740">
+          <caret line="37" column="38" lean-forward="false" selection-start-line="37" selection-start-column="38" selection-end-line="37" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/classification_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#1#10#0" expanded="true" />
+            <element signature="e#910#1164#0" expanded="false" />
+            <element signature="e#1535#1612#0" expanded="false" />
+            <element signature="e#1924#3064#0" expanded="false" />
+            <element signature="e#3716#4029#0" expanded="false" />
+            <element signature="e#4087#4498#0" expanded="false" />
+            <element signature="e#4572#4743#0" expanded="false" />
+            <element signature="e#4811#5142#0" expanded="false" />
+            <element signature="e#5210#5602#0" expanded="false" />
+            <element signature="e#6333#6616#0" expanded="false" />
+            <element signature="e#6679#6733#0" expanded="false" />
+            <element signature="e#6697#6733#0" expanded="false" />
+            <element signature="e#6797#6900#0" expanded="false" />
+            <element signature="e#6958#7443#0" expanded="false" />
+            <element signature="e#7485#7573#0" expanded="false" />
+            <element signature="e#7612#7658#0" expanded="false" />
+            <element signature="e#7699#7742#0" expanded="false" />
+            <element signature="e#7778#8061#0" expanded="false" />
+            <element signature="e#8097#8148#0" expanded="false" />
+            <element signature="e#8182#8257#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/classification_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#1#10#0" expanded="true" />
+            <element signature="e#910#1164#0" expanded="false" />
+            <element signature="e#1535#1612#0" expanded="false" />
+            <element signature="e#1924#3064#0" expanded="false" />
+            <element signature="e#3716#4029#0" expanded="false" />
+            <element signature="e#4087#4498#0" expanded="false" />
+            <element signature="e#4572#4743#0" expanded="false" />
+            <element signature="e#4811#5142#0" expanded="false" />
+            <element signature="e#5210#5602#0" expanded="false" />
+            <element signature="e#6333#6616#0" expanded="false" />
+            <element signature="e#6679#6733#0" expanded="false" />
+            <element signature="e#6697#6733#0" expanded="false" />
+            <element signature="e#6797#6900#0" expanded="false" />
+            <element signature="e#6958#7443#0" expanded="false" />
+            <element signature="e#7485#7573#0" expanded="false" />
+            <element signature="e#7612#7658#0" expanded="false" />
+            <element signature="e#7699#7742#0" expanded="false" />
+            <element signature="e#7778#8061#0" expanded="false" />
+            <element signature="e#8097#8148#0" expanded="false" />
+            <element signature="e#8182#8257#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/transform/classification_model/2006/decision_tree/part-00000-732df8ef-b363-41d2-a26b-ea88ed492400-c000.csv" />
+    <entry file="file://$PROJECT_DIR$/test/accuracy/{0}_stacking_accuracy.csv" />
+    <entry file="file://$PROJECT_DIR$/test/accuracy/2014_stacking_accuracy.csv" />
+    <entry file="file://$PROJECT_DIR$/test/accuracy/2014_2_stacking_accuracy.csv" />
+    <entry file="file://$PROJECT_DIR$/test/accuracy/2014_3_stacking_accuracy.csv" />
+    <entry file="file://$PROJECT_DIR$/python/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/test/accuracy/2014_5_stacking_accuracy.csv" />
+    <entry file="file://$PROJECT_DIR$/test/accuracy/2014_4_stacking_accuracy.csv" />
+    <entry file="file://$PROJECT_DIR$/test/accuracy/2014_6_stacking_accuracy.csv" />
+    <entry file="file://$PROJECT_DIR$/test/accuracy/random_forest/2014_5_stacking_accuracy.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1980">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/accuracy/logistic_regression/2014_5_stacking_accuracy.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1986">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/prediction/stacking/2014/3rd_stage/stacking_378/decision_tree/part-00000-4b99e6e6-21e6-4a9c-96cd-bb69545d5bde-c000.csv" />
+    <entry file="file://$PROJECT_DIR$/test/prediction/stacking/2014/3rd_stage/stacking_424/decision_tree/part-00000-636ae5d9-38ef-4a34-be42-cc02d102bca6-c000.csv" />
+    <entry file="file://$PROJECT_DIR$/test/prediction/stacking/2014/3rd_stage/stacking_270/decision_tree/part-00000-95ebac7c-5140-405b-87a2-3751f9332398-c000.csv" />
+    <entry file="file://$PROJECT_DIR$/test/prediction/stacking/2014/3rd_stage/stacking_271/decision_tree/part-00000-c7a4d1de-96c1-4915-bb70-87fa4eae04df-c000.csv" />
+    <entry file="file://$PROJECT_DIR$/test/prediction/stacking/2014/3rd_stage/stacking_376/decision_tree/part-00000-a3d5e34f-9ff0-4af7-bc54-85012c6e6627-c000.csv" />
+    <entry file="file://$PROJECT_DIR$/test/prediction/stacking/2014/3rd_stage/stacking_429/decision_tree/part-00000-da03cda9-03f2-46d7-ba41-d0c743d1d677-c000.csv" />
+    <entry file="file://$PROJECT_DIR$/test/prediction/stacking/2014/3rd_stage/stacking_428/decision_tree/part-00000-b41f43f3-b4f0-4de3-89ca-d0584fc3d836-c000.csv" />
+    <entry file="file://$PROJECT_DIR$/test/prediction/regression/2014/3rd_stage/decision_tree/part-00000-c2374bea-979d-43bd-94b2-99248d815465-c000.csv" />
+    <entry file="file://$PROJECT_DIR$/notebook/stacking_model_accuracy.ipynb" />
+    <entry file="file://$PROJECT_DIR$/pyspark/stacking_classification_method.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="58" column="28" lean-forward="false" selection-start-line="58" selection-start-column="28" selection-end-line="58" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/prediction/classification/2014/1st_stage/decision_tree/part-00000-d5d8120a-7233-491b-b768-949b060effc3-c000.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyspark/get_classification_approach.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="16" lean-forward="false" selection-start-line="0" selection-start-column="4" selection-end-line="0" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyspark/get_stacking_approach.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="19" lean-forward="false" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyspark/result_statistic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="27" column="78" lean-forward="false" selection-start-line="27" selection-start-column="78" selection-end-line="27" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyspark/get_world_cup_matches.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="1" column="15" lean-forward="false" selection-start-line="1" selection-start-column="4" selection-end-line="1" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyspark/get_regression_approach.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="30" lean-forward="false" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyspark/match_prediction.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1710">
+          <caret line="103" column="36" lean-forward="true" selection-start-line="103" selection-start-column="36" selection-end-line="103" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyspark/averaging_predictions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="69">
+          <caret line="110" column="30" lean-forward="false" selection-start-line="110" selection-start-column="30" selection-end-line="110" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyspark/get_data_schema.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="49" column="38" lean-forward="false" selection-start-line="49" selection-start-column="24" selection-end-line="49" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/AFC/2006_World_Cup_AFC_qualifying_results.tsv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="66">
+          <caret line="121" column="20" lean-forward="false" selection-start-line="121" selection-start-column="20" selection-end-line="121" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/AFC/2014_World_Cup_AFC_qualifying_results.tsv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="79">
+          <caret line="12" column="22" lean-forward="false" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/sklearn/training/2014.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="1" column="22" lean-forward="false" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/notebook/pyspark_logistic_regression.ipynb" />
+    <entry file="file://$PROJECT_DIR$/notebook/logistic_regression.ipynb" />
+    <entry file="file://$PROJECT_DIR$/pyspark/classification_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="412">
+          <caret line="193" column="0" lean-forward="false" selection-start-line="193" selection-start-column="0" selection-end-line="193" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/get_data_names.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="36" column="34" lean-forward="false" selection-start-line="36" selection-start-column="16" selection-end-line="36" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/get_features.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/classification_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="134" column="78" lean-forward="false" selection-start-line="134" selection-start-column="41" selection-end-line="134" selection-end-column="78" />
+          <folding>
+            <element signature="e#1#10#0" expanded="true" />
+            <element signature="e#910#1164#0" expanded="false" />
+            <element signature="e#1535#1612#0" expanded="false" />
+            <element signature="e#1924#3064#0" expanded="false" />
+            <element signature="e#3716#4029#0" expanded="false" />
+            <element signature="e#4087#4498#0" expanded="false" />
+            <element signature="e#4572#4743#0" expanded="false" />
+            <element signature="e#4811#5142#0" expanded="false" />
+            <element signature="e#5210#5602#0" expanded="false" />
+            <element signature="e#6333#6616#0" expanded="false" />
+            <element signature="e#6679#6733#0" expanded="false" />
+            <element signature="e#6697#6733#0" expanded="false" />
+            <element signature="e#6797#6900#0" expanded="false" />
+            <element signature="e#6958#7443#0" expanded="false" />
+            <element signature="e#7485#7573#0" expanded="false" />
+            <element signature="e#7612#7658#0" expanded="false" />
+            <element signature="e#7699#7742#0" expanded="false" />
+            <element signature="e#7778#8061#0" expanded="false" />
+            <element signature="e#8097#8148#0" expanded="false" />
+            <element signature="e#8182#8257#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyspark/regression_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="65">
+          <caret line="185" column="23" lean-forward="false" selection-start-line="183" selection-start-column="0" selection-end-line="189" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/get_match_issue.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="40">
+          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/regression_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="613">
+          <caret line="83" column="0" lean-forward="false" selection-start-line="83" selection-start-column="0" selection-end-line="83" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#531#760#0" expanded="false" />
+            <element signature="e#793#797#0" expanded="false" />
+            <element signature="e#826#999#0" expanded="false" />
+            <element signature="e#1038#1091#0" expanded="false" />
+            <element signature="e#1131#1222#0" expanded="false" />
+            <element signature="e#1253#1302#0" expanded="false" />
+            <element signature="e#1396#1460#0" expanded="false" />
+            <element signature="e#1873#1985#0" expanded="false" />
+            <element signature="e#2717#2799#0" expanded="false" />
+            <element signature="e#2838#2884#0" expanded="false" />
+            <element signature="e#3004#3055#0" expanded="false" />
+            <element signature="e#3091#3531#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyspark/get_competition_dates.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="40">
+          <caret line="2" column="25" lean-forward="false" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/complete_stage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="11" column="0" lean-forward="false" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyspark/complete_stage.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2150">
+          <caret line="179" column="0" lean-forward="false" selection-start-line="179" selection-start-column="0" selection-end-line="179" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pyspark/featurization_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-442">
+          <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="46" selection-end-column="45" />
+          <folding>
+            <element signature="e#584#963#0" expanded="false" />
+            <element signature="e#996#1172#0" expanded="false" />
+            <element signature="e#1201#1348#0" expanded="false" />
+            <element signature="e#1547#1569#0" expanded="false" />
+            <element signature="e#1612#1638#0" expanded="false" />
+            <element signature="e#1673#1837#0" expanded="false" />
+            <element signature="e#1893#3989#0" expanded="false" />
+            <element signature="e#2009#2185#0" expanded="false" />
+            <element signature="e#4103#4279#0" expanded="false" />
+            <element signature="e#4426#4602#0" expanded="false" />
+            <element signature="e#5022#5167#0" expanded="false" />
+            <element signature="e#5518#5646#0" expanded="false" />
+            <element signature="e#6330#6464#0" expanded="false" />
+            <element signature="e#6797#7888#0" expanded="false" />
+            <element signature="e#7937#8064#0" expanded="false" />
+            <element signature="e#8113#8621#0" expanded="false" />
+            <element signature="e#8133#8358#0" expanded="false" />
+            <element signature="e#8659#8942#0" expanded="false" />
+            <element signature="e#8976#9553#0" expanded="false" />
+            <element signature="e#9142#9299#0" expanded="false" />
+            <element signature="e#9188#9217#0" expanded="false" />
+            <element signature="e#9376#9553#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/python/featurization_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="398">
+          <caret line="72" column="19" lean-forward="true" selection-start-line="72" selection-start-column="19" selection-end-line="72" selection-end-column="19" />
+          <folding>
+            <element signature="e#25#34#0" expanded="true" />
+            <element signature="e#239#375#0" expanded="false" />
+            <element signature="e#425#735#0" expanded="false" />
+            <element signature="e#1103#1107#0" expanded="false" />
+            <element signature="e#1136#1234#0" expanded="false" />
+            <element signature="e#1571#2058#0" expanded="false" />
+            <element signature="e#3089#4350#0" expanded="false" />
+            <element signature="e#3889#4075#0" expanded="false" />
+            <element signature="e#4399#4544#0" expanded="false" />
+            <element signature="e#4415#4544#0" expanded="false" />
+            <element signature="e#4593#4644#0" expanded="false" />
+            <element signature="e#4683#5054#0" expanded="false" />
+            <element signature="e#5088#5397#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>Python</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Python 2.7 (world_cup_2018) interpreter library</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>Python 2.7 (world_cup_2018)</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>world_cup_2018</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

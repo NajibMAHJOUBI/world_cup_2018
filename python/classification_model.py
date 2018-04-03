@@ -1,223 +1,194 @@
 
-# Import libraries
 import os
-from itertools import product
+import pandas as pd
 
-from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, \
-    MultilayerPerceptronClassifier, OneVsRest, LinearSVC
-from pyspark.ml.classification import LogisticRegressionModel, DecisionTreeClassificationModel, \
-    RandomForestClassificationModel, MultilayerPerceptronClassificationModel, OneVsRestModel
-from pyspark.ml.evaluation import MulticlassClassificationEvaluator
-from pyspark.ml.tuning import CrossValidator, TrainValidationSplit, ParamGridBuilder
+from sklearn.externals import joblib
+from sklearn.metrics import accuracy_score
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.gaussian_process.kernels import RBF
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import SGDClassifier
 
-from get_spark_session import get_spark_session
+from get_features import get_features
 
-
-# Class Classification Model
 class ClassificationModel:
-    def __init__(self, spark_session, year, classification_model, path_data, path_model, path_transform,
-                 validator, list_layers=None):
-        self.spark = spark_session
-        self.year = year
-        self.model_classifier = classification_model
-        self.root_path_data = path_data
-        self.root_path_model = path_model
-        self.root_path_transform = path_transform
-        self.validator = validator
-        self.layers = list_layers
-        self.features_column = "features"
-        self.label_column = "label"
-        self.prediction_column = "prediction"
 
-        self.data = None  # data - training
-        self.transform = None  # prediction
-        self.model = None  # classifier model
-        self.param_grid = None  # parameters grid builder
-        self.estimator = None  # model estimator
-        self.evaluator = None  # evaluator multi label prediction
+    def __init__(self, year, model_classifier, path_data, path_model):
+        self.year = year
+        self.model_classifier = model_classifier
+        self.path_data = path_data
+        self.path_model = path_model
+
+        self.estimator = None
+        self.param_grid = None
+        self.validator = None
+        self.data = None
 
     def __str__(self):
-        s = "\nClassification model: {0}\n".format(self.model_classifier)
-        s += "Validator: {0}\n".format(self.validator)
-        return s
+        pass
 
     def run(self):
         self.load_data()
         self.define_estimator()
-        self.define_evaluator()
-        self.define_grid_builder()
+        self.define_grid_parameters()
         self.define_validator()
         self.fit_validator()
-        self.save_best_model()
-        self.transform_model()
-        self.save_transform()
+        self.save_model()
 
-    def get_path_save_model(self):
-        return os.path.join(self.root_path_model, self.year, self.model_classifier)
+    def get_path_data(self):
+        return os.path.join(self.path_data, self.year+".csv")
 
-    def get_path_transform(self):
-        return os.path.join(self.root_path_transform, self.year, self.model_classifier)
+    def get_path_model(self):
+        return os.path.join(self.path_model, self.year, self.model_classifier+".pkl")
 
-    def get_best_model(self):
-        if self.model_classifier == "logistic_regression":
-            return LogisticRegressionModel.load(self.get_path_save_model())
-        elif self.model_classifier == "decision_tree":
-            return DecisionTreeClassificationModel.load(self.get_path_save_model())
-        elif self.model_classifier == "random_forest":
-            return RandomForestClassificationModel.load(self.get_path_save_model())
-        elif self.model_classifier == "multilayer_perceptron":
-            return MultilayerPerceptronClassificationModel.load(self.get_path_save_model())
-        elif self.model_classifier == "one_vs_rest":
-            return OneVsRestModel.load(self.get_path_save_model())
+    def get_x(self):
+        return self.data.loc[:, get_features("features")]
 
-    def get_transform(self):
-        return self.transform
-
-    def get_model(self):
-        return self.model
-
-    def set_model(self, model_to_set):
-        self.model = model_to_set
-
-    def set_transform(self, transform_to_set):
-        self.transform = transform_to_set
-
-    def set_data(self, data_to_set):
-        self.data = data_to_set
+    def get_y(self):
+        label = get_features("label")
+        return self.data.label
 
     def load_data(self):
-        self.data = (self.spark.read.parquet(os.path.join(self.root_path_data, self.year)))
-
-    def load_best_model(self):
-        if self.model_classifier == "logistic_regression":
-            self.model = LogisticRegressionModel.load(self.get_path_save_model())
-        elif self.model_classifier == "decision_tree":
-            self.model = DecisionTreeClassificationModel.load(self.get_path_save_model())
-        elif self.model_classifier == "random_forest":
-            self.model = RandomForestClassificationModel.load(self.get_path_save_model())
-        elif self.model_classifier == "multilayer_perceptron":
-            self.model = MultilayerPerceptronClassificationModel.load(self.get_path_save_model())
-        elif self.model_classifier == "one_vs_rest":
-            self.model = OneVsRestModel.load(self.get_path_save_model())
-
-    def define_grid_builder(self):
-        if self.model_classifier == "logistic_regression":
-            self.param_grid = (ParamGridBuilder()
-                               .addGrid(self.estimator.maxIter, [5, 10, 15, 20])
-                               .addGrid(self.estimator.regParam, [0.0, 0.01, 0.1, 1.0, 10.0])
-                               .addGrid(self.estimator.elasticNetParam, [0.0, 0.25, 0.5, 0.75, 1.0])
-                               .addGrid(self.estimator.fitIntercept, [True, False])
-                               .addGrid(self.estimator.aggregationDepth, [2, 4, 8, 16])
-                               .build())
-        elif self.model_classifier == "decision_tree":
-            self.param_grid = (ParamGridBuilder()
-                               .addGrid(self.estimator.maxDepth, [5, 10, 15, 20, 25])
-                               .addGrid(self.estimator.maxBins, [4, 8, 16, 32])
-                               .build())
-        elif self.model_classifier == "random_forest":
-            self.param_grid = (ParamGridBuilder()
-                               .addGrid(self.estimator.numTrees, [5, 10, 15, 20, 25])
-                               .addGrid(self.estimator.maxDepth, [5, 10, 15, 20])
-                               .addGrid(self.estimator.maxBins, [4, 8, 16, 32])
-                               .build())
-        elif self.model_classifier == "multilayer_perceptron":
-            if self.layers is None:
-                self.layers = [[8, 7, 6, 5, 4, 3], [8, 10, 3], [8, 8, 5, 3],  [8, 12, 12, 5, 3]]
-
-            self.param_grid = (ParamGridBuilder()
-                               .addGrid(self.estimator.layers, self.layers)
-                               .build())
-        elif self.model_classifier == "one_vs_rest":
-            list_classifier = []
-            # logistic regression classifier
-            reg_param = [0.0, 0.01, 0.1, 1.0, 10.0]
-            elastic_param = [0.0, 0.25, 0.5, 0.75, 1.0]
-            for reg, elastic in product(reg_param, elastic_param):
-                list_classifier.append(LogisticRegression(regParam=reg, elasticNetParam=elastic, family="binomial"))
-            # linerSVC
-            intercept = [True, False]
-            for reg, inter in product(reg_param, intercept):
-                list_classifier.append(LinearSVC(regParam=reg, fitIntercept=inter))
-
-            self.param_grid = (ParamGridBuilder()
-                               .addGrid(self.estimator.classifier, list_classifier)
-                               .build())
+        self.data = pd.read_csv(self.get_path_data(), header=0, sep=",")
 
     def define_estimator(self):
         if self.model_classifier == "logistic_regression":
-            self.estimator = LogisticRegression(featuresCol=self.features_column, labelCol=self.label_column,
-                                                family="multinomial")
+            self.estimator = LogisticRegression(max_iter=200, tol=0.001)
+        elif self.model_classifier == "k_neighbors":
+            self.estimator = KNeighborsClassifier()
+        elif self.model_classifier == "svc":
+            self.estimator = SVC()
+        elif self.model_classifier == "gaussian_classifier":
+            self.estimator = GaussianProcessClassifier()
         elif self.model_classifier == "decision_tree":
-            self.estimator = DecisionTreeClassifier(featuresCol=self.features_column, labelCol=self.label_column)
+            self.estimator = DecisionTreeClassifier()
         elif self.model_classifier == "random_forest":
-            self.estimator = RandomForestClassifier(featuresCol=self.features_column, labelCol=self.label_column)
-        elif self.model_classifier == "multilayer_perceptron":
-            self.estimator = MultilayerPerceptronClassifier(featuresCol=self.features_column,
-                                                            labelCol=self.label_column)
-        elif self.model_classifier == "one_vs_rest":
-            self.estimator = OneVsRest(featuresCol=self.features_column, labelCol=self.label_column)
+            self.estimator = RandomForestClassifier()
+        elif self.model_classifier == "mlp_classifier":
+            self.estimator = MLPClassifier()
+        elif self.model_classifier == "ada_boost":
+            self.estimator = AdaBoostClassifier()
+        elif self.model_classifier == "gaussian":
+            self.estimator = GaussianNB()
+        elif self.model_classifier == "quadratic":
+            self.estimator = QuadraticDiscriminantAnalysis()
+        elif self.model_classifier == "sgd":
+            self.estimator = SGDClassifier()
 
-    def define_evaluator(self):
-        self.evaluator = MulticlassClassificationEvaluator(predictionCol=self.prediction_column,
-                                                           labelCol=self.label_column,
-                                                           metricName="accuracy")
+    def define_grid_parameters(self):
+        if self.model_classifier == 'logistic_regression':
+            self.param_grid = [{'penalty': ['l2'],
+                                'C': [1, 10, 100, 1000],
+                                'solver': ['newton-cg', 'sag', 'lbfgs'],
+                                'fit_intercept': [True, False]},
+                               {'penalty': ['l1'],
+                                'C': [4.0, 2.0, 1.333, 1.0],
+                                'solver': ['liblinear', 'saga'],
+                                'fit_intercept': [True, False]}]
+        elif self.model_classifier == "k_neighbors":
+            self.param_grid = [{'n_neighbors': [2, 5, 10, 15, 20],
+                                'algorithm': ['brute']},
+                               {'n_neighbors': [2, 5, 10, 15, 20],
+                                'algorithm': ['ball_tree', 'kd_tree'],
+                                'leaf_size': [10, 20, 30, 40]}]
+        elif self.model_classifier == "svc":
+            self.param_grid = [{'kernel': ['rbf', 'linear', 'sigmoid'],
+                                'C': [1, 10, 100, 1000],
+                                'gamma': [0.001, 0.0001, 1./8]},
+                               {'kernel': ['poly'],
+                                'C': [1, 10, 100, 1000],
+                                'gamma': [0.001, 0.0001, 1./8],
+                                'degree': [2, 3, 4, 5]}]
+        elif self.model_classifier == "gaussian_classifier":
+            self.param_grid = [{'kernel': [1.0 * RBF(1.0),
+                                           1.0 * RBF(1000.0),
+                                           1.0 * RBF(0.001)]}]
+        elif self.model_classifier == "decision_tree":
+            self.param_grid = [{'criterion': ['gini', 'entropy'],
+                                'max_depth': [5, 10, 15, 20, 25, None],
+                                'min_samples_split': [2, 4, 6, 8],
+                                'min_samples_leaf': [1, 2, 4, 8],
+                                'max_features': ['sqrt', 'log2', None]}]
+        elif self.model_classifier == "random_forest":
+            self.param_grid = [{'n_estimators': [5, 10, 20],
+                                'criterion': ['gini', 'entropy'],
+                                'max_depth': [5, 10, 15, 20, 25, None],
+                                'min_samples_split': [2, 4, 6, 8],
+                                'min_samples_leaf': [1, 2, 4, 8],
+                                'max_features': ['sqrt', 'log2', None]}]
+        elif self.model_classifier == "mlp_classifier":
+            self.param_grid = [{'hidden_layer_sizes': [[8, 7, 6, 5, 4, 3],
+                                                       [8, 10, 3],
+                                                       [8, 8, 5, 3],
+                                                       [8, 12, 12, 5, 3]],
+                                'activation': ['identity', 'logistic', 'tanh', 'relu'],
+                                'solver': ['lbfgs', 'sgd', 'adam'],
+                                'alpha': [0.0, 0.0001, 0.001, 0.01, 0.1, 1.0],
+                                'learning_rate': ['constant', 'invscaling', 'adaptive']}]
+        elif self.model_classifier == "ada_boost":
+            self.param_grid = [{'base_estimator': [LogisticRegression(),
+                                                   DecisionTreeClassifier(),
+                                                   RandomForestClassifier()],
+                                'algorithm': ['SAMME', 'SAMME.R']}]
+        elif self.model_classifier == "gaussian":
+            self.param_grid = [{}
+                               ]
+        elif self.model_classifier == "quadratic":
+            self.param_grid = [{'reg_param': [0.0, 0.0001, 0.001, 0.01, 0.1, 1.0]}
+                               ]
+        elif self.model_classifier == "sgd":
+            self.param_grid = [{'loss': ['hinge', 'log', 'modified_huber', 'squared_hinge', 'perceptron', 'squared_loss',
+                                         'huber', 'epsilon_insensitive', 'squared_epsilon_insensitive'],
+                                'penalty': ["elasticnet"],
+                                'alpha': [0.0001, 0.001, 0.01, 0.1, 1.0],
+                                'l1_ratio': [0.0, 0.25, 0.5, 0.75, 1.0],
+                                'fit_intercept': [True, False]}]
 
     def define_validator(self):
-        if self.validator == "cross_validation":
-            self.validator = CrossValidator(estimator=self.estimator, 
-                                            estimatorParamMaps=self.param_grid, 
-                                            evaluator=self.evaluator, 
-                                            numFolds=4)
-        elif self.validator == "train_validation":
-            self.validator = TrainValidationSplit(estimator=self.estimator,
-                                                  estimatorParamMaps=self.param_grid,
-                                                  evaluator=self.evaluator,
-                                                  trainRatio=0.75)
+        self.validator = GridSearchCV(self.estimator, self.param_grid, cv=4, scoring='accuracy')
 
     def fit_validator(self):
-        self.model = self.validator.fit(self.data)
+        self.validator.fit(self.get_x(), self.get_y())
 
     def transform_model(self):
-        self.transform = self.model.transform(self.data)
+        return self.validator.predict(self.get_x())
 
-    def evaluate_evaluator(self): 
-        return self.evaluator.evaluate(self.transform)
+    def save_model(self):
+        if not os.path.isdir(os.path.join(self.path_model, self.year)):
+            os.makedirs(os.path.join(self.path_model, self.year))
+        if os.path.isfile(self.get_path_model()):
+            os.remove(self.get_path_model())
+        joblib.dump(self.validator, self.get_path_model())
 
-    def save_best_model(self):
-        self.model.bestModel.write().overwrite().save(self.get_path_save_model())
+    def load_model(self):
+        self.validator = joblib.load(self.get_path_model())
 
-    def save_transform(self):
-        (self.transform
-         .select("id", "label", "prediction")
-         .coalesce(1)
-         .write.csv(self.get_path_transform(), mode="overwrite", sep=",", header=True))
+    def evaluate(self):
+        return accuracy_score(self.get_y(), self.transform_model(), normalize=True)
 
 
 if __name__ == "__main__":
-    spark = get_spark_session("Classification Model")
-    classification_models = ["logistic_regression", "decision_tree", "random_forest", "multilayer_perceptron",
-                            "one_vs_rest"]
-    dic_year_model = {
-        # "2018": classification_models,
-        # "2014": classification_models,
-        "2010": classification_models,
-        # "2006": classification_models,
-    }
+    # models = ["logistic_regression", "k_neighbors", "gaussian_classifier",
+    #           "decision_tree", "random_forest", "mlp_classifier", "ada_boost",
+    #           "gaussian", "quadratic", "svc"]
+    models = ["svc"]
+    dic_accuracy = {}
+    for model in models:
+        print("Model: {0}".format(model))
+        classification_model = ClassificationModel("2014", model,
+                                                   "./test/sklearn/training",
+                                                   "./test/sklearn/model")
+        classification_model.run()
+        dic_accuracy[model] = classification_model.evaluate()
 
-    dic_evaluate_model = {}
-    # classification_models = ["one_vs_rest"]
-    for year, models in dic_year_model.iteritems():
-        print("Year: {0}".format(year))
-        dic_evaluate_model[year] = {}
-        for model in models:
-            print("  Model classification: {0}".format(model))
-            classification_model = ClassificationModel(spark, year, model,
-                                                       "./test/training",
-                                                       "./test/model/classification",
-                                                       "./test/transform/classification",
-                                                       validator="train_validation", list_layers=None)
-            classification_model.run()
-            dic_evaluate_model[year][model] = classification_model.evaluate_evaluator()
-
-    for year in sorted(dic_year_model.keys()):
-        print(dic_evaluate_model[year])
+for item in dic_accuracy.iteritems():
+    print item

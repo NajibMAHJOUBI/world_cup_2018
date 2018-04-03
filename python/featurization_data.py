@@ -1,192 +1,116 @@
+# -*- coding: utf-8 -*-
 
-# Pyspark libraries
-import numpy as np
-# Python libraries
 import os
-from pyspark.ml.feature import StringIndexer
-from pyspark.ml.linalg import Vectors, VectorUDT
-from pyspark.sql.functions import col, udf
-from pyspark.sql.types import StructType, StructField, StringType, FloatType, BooleanType
-# My libraries
-from get_data_schema import get_data_schema
-from get_spark_session import get_spark_session
+import sys
+sys.append("./pyspark")
+from get_competition_dates import get_competition_dates
+import pandas as pd
+
+from get_data_names import get_data_names
+
+
+def win_team_1(score_team_1, score_team_2):
+    if score_team_1 > score_team_2:
+        return 2.0
+    elif score_team_1 < score_team_2:
+        return 1.0
+    else:
+        return 0.0
 
 
 class FeaturizationData:
-    def __init__(self, spark_session, year, list_confederation, path_training, path_string_indexer, stage=None,
-                 list_date=None):
-        self.spark = spark_session
-        self.year = year
-        self.confederations = list_confederation
-        self.path_training = path_training
-        self.path_string_indexer = path_string_indexer
-        self.stage = stage
-        self.list_date = list_date
 
-        self.dic_data = {}
+    features_names = {"matchesGroup_home": "home", "matchesGroup_away": "away",
+                      "matchesGroup_neutral": "neutral", "matchesGroup_wins": "wins",
+                      "matchesGroup_losses": "losses", "matchesGroup_draws": "draws",
+                      "goalsGroup_for": "for", "goalsGroup_against": "against"}
+
+    def __init__(self, year, confederations, path_training, stage=None):
+        self.year = year
+        self.confederations = confederations
+        self.path_training = path_training
+        self.stage = stage
+
+        self.dic_data = None
         self.data_union = None
         self.start_date = None
         self.end_date = None
 
     def __str__(self):
-        s = "FeaturizationData class:\n"
-        s += "List of confederations: {0} \n".format(self.confederations)
-        s += "Spark Session: {0}".format(self.spark)
-        return s
+        pass
 
     def run(self):
-        self.get_dates()
         self.loop_all_confederations()
         self.union_all_confederation()
-        self.data_indexer()
-        self.save_data()
-
-    def get_dates(self):
-        if self.list_date is not None:
-            self.start_date = self.list_date[0]
-            self.end_date = self.list_date[1]
+        self.save_training()
 
     def get_data_union(self):
         return self.data_union
 
-    def get_confederation(self):
-        return self.confederations
-
-    def save_data(self):
-        return (self.data_union
-                .coalesce(1)
-                .write.mode('overwrite')
-                .parquet(os.path.join(self.path_training, self.year)))
+    def set_dates(self):
+        if self.list_date is not None:
+            self.start_date = get_competition_dates(self.year)[self.stage][0]
+            self.end_date = get_competition_dates(self.year)[self.stage][1]
 
     def load_start_data(self, confederation):
-        udf_get_percentage_game = udf(lambda x, y: x / y, FloatType())
-
-        def convert_string_to_float(x):
-            x_replace_minus = x.replace(u'\u2212', '-')
-            if x_replace_minus == '-':
-                return np.nan
-            else:
-                return float(x_replace_minus)
-
-        udf_convert_string_to_float = udf(lambda x: convert_string_to_float(x), FloatType())
-        udf_create_features = udf(lambda s, t, u, v, w, x, y, z: Vectors.dense([s, t, u, v, w, x, y, z]), VectorUDT())
-
-        names_start_to_convert = get_data_schema("qualifying_start").names
-        names_start_to_convert.remove("teamGroup_team")
         path = "./data/{0}/{1}_World_Cup_{2}_qualifying_start.tsv".format(confederation, self.year, confederation)
-        return (self.spark.read.csv(path, sep="\t", schema=get_data_schema("qualifying_start"), header=False)
-        .select([udf_convert_string_to_float(col(name)).alias(name) for name in names_start_to_convert] +
-                ["teamGroup_team"])
-        .withColumn("features", udf_create_features(
-                                        udf_get_percentage_game(col("matchesGroup_home"), col("matchesGroup_total")),
-                                        udf_get_percentage_game(col("matchesGroup_away"), col("matchesGroup_total")),
-                                        udf_get_percentage_game(col("matchesGroup_neutral"), col("matchesGroup_total")),
-                                        udf_get_percentage_game(col("matchesGroup_wins"), col("matchesGroup_total")),
-                                        udf_get_percentage_game(col("matchesGroup_losses"), col("matchesGroup_total")),
-                                        udf_get_percentage_game(col("matchesGroup_draws"), col("matchesGroup_total")),
-                                        udf_get_percentage_game(col("goalsGroup_for"), col("matchesGroup_total")),
-                                        udf_get_percentage_game(col("goalsGroup_against"), col("matchesGroup_total"))))
-        .withColumnRenamed("teamGroup_team", "team")
-        .select("team", "features"))
+        data = pd.read_csv(path, sep='\t', header=None, names=get_data_names("qualifying_start"))
+        for key, value in self.features_names.iteritems():
+            data[value] = data.apply(lambda row: row[key] / float(row["matchesGroup_total"]), axis=1)
+        data = data.rename(columns={'teamGroup_team': 'team'})
+        return data[["team"]+self.features_names.values()]
 
     def load_results_data(self, confederation):
-        def win_team_1(score_team_1, score_team_2):
-            if score_team_1 > score_team_2:
-                return 2.0
-            elif score_team_1 < score_team_2:
-                return 1.0
-            else:
-                return 0.0
-        udf_win_team_1 = udf(lambda team_1, team_2: win_team_1(team_1, team_2), FloatType())
-
-        def convert_string_to_float(x):
-            x_replace_minus = x.replace(u'\u2212', '-')
-            if x_replace_minus == '-':
-                return np.nan
-            else:
-                return float(x_replace_minus)
-        udf_convert_string_to_float = udf(lambda x: convert_string_to_float(x), FloatType())
-
-        udf_diff_points = udf(lambda goals_1, goals_2: float(goals_1 - goals_2), FloatType())
-
-        udf_get_date = udf(lambda date, month, year:  str(year) + "/" + str(month) + "/" + str(date), StringType())
-
-        names_results_to_convert = get_data_schema("qualifying_results").names
-        names_results_to_remove = ["year", "month", "date",  "team_1", "team_2", "score_team_1", "score_team_2",
-                                   "tournament", "country_played"]
-        for name in names_results_to_remove: names_results_to_convert.remove(name)
         path = "./data/{0}/{1}_World_Cup_{2}_qualifying_results.tsv".format(confederation, self.year, confederation)
-        data = self.spark.read.csv(path, sep="\t", schema=get_data_schema("qualifying_results"), header=False)\
-                              .select([udf_convert_string_to_float(col(name)).alias(name)
-                                       for name in names_results_to_convert] + names_results_to_remove)\
-                              .withColumn("label", udf_win_team_1(col("score_team_1"), col("score_team_2")))\
-                              .withColumn("diff_points", udf_diff_points(col("score_team_1"), col("score_team_2")))\
-                              .withColumn("new_date", udf_get_date(col("date"), col("month"), col("year")))\
-                              .select(col("team_1"), col("team_2"), col("label"), col("diff_points"),
-                                      col("new_date").alias("date"))
-
+        data = pd.read_csv(path, sep="\t", names=get_data_names("qualifying_results"), header=None)
+        data["label"] = data.apply(lambda row: win_team_1(int(row["score_team_1"]), int(row["score_team_2"])), axis=1)
+        data["diff_points"] = data.apply(lambda row: float(row["score_team_1"]) - float(row["score_team_2"]), axis=1)
+        data["new_date"] = data.apply(lambda row: str(row["year"]) + "/" + str(row["month"]) + "/" + str(row["date"]),
+                                      axis=1)
+        data = data[["team_1", "team_2", "label", "diff_points", "new_date"]].rename(columns={'new_date': 'date'})
         if (self.start_date is not None) and (self.end_date is not None):
-            def filter_date(date, start_date, end_date):
-                if (date >= start_date) and (date <= end_date):
-                    return True
-                else:
-                    return False
-            start_date, end_date = self.start_date, self.end_date
-            udf_filter_date = udf(lambda date: filter_date(date, start_date, end_date), BooleanType())
-            return data.filter(udf_filter_date(col("date")))
-        else:
-            return data  
+            data = data[(data.date >= self.start_date) & (data.date <= self.end_date)]
+        return data
 
-    def get_data_confederation(self, confederation):
-        udf_diff_features = udf(lambda features_1, features_2: features_1 - features_2, VectorUDT())
-        udf_team1_team2 = udf(lambda team_1, team_2, date: team_1 + "/" + team_2 + "_" + date, StringType())
+    def compute_data_confederation(self, confederation):
         df_qualifying_results = self.load_results_data(confederation)
         df_qualifying_start = self.load_start_data(confederation)
-        return (df_qualifying_results
-                .join(df_qualifying_start, df_qualifying_results.team_1 == df_qualifying_start.team)
-                .withColumnRenamed("features", "features_1").drop("team")
-                .join(df_qualifying_start, df_qualifying_results.team_2 == df_qualifying_start.team)
-                .withColumnRenamed("features", "features_2").drop("team")
-                .withColumn("features", udf_diff_features(col("features_1"), col("features_2")))
-                .select(col("label"), col("diff_points"), col("features"), udf_team1_team2(col("team_1"), col("team_2"),
-                                                                                           col("date")).alias("matches")
-                        ))
+
+        df_qualifying_results = (df_qualifying_results
+                                 .merge(df_qualifying_start, left_on=["team_1"], right_on=["team"])
+                                 .rename(columns={feature: feature+"_1" for feature in self.features_names.values()})
+                                 .drop(["team"], axis=1)
+                                 .merge(df_qualifying_start, left_on=["team_2"], right_on=["team"])
+                                 .rename(columns={feature: feature+"_2" for feature in self.features_names.values()})
+                                 .drop(["team"], axis=1))
+        for feature in self.features_names.values():
+            df_qualifying_results[feature] = df_qualifying_results.apply(lambda x: x[feature+"_1"] - x[feature+"_2"],
+                                                                         axis=1)
+
+        df_qualifying_results["matches"] = df_qualifying_results.apply(
+            lambda x: str(x["team_1"]) + "/" + str(x["team_2"]) + "_" + str(x["date"]), axis=1)
+
+        return df_qualifying_results[["matches", "label", "diff_points"] + self.features_names.values()]
 
     def loop_all_confederations(self):
-        for confederation in self.confederations:
-            self.dic_data[confederation] = self.get_data_confederation(confederation)
+        self.dic_data = {confederation: self.compute_data_confederation(confederation)
+                         for confederation in self.confederations}
 
     def union_all_confederation(self):
-        schema = StructType([
-            StructField("label", FloatType(), True),
-            StructField("diff_points", FloatType(), True),
-            StructField("features", VectorUDT(), True),
-            StructField("matches", StringType(), True)])
+        self.data_union = pd.concat(self.dic_data.values())
 
-        data_union_0 = self.spark.createDataFrame(self.spark.sparkContext.emptyRDD(), schema)
-
-        for tp in self.dic_data.iteritems():
-            data_union_0 = data_union_0.union(tp[1])
-        data_union_0.count()
-        self.data_union = data_union_0
-
-    def data_indexer(self):
-        string_indexer = StringIndexer(inputCol="matches", outputCol="id")
-        model = string_indexer.fit(self.data_union)
-        self.data_union = model.transform(self.data_union).drop("matches")
-        model.write().overwrite().save(os.path.join(self.path_string_indexer, self.year))
+    def save_training(self):
+        if not os.path.isdir(self.path_training):
+            os.makedirs(self.path_training)
+        if os.path.isfile(os.path.join(self.path_training, str(self.year)+'.csv')):
+            os.remove(os.path.join(self.path_training, str(self.year)+'.csv'))
+        self.data_union.to_csv(os.path.join(self.path_training, str(self.year)+'.csv'), sep=',', header=True, index=False)
 
 
 if __name__ == "__main__":
-    spark = get_spark_session("World_Cup")
-    all_confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA", "WCP"]
-    dic_year_confederation = {
-        "2018": ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA"],
-        "2014": all_confederations,
-        "2010": all_confederations,
-        "2006": all_confederations,
-    }
-    for year, confederations in dic_year_confederation.iteritems():
+    confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA", "WCP"]
+
+    for year in ["2018", "2014", "2010", "2006"]:
         print("Year: {0}".format(year))
-        featurization_data = FeaturizationData(spark, year, confederations, "./test/training", "./test/indexer")
+        featurization_data = FeaturizationData(year, confederations, "./test/sklearn/training")
         featurization_data.run()
