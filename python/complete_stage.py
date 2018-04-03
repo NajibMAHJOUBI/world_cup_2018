@@ -9,3 +9,6 @@ class CompleteStage:
 
     def run(self):
         pass
+
+    def load_data(self):
+        pass
