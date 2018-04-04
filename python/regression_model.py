@@ -25,6 +25,7 @@ class RegressionModel:
         self.estimator = None
         self.param_grid = None
         self.validator = None
+        self.data = None
 
     def __str__(self):
         pass
@@ -48,6 +49,9 @@ class RegressionModel:
 
     def get_y(self):
         return self.data.diff_points
+
+    def get_validator(self):
+        return self.validator
 
     def load_data(self):
         self.data = pd.read_csv(self.get_path_data(), header=0, sep=",")
