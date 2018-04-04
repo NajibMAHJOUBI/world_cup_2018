@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
-sys.append("./pyspark")
-from get_competition_dates import get_competition_dates
 import pandas as pd
-
 from get_data_names import get_data_names
+import sys
+sys.path.append("./pyspark")
+from get_competition_dates import get_competition_dates
 
 
 def win_team_1(score_team_1, score_team_2):
@@ -48,9 +47,12 @@ class FeaturizationData:
         return self.data_union
 
     def set_dates(self):
-        if self.list_date is not None:
+        if self.stage is not None:
             self.start_date = get_competition_dates(self.year)[self.stage][0]
             self.end_date = get_competition_dates(self.year)[self.stage][1]
+
+    def get_dates(self):
+        return self.start_date, self.end_date
 
     def load_start_data(self, confederation):
         path = "./data/{0}/{1}_World_Cup_{2}_qualifying_start.tsv".format(confederation, self.year, confederation)
@@ -65,7 +67,9 @@ class FeaturizationData:
         data = pd.read_csv(path, sep="\t", names=get_data_names("qualifying_results"), header=None)
         data["label"] = data.apply(lambda row: win_team_1(int(row["score_team_1"]), int(row["score_team_2"])), axis=1)
         data["diff_points"] = data.apply(lambda row: float(row["score_team_1"]) - float(row["score_team_2"]), axis=1)
-        data["new_date"] = data.apply(lambda row: str(row["year"]) + "/" + str(row["month"]) + "/" + str(row["date"]),
+        data["new_date"] = data.apply(lambda row: (str(row["year"]) + "/" +
+                                                   str(row["month"]).zfill(2) + "/" +
+                                                   str(row["date"]).zfill(2)),
                                       axis=1)
         data = data[["team_1", "team_2", "label", "diff_points", "new_date"]].rename(columns={'new_date': 'date'})
         if (self.start_date is not None) and (self.end_date is not None):
