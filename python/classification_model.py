@@ -49,7 +49,7 @@ class ClassificationModel:
         return os.path.join(self.path_data, self.year+".csv")
 
     def get_path_model(self):
-        return os.path.join(self.path_model, self.year, self.model_classifier+".pkl")
+        return os.path.join(self.path_model, "classification", self.year, self.model_classifier+".pkl")
 
     def get_x(self):
         return self.data.loc[:, get_features("features")]
@@ -194,5 +194,5 @@ if __name__ == "__main__":
         classification_model.run()
         dic_accuracy[model] = classification_model.evaluate()
 
-for item in dic_accuracy.iteritems():
-    print item
+    for item in dic_accuracy.iteritems():
+        print item
