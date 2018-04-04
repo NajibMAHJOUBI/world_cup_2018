@@ -47,5 +47,5 @@ class CompleteStage:
 
 
 if __name__ == "__main__":
-    complete_stage = CompleteStage("2014", "logistic_regression", "classification", "1st_stage", None, None)
+    complete_stage = CompleteStage("2014", "logistic_regression", "classification", "1st_stage", "./test/sklearn/model", None)
     complete_stage.run()
