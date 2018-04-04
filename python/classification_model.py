@@ -20,6 +20,7 @@ from sklearn.linear_model import SGDClassifier
 
 from get_features import get_features
 
+
 class ClassificationModel:
 
     def __init__(self, year, model_classifier, path_data, path_model):
@@ -56,6 +57,9 @@ class ClassificationModel:
     def get_y(self):
         label = get_features("label")
         return self.data.label
+
+    def get_validator(self):
+        return self.validator
 
     def load_data(self):
         self.data = pd.read_csv(self.get_path_data(), header=0, sep=",")
