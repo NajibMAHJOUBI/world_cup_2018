@@ -1,14 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="affcfc4c-b793-4d97-ba2b-ce34a41f93c8" name="Default" comment="prediction by stage">
+    <list default="true" id="affcfc4c-b793-4d97-ba2b-ce34a41f93c8" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/1st_stage/ada_boost.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/1st_stage/decision_tree.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/1st_stage/gaussian.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/1st_stage/gaussian_classifier.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/1st_stage/k_neighbors.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/1st_stage/logistic_regression.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/1st_stage/mlp_classifier.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/1st_stage/quadratic.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/1st_stage/random_forest.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/1st_stage/sgd.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/1st_stage/svc.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/2nd_stage/ada_boost.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/2nd_stage/decision_tree.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/2nd_stage/gaussian.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/2nd_stage/gaussian_classifier.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/2nd_stage/k_neighbors.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/2nd_stage/logistic_regression.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/2nd_stage/mlp_classifier.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/2nd_stage/quadratic.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/2nd_stage/random_forest.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/2nd_stage/sgd.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/2nd_stage/svc.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/3rd_stage/ada_boost.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/3rd_stage/decision_tree.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/3rd_stage/gaussian.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/3rd_stage/gaussian_classifier.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/3rd_stage/k_neighbors.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/3rd_stage/logistic_regression.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/3rd_stage/mlp_classifier.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/3rd_stage/quadratic.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/3rd_stage/random_forest.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/3rd_stage/sgd.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/3rd_stage/svc.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/4th_stage/ada_boost.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/4th_stage/decision_tree.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/4th_stage/gaussian.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/4th_stage/gaussian_classifier.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/4th_stage/k_neighbors.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/4th_stage/logistic_regression.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/4th_stage/mlp_classifier.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/4th_stage/quadratic.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/4th_stage/random_forest.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/4th_stage/sgd.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/4th_stage/svc.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/5th_stage/ada_boost.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/5th_stage/decision_tree.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/5th_stage/gaussian.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/5th_stage/gaussian_classifier.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/5th_stage/k_neighbors.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/5th_stage/logistic_regression.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/5th_stage/mlp_classifier.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/5th_stage/quadratic.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/5th_stage/random_forest.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/5th_stage/sgd.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/5th_stage/svc.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/6th_stage/ada_boost.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/6th_stage/decision_tree.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/6th_stage/gaussian.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/6th_stage/gaussian_classifier.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/6th_stage/k_neighbors.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/6th_stage/logistic_regression.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/6th_stage/mlp_classifier.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/6th_stage/quadratic.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/6th_stage/random_forest.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/6th_stage/sgd.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/classification/2014/6th_stage/svc.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/1st_stage/lars.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/1st_stage/linear_regression.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/1st_stage/ridge.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/2nd_stage/lars.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/2nd_stage/linear_regression.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/2nd_stage/ridge.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/3rd_stage/lars.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/3rd_stage/linear_regression.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/3rd_stage/ridge.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/4th_stage/lars.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/4th_stage/linear_regression.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/4th_stage/ridge.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/5th_stage/lars.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/5th_stage/linear_regression.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/5th_stage/ridge.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/6th_stage/lars.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/6th_stage/linear_regression.csv" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/test/sklearn/prediction/regression/2014/6th_stage/ridge.csv" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored mask="*.crc" />
     <ignored mask="*.parquet" />
     <ignored mask="_SUCCESS" />
     <ignored path="test/string_indexer/2006/metadata/part-00000" />
-    <ignored mask="*.csv" />
     <ignored mask="part-00000" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -19,7 +102,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="regression_model.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="regression_model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/python/regression_model.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1040">
@@ -56,6 +139,26 @@
                 <element signature="e#3714#4014#0" expanded="false" />
                 <element signature="e#4470#4519#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="59">
+              <caret line="37" column="11" lean-forward="false" selection-start-line="37" selection-start-column="7" selection-end-line="37" selection-end-column="11" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="workspace.xml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="140">
+              <caret line="7" column="67" lean-forward="false" selection-start-line="7" selection-start-column="67" selection-end-line="7" selection-end-column="67" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -109,6 +212,7 @@
       <find>alpha</find>
       <find>run</find>
       <find>np</find>
+      <find>test</find>
     </findStrings>
     <replaceStrings>
       <replace>row[</replace>
@@ -162,6 +266,7 @@
         <option value="$PROJECT_DIR$/python/classification_model.py" />
         <option value="$PROJECT_DIR$/python/regression_model.py" />
         <option value="$PROJECT_DIR$/python/complete_stage.py" />
+        <option value="$PROJECT_DIR$/.idea/workspace.xml" />
       </list>
     </option>
   </component>
@@ -201,6 +306,16 @@
             <path>
               <item name="world_cup_2018" type="b2602c69:ProjectViewProjectNode" />
               <item name="world_cup_2018" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="world_cup_2018" type="b2602c69:ProjectViewProjectNode" />
+              <item name="world_cup_2018" type="462c0819:PsiDirectoryNode" />
+              <item name=".idea" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="world_cup_2018" type="b2602c69:ProjectViewProjectNode" />
+              <item name="world_cup_2018" type="462c0819:PsiDirectoryNode" />
+              <item name="python" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="world_cup_2018" type="b2602c69:ProjectViewProjectNode" />
@@ -450,13 +565,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1520548486441</updated>
-    </task>
-    <task id="LOCAL-00040" summary="modify path data">
-      <created>1521387957868</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1521387957898</updated>
     </task>
     <task id="LOCAL-00041" summary="use of combonations instead of permutations">
       <created>1521388032607</created>
@@ -794,7 +902,14 @@
       <option name="project" value="LOCAL" />
       <updated>1522969840345</updated>
     </task>
-    <option name="localTasksCounter" value="89" />
+    <task id="LOCAL-00089" summary="no message">
+      <created>1522970197284</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1522970197284</updated>
+    </task>
+    <option name="localTasksCounter" value="90" />
     <servers />
   </component>
   <component name="TodoView">
@@ -817,12 +932,12 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6924565" sideWeight="0.74626863" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3251599" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5415861" sideWeight="0.69776875" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5415861" sideWeight="0.69776875" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21083172" sideWeight="0.75236595" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32688588" sideWeight="0.25373134" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3283582" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3283582" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20977917" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24840085" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -892,7 +1007,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="world cup 2018 classification models" />
     <MESSAGE value="world cup 2018 match prediction classification + regression" />
     <MESSAGE value="renamed dir from python to pyspark" />
     <MESSAGE value="remove notebooks" />
@@ -917,7 +1031,8 @@
     <MESSAGE value="compute prediction by stage" />
     <MESSAGE value="first commit" />
     <MESSAGE value="add set_data function" />
-    <option name="LAST_COMMIT_MESSAGE" value="add set_data function" />
+    <MESSAGE value="no message" />
+    <option name="LAST_COMMIT_MESSAGE" value="no message" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -930,8 +1045,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/python/__init__.py" />
-    <entry file="file://$PROJECT_DIR$/test/accuracy/2014_5_stacking_accuracy.csv" />
     <entry file="file://$PROJECT_DIR$/test/accuracy/2014_4_stacking_accuracy.csv" />
     <entry file="file://$PROJECT_DIR$/test/accuracy/2014_6_stacking_accuracy.csv" />
     <entry file="file://$PROJECT_DIR$/test/accuracy/random_forest/2014_5_stacking_accuracy.csv">
@@ -1298,6 +1411,22 @@
             <element signature="e#3714#4014#0" expanded="false" />
             <element signature="e#4470#4519#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="59">
+          <caret line="37" column="11" lean-forward="false" selection-start-line="37" selection-start-column="7" selection-end-line="37" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="7" column="67" lean-forward="false" selection-start-line="7" selection-start-column="67" selection-end-line="7" selection-end-column="67" />
+          <folding />
         </state>
       </provider>
     </entry>
