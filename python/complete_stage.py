@@ -3,8 +3,8 @@ import os
 import pandas as pd
 
 from featurization_data import FeaturizationData
-from classification_model import ClassificationModel
-from regression_model import RegressionModel
+from model_classification import ClassificationModel
+from model_regression import RegressionModel
 
 
 class CompleteStage:
