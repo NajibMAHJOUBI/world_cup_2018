@@ -50,6 +50,9 @@ class RegressionModel:
     def get_y(self):
         return self.data.diff_points
 
+    def set_data(self, data):
+        self.data = data
+
     def get_validator(self):
         return self.validator
 
@@ -110,9 +113,9 @@ class RegressionModel:
 
 
 if __name__ == "__main__":
-    models = ["linear_regression", "ridge", "lars"]
+    from get_regression_models import get_regression_models
     dic_regression, dic_classification = {}, {}
-    for model in models:
+    for model in get_regression_models():
         print("Model: {0}".format(model))
         regression_model = RegressionModel("2014", model,
                                            "./test/sklearn/training",
