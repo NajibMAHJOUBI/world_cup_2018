@@ -1,22 +1,22 @@
 
 import os
-import pandas as pd
 
-from sklearn.externals import joblib
-from sklearn.metrics import accuracy_score
+import pandas as pd
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.externals import joblib
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import SGDClassifier
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.linear_model import SGDClassifier
 
 from get_features import get_features
 
@@ -55,8 +55,10 @@ class ClassificationModel:
         return self.data.loc[:, get_features("features")]
 
     def get_y(self):
-        label = get_features("label")
         return self.data.label
+
+    def set_data(self, data):
+        self.data = data
 
     def get_validator(self):
         return self.validator
@@ -181,12 +183,9 @@ class ClassificationModel:
 
 
 if __name__ == "__main__":
-    # models = ["logistic_regression", "k_neighbors", "gaussian_classifier",
-    #           "decision_tree", "random_forest", "mlp_classifier", "ada_boost",
-    #           "gaussian", "quadratic", "svc"]
-    models = ["svc"]
+    from get_classification_models import get_classification_models
     dic_accuracy = {}
-    for model in models:
+    for model in get_classification_models():
         print("Model: {0}".format(model))
         classification_model = ClassificationModel("2014", model,
                                                    "./test/sklearn/training",
