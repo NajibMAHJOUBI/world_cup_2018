@@ -12,15 +12,15 @@ from sklearn.model_selection import GridSearchCV
 
 from get_features import get_features
 from get_match_issue import get_match_issue
+from model_definition import DefinitionModel
 
 
-class RegressionModel:
+class RegressionModel(DefinitionModel):
 
-    def __init__(self, year, model_regression, path_data, path_model):
-        self.year = year
-        self.model_regression = model_regression
-        self.path_data = path_data
-        self.path_model = path_model
+    model_type = "regression"
+
+    def __init__(self, year, model, path_data, path_model):
+        DefinitionModel.__init__(self, year, model, self.model_type, path_data, path_model)
 
         self.estimator = None
         self.param_grid = None
@@ -37,27 +37,6 @@ class RegressionModel:
         self.define_validator()
         self.fit_validator()
         self.save_model()
-
-    def get_path_data(self):
-        return os.path.join(self.path_data, self.year+".csv")
-
-    def get_path_model(self):
-        return os.path.join(self.path_model, "regression", self.year, self.model_regression+".pkl")
-
-    def get_x(self):
-        return self.data.loc[:, get_features("features")]
-
-    def get_y(self):
-        return self.data.diff_points
-
-    def set_data(self, data):
-        self.data = data
-
-    def get_validator(self):
-        return self.validator
-
-    def load_data(self):
-        self.data = pd.read_csv(self.get_path_data(), header=0, sep=",")
 
     def define_estimator(self):
         if self.model_regression == "linear_regression":
@@ -82,34 +61,6 @@ class RegressionModel:
                                 'normalize': [True, False],
                                 'precompute': [True, False],
                                 'positive': [True, False]}]
-
-    def define_validator(self):
-        self.validator = GridSearchCV(self.estimator, self.param_grid, cv=4, scoring='r2')
-
-    def fit_validator(self):
-        self.validator.fit(self.get_x(), self.get_y())
-
-    def transform_model(self):
-        return self.validator.predict(self.get_x())
-
-    def load_model(self):
-        self.validator = joblib.load(self.get_path_model())
-
-    def save_model(self):
-        if not os.path.join(self.path_model, "regression"):
-            os.makedirs(os.path.join(self.path_model, "regression"))
-        if not os.path.isdir(os.path.join(self.path_model, "regression", self.year)):
-            os.makedirs(os.path.join(self.path_model, "regression", self.year))
-        if os.path.isfile(self.get_path_model()):
-            os.remove(self.get_path_model())
-        joblib.dump(self.validator, self.get_path_model())
-
-    def evaluate(self, model_):
-        if model_ == "classification":
-            return accuracy_score(self.get_y(), np.array(map(lambda x: get_match_issue(x), self.transform_model())),
-                                  normalize=True)
-        elif model_ == "regression":
-            return r2_score(self.get_y(), self.transform_model())
 
 
 if __name__ == "__main__":
