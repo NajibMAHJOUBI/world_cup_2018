@@ -9,15 +9,38 @@ from sklearn.metrics import accuracy_score
 
 class DefinitionModel:
 
-    def __init__(self, year, model, model_type, path_data, path_model):
+    scoring_method = {
+        "classification": "accuracy",
+        "regression": "r2"
+    }
+
+    def __init__(self, year, model, model_type,  path_data, path_model):
         self.year = year
         self.model = model
         self.model_type = model_type
         self.path_data = path_data
         self.path_model = path_model
 
+        self.data = None
+        self.validator = None
+
     def __str__(self):
-        pass
+        s = "DefinitionModel class:\n"
+        s += "Year: {0}\n".format(self.year)
+        s += "Model: {0}\n".format(self.get_model())
+        s += "Model type: {0}\n".format(self.model_type)
+        s += "Path data: {0}\n".format(self.path_data)
+        s += "Path model: {0}\n".format(self.path_model)
+        return s
+
+    def get_year(self):
+        return self.year
+
+    def get_model(self):
+        return self.model
+
+    def get_model_type(self):
+        return self.model_type
 
     def get_path_data(self):
         return os.path.join(self.path_data, self.year+".csv")
@@ -29,7 +52,7 @@ class DefinitionModel:
         path = os.path.join(path, self.year)
         if not os.path.isdir(path):
             os.makedirs(path)
-        return os.path.join(path, self.model_classifier+".pkl")
+        return os.path.join(path, self.model+".pkl")
 
     def get_x(self):
         return self.data.loc[:, get_features("features")]
@@ -47,7 +70,8 @@ class DefinitionModel:
         self.data = pd.read_csv(self.get_path_data(), header=0, sep=",")
 
     def define_validator(self):
-        self.validator = GridSearchCV(self.estimator, self.param_grid, cv=4, scoring='accuracy')
+        self.validator = GridSearchCV(self.estimator, self.param_grid, cv=4,
+                                      scoring=self.scoring_method[self.model_type])
 
     def fit_validator(self):
         self.validator.fit(self.get_x(), self.get_y())
