@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
-import pandas as pd
-from get_data_names import get_data_names
 import sys
+
+import pandas as pd
+
+from get_data_names import get_data_names
+
 sys.path.append("./pyspark")
 from get_competition_dates import get_competition_dates
 
@@ -36,7 +39,11 @@ class FeaturizationData:
         self.end_date = None
 
     def __str__(self):
-        pass
+        s = "Year: {0}".format(self.year)
+        s += "Confederations: {0}".format(self.confederations)
+        s += "Path training: {0}".format(self.path_training)
+        s += "Stage: {0}".format(self.stage)
+        return s
 
     def run(self):
         self.loop_all_confederations()
@@ -45,6 +52,14 @@ class FeaturizationData:
 
     def get_data_union(self):
         return self.data_union
+
+    def get_path_training(self):
+        if not os.path.isdir(self.path_training):
+            os.makedirs(self.path_training)
+        path = os.path.join(self.path_training, str(self.year)+'.csv')
+        if os.path.isfile(path):
+            os.remove(path)
+        return path
 
     def set_dates(self):
         if self.stage is not None:
@@ -104,17 +119,13 @@ class FeaturizationData:
         self.data_union = pd.concat(self.dic_data.values())
 
     def save_training(self):
-        if not os.path.isdir(self.path_training):
-            os.makedirs(self.path_training)
-        if os.path.isfile(os.path.join(self.path_training, str(self.year)+'.csv')):
-            os.remove(os.path.join(self.path_training, str(self.year)+'.csv'))
-        self.data_union.to_csv(os.path.join(self.path_training, str(self.year)+'.csv'), sep=',', header=True, index=False)
+        self.data_union.to_csv(self.get_path_training(), sep=',', header=True, index=False)
 
 
 if __name__ == "__main__":
     confederations = ["AFC", "CAF", "CONCACAF", "CONMEBOL", "OFC", "playoffs", "UEFA", "WCP"]
 
     for year in ["2018", "2014", "2010", "2006"]:
-        print("Year: {0}".format(year))
+        print("  Year: {0}".format(year))
         featurization_data = FeaturizationData(year, confederations, "./test/sklearn/training")
         featurization_data.run()
