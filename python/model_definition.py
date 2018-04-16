@@ -1,10 +1,12 @@
 
 import os
+
 import pandas as pd
-from get_features import get_features
-from sklearn.model_selection import GridSearchCV
 from sklearn.externals import joblib
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import GridSearchCV
+
+from get_features import get_features
 
 
 class DefinitionModel:
@@ -14,7 +16,7 @@ class DefinitionModel:
         "regression": "r2"
     }
 
-    def __init__(self, year, model, model_type,  path_data, path_model):
+    def __init__(self, year, model, model_type, path_data, path_model):
         self.year = year
         self.model = model
         self.model_type = model_type
