@@ -17,11 +17,10 @@ from model_definition import DefinitionModel
 class ClassificationModel(DefinitionModel):
 
     model_type = "classification"
-    scoring_method = "accuracy"
 
     def __init__(self, year, model, path_data, path_model):
 
-        DefinitionModel.__init__(self, year, model, self.model_type, self.scoring_method, path_data, path_model)
+        DefinitionModel.__init__(self, year, model, self.model_type, path_data, path_model)
 
         self.estimator = None
         self.param_grid = None
@@ -138,7 +137,7 @@ if __name__ == "__main__":
     sys.path.append("./pyspark")
     from get_classification_models import get_classification_models
     # dic_accuracy = {}
-    for year in ["2018"]:
+    for year in ["2006", "2010", "2014", "2018"]:
         print("Year: {0}".format(year))
         for model in get_classification_models():
             print("  Model: {0}".format(model))
@@ -146,7 +145,3 @@ if __name__ == "__main__":
                                                        "./test/sklearn/training",
                                                        "./test/sklearn/model")
             classification_model.run()
-            # dic_accuracy[model] = classification_model.evaluate()
-
-    # for item in dic_accuracy.iteritems():
-    #     print item
