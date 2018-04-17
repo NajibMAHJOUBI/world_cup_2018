@@ -124,8 +124,8 @@ class ClassificationModel(DefinitionModel):
             self.param_grid = [{'reg_param': [0.0, 0.0001, 0.001, 0.01, 0.1, 1.0]}
                                ]
         elif self.model == "sgd":
-            self.param_grid = [{'loss': ['hinge', 'log', 'modified_huber', 'squared_hinge', 'perceptron', 'squared_loss',
-                                         'huber', 'epsilon_insensitive', 'squared_epsilon_insensitive'],
+            self.param_grid = [{'loss': ['hinge', 'log', 'modified_huber', 'squared_hinge', 'perceptron',
+                                         'squared_loss', 'huber', 'epsilon_insensitive', 'squared_epsilon_insensitive'],
                                 'penalty': ["elasticnet"],
                                 'alpha': [0.0001, 0.001, 0.01, 0.1, 1.0],
                                 'l1_ratio': [0.0, 0.25, 0.5, 0.75, 1.0],
