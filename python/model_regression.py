@@ -7,10 +7,8 @@ from model_definition import DefinitionModel
 
 class RegressionModel(DefinitionModel):
 
-    model_type = "regression"
-
     def __init__(self, year, model, path_data, path_model):
-        DefinitionModel.__init__(self, year, model, self.model_type, path_data, path_model)
+        DefinitionModel.__init__(self, year, model, "regression", path_data, path_model)
 
         self.estimator = None
         self.param_grid = None
