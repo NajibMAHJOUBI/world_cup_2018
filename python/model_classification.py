@@ -136,7 +136,6 @@ if __name__ == "__main__":
     import sys
     sys.path.append("./pyspark")
     from get_classification_models import get_classification_models
-    # dic_accuracy = {}
     for year in ["2006", "2010", "2014", "2018"]:
         print("Year: {0}".format(year))
         for model in get_classification_models():
