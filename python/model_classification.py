@@ -138,7 +138,7 @@ if __name__ == "__main__":
     from get_classification_models import get_classification_models
     for year in ["2006", "2010", "2014", "2018"]:
         print("Year: {0}".format(year))
-        for model in get_classification_models():
+        for model in get_classification_models(["gaussian_classifier"]):
             print("  Model: {0}".format(model))
             classification_model = ClassificationModel(year, model,
                                                        "./test/sklearn/training",
