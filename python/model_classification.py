@@ -16,11 +16,9 @@ from model_definition import DefinitionModel
 
 class ClassificationModel(DefinitionModel):
 
-    model_type = "classification"
-
     def __init__(self, year, model, path_data, path_model):
 
-        DefinitionModel.__init__(self, year, model, self.model_type, path_data, path_model)
+        DefinitionModel.__init__(self, year, model, "classification", path_data, path_model)
 
         self.estimator = None
         self.param_grid = None
