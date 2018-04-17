@@ -60,7 +60,10 @@ class DefinitionModel:
         return self.data.loc[:, get_features("features")]
 
     def get_y(self):
-        return self.data.diff_points
+        if self.model_type == "regression":
+            return self.data.diff_points
+        elif self.model_type == "classification":
+            return self.data.label
 
     def set_data(self, data):
         self.data = data
