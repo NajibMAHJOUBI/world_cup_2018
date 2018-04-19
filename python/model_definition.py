@@ -68,6 +68,9 @@ class DefinitionModel:
     def set_data(self, data):
         self.data = data
 
+    def set_model_type(self, model_type):
+        self.model_type = model_type
+
     def get_validator(self):
         return self.validator
 
