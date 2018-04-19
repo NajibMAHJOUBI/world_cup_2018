@@ -1,4 +1,4 @@
-
+import numpy as np
 import os
 import pandas as pd
 
@@ -6,18 +6,26 @@ from featurization_data import FeaturizationData
 from model_definition import DefinitionModel
 
 
+def get_prediction(x):
+    threshold = 0.25
+    if float(np.abs(x)) <= threshold:
+        return 0.0
+    elif x > threshold:
+        return 2.0
+    elif x < -1.0 * threshold:
+        return 1.0
+
+
 class CompleteStage(DefinitionModel):
 
     def __init__(self, year, model, model_method, stage, path_model, path_prediction):
         DefinitionModel.__init__(self, year, model, model_method, None, path_model)
-                              # (self, year, model, model_type,  path_data, path_model)
         self.stage = stage
-        self.path_model = path_model
+        # self.path_model = path_model
         self.path_prediction = path_prediction
 
         self.data = None
         self.prediction = None
-        self.model = None
 
     def __str__(self):
         s = "Year: {0}\n".format(self.get_year())
@@ -60,8 +68,21 @@ class CompleteStage(DefinitionModel):
         self.prediction = self.transform_model()
 
     def define_label_prediction(self):
-        return pd.DataFrame({"label": self.get_y(),
-                             "prediction": self.prediction})
+        if self.model_type == "classification":
+            label_prediction = {"label": self.get_y(),
+                                "prediction": self.get_prediction()}
+        elif self.model_type == "regression":
+            label_prediction = {}
+            self.set_model_type("classification")
+            label_prediction.update({"label": self.get_y()})
+            self.set_model_type("regression")
+            label_prediction.update({"diff_points_label": self.get_y(),
+                                     "diff_points_prediction": self.get_prediction(),
+                                     "prediction":
+                                         np.array([get_prediction(diff_points)
+                                                   for diff_points in self.get_prediction().tolist()])})
+
+        return pd.DataFrame(label_prediction)
 
     def save_prediction(self):
         self.define_label_prediction().to_csv(self.get_path_prediction(), header=True, index=False)
@@ -75,18 +96,16 @@ if __name__ == "__main__":
     from get_competition_dates import get_competition_dates
 
     dic_models = {
-        "classification": get_classification_models(),
+        "classification": get_classification_models(["gaussian_classifier"]),
         "regression": get_regression_models()
     }
-    for year in ["2006", "2010", "2014", "2018"]:
+    for year in ["2006", "2010", "2014"]:
         for stage in get_competition_dates(year).keys():
-            for model_method in dic_models.keys():
-                for model in dic_models[model_method]:
-                    print(year, model, model_method, stage,
-                          "./test/sklearn/model",
-                          "./test/sklearn/prediction")
-                    complete_stage = CompleteStage(year, model, model_method, stage,
+            for model_type in dic_models.keys():
+                for model in dic_models[model_type]:
+                    complete_stage = CompleteStage(year, model, model_type, stage,
                                                    "./test/sklearn/model",
                                                    "./test/sklearn/prediction")
-                    # complete_stage.run()
-                    print(complete_stage)
+                    # print(complete_stage)
+                    complete_stage.run()
+
