@@ -25,6 +25,7 @@ class DefinitionModel:
 
         self.data = None
         self.validator = None
+        self.prediction = None
 
     def __str__(self):
         s = "DefinitionModel class:\n"
@@ -65,11 +66,17 @@ class DefinitionModel:
         elif self.model_type == "classification":
             return self.data.label
 
+    def get_prediction(self):
+        return self.prediction
+
     def set_data(self, data):
         self.data = data
 
     def set_model_type(self, model_type):
         self.model_type = model_type
+
+    def set_prediction(self, prediction):
+        self.prediction = prediction
 
     def get_validator(self):
         return self.validator
@@ -85,7 +92,7 @@ class DefinitionModel:
         self.validator.fit(self.get_x(), self.get_y())
 
     def transform_model(self):
-        return self.validator.predict(self.get_x())
+        self.prediction = self.validator.predict(self.get_x())
 
     def save_model(self):
         if os.path.isfile(self.get_path_model()):
