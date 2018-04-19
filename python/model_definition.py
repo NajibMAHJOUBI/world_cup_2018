@@ -103,4 +103,4 @@ class DefinitionModel:
         self.validator = joblib.load(self.get_path_model())
 
     def evaluate_classification(self):
-        return accuracy_score(self.get_y(), self.transform_model(), normalize=True)
+        return accuracy_score(self.get_y(), self.get_prediction(), normalize=True)
