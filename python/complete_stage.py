@@ -58,6 +58,9 @@ class CompleteStage(DefinitionModel):
             os.makedirs(path)
         return os.path.join(path, self.get_model()+".csv")
 
+    def get_matches(self):
+        return self.data.matches
+
     def load_data(self):
         features_data = FeaturizationData(self.year, ["WCF"], None, stage=self.stage)
         features_data.set_dates()
@@ -68,11 +71,11 @@ class CompleteStage(DefinitionModel):
         self.prediction = self.transform_model()
 
     def define_label_prediction(self):
+        label_prediction = {"matches": self.get_matches()}
         if self.model_type == "classification":
-            label_prediction = {"label": self.get_y(),
-                                "prediction": self.get_prediction()}
+            label_prediction.update({"label": self.get_y(),
+                                     "prediction": self.get_prediction()})
         elif self.model_type == "regression":
-            label_prediction = {}
             self.set_model_type("classification")
             label_prediction.update({"label": self.get_y()})
             self.set_model_type("regression")
@@ -81,7 +84,6 @@ class CompleteStage(DefinitionModel):
                                      "prediction":
                                          np.array([get_prediction(diff_points)
                                                    for diff_points in self.get_prediction().tolist()])})
-
         return pd.DataFrame(label_prediction)
 
     def save_prediction(self):
