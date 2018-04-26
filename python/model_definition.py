@@ -1,10 +1,10 @@
 import os
 import pandas as pd
 from sklearn.externals import joblib
-from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
 
 from get_features import get_features
+from get_accuracy import get_accuracy
 
 
 class DefinitionModel:
@@ -100,4 +100,4 @@ class DefinitionModel:
         self.validator = joblib.load(self.get_path_model())
 
     def evaluate_classification(self):
-        return accuracy_score(self.get_y(), self.get_prediction(), normalize=True)
+        return get_accuracy(self.get_y(), self.get_prediction())
