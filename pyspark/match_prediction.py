@@ -72,6 +72,12 @@ class MatchPrediction:
         self.country_2 = country_2
         self.set_teams()
 
+    def set_model_regression(self, model):
+        self.model_regression = model
+
+    def set_model_classification(self, model):
+        self.model_classification = model
+
     def load_data_start(self):
         udf_get_percentage_game = udf(lambda x, y: x / y, FloatType())
 
@@ -232,21 +238,46 @@ class MatchPrediction:
 if __name__ == "__main__":
     from get_spark_session import get_spark_session
     from get_world_cup_matches import get_matches
+    from get_classification_approach import get_classification_approach
+    from get_regression_approach import get_regression_approach
     year = "2018"
     spark = get_spark_session("2018 World Cup")
     matches = get_matches(year)
 
-    world_cup = MatchPrediction(spark, year, "./test/model",
-                                model_classification="logistic_regression",
+    # world_cup = MatchPrediction(spark, year, "./test/pyspark/model",
+    #                             model_classification="decision_tree",
+    #                             model_regression=None,
+    #                             model_stacking=None,
+    #                             stacking_name=None)
+    #
+    # for group in sorted(matches["1st_stage"].keys()):
+    #     print("Group: {0}".format(group))
+    #     for match in matches["1st_stage"][group]:
+    #         country_1, country_2 = match
+    #         world_cup.set_country(country_1, country_2)
+    #         world_cup.run()
+    #         print("  {0}: {1}".format(world_cup.get_country(), world_cup.get_prediction()))
+    #     print("")
+
+    models = {"classification": get_classification_approach(),
+              "regression": get_regression_approach()}
+
+    world_cup = MatchPrediction(spark, year, "./test/pyspark/model",
+                                model_classification=None,
                                 model_regression=None,
                                 model_stacking=None,
                                 stacking_name=None)
+    world_cup.set_country("Uruguay", "Saudi Arabia")
+    print("{0}".format(world_cup.get_country()))
 
-    for group in sorted(matches["1st_stage"].keys()):
-        print("Group: {0}".format(group))
-        for match in matches["1st_stage"][group]:
-            country_1, country_2 = match
-            world_cup.set_country(country_1, country_2)
+    for model_type, models_ in models.iteritems():
+        for model in models_:
+            if model_type == "classification":
+                world_cup.set_model_classification(model)
+                world_cup.set_model_regression(None)
+            elif model_type == "regression":
+                world_cup.set_model_regression(model)
+                world_cup.set_model_classification(None)
             world_cup.run()
-            print("  {0}: {1}".format(world_cup.get_country(), world_cup.get_prediction()))
-        print("")
+            print("{0}; {1}:  {2}".format(model_type, model, world_cup.get_prediction()))
+

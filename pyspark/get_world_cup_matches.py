@@ -1,6 +1,6 @@
 
 def get_matches(year):
-    if year:
+    if year == "2018":
         matches = {"1st_stage": {}}
         matches["1st_stage"]["A"] = [("Russia", "Saudi Arabia"),
                                      ("Egypt", "Uruguay"),
