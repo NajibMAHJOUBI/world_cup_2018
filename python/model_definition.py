@@ -1,6 +1,4 @@
-
 import os
-
 import pandas as pd
 from sklearn.externals import joblib
 from sklearn.metrics import accuracy_score
@@ -10,7 +8,6 @@ from get_features import get_features
 
 
 class DefinitionModel:
-
     scoring_method = {
         "classification": "accuracy",
         "regression": "r2"
@@ -46,7 +43,7 @@ class DefinitionModel:
         return self.model_type
 
     def get_path_data(self):
-        return os.path.join(self.path_data, self.year+".csv")
+        return os.path.join(self.path_data, self.year + ".csv")
 
     def get_path_model(self):
         path = os.path.join(self.path_model, self.model_type)
@@ -55,7 +52,7 @@ class DefinitionModel:
         path = os.path.join(path, self.year)
         if not os.path.isdir(path):
             os.makedirs(path)
-        return os.path.join(path, self.model+".pkl")
+        return os.path.join(path, self.model + ".pkl")
 
     def get_x(self):
         return self.data.loc[:, get_features("features")]
