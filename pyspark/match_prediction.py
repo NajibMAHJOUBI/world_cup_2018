@@ -267,7 +267,7 @@ if __name__ == "__main__":
                                 model_regression=None,
                                 model_stacking=None,
                                 stacking_name=None)
-    world_cup.set_country("Uruguay", "Saudi Arabia")
+    world_cup.set_country("Morocco", "Portugal")
     print("{0}".format(world_cup.get_country()))
 
     for model_type, models_ in models.iteritems():
