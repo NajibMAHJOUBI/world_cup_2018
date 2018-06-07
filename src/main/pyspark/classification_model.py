@@ -213,9 +213,9 @@ if __name__ == "__main__":
         for model in models:
             print("  Model classification: {0}".format(model))
             classification_model = ClassificationModel(spark, year, model,
-                                                       "./test/pyspark/training",
-                                                       "./test/pyspark/model/classification",
-                                                       "./test/pyspark/transform/classification",
+                                                       "./src/test/pyspark/training",
+                                                       "./src/test/pyspark/model/classification",
+                                                       "./src/test/pyspark/transform/classification",
                                                        validator="train_validation", list_layers=None)
             classification_model.run()
             dic_evaluate_model[year][model] = classification_model.evaluate_evaluator()

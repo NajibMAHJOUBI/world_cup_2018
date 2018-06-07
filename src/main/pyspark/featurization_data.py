@@ -189,5 +189,5 @@ if __name__ == "__main__":
     for year, confederations in dic_year_confederation.iteritems():
         print("Year: {0}".format(year))
         featurization_data = FeaturizationData(spark, year, confederations,
-                                               "./test/pyspark/training", "./test/pyspark/indexer")
+                                               "./src/test/pyspark/training", "./src/test/pyspark/indexer")
         featurization_data.run()

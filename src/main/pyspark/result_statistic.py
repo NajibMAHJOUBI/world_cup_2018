@@ -176,7 +176,7 @@ if __name__ == "__main__":
             for classifier in models[method]:
                 accuracy_by_stage[method][year][classifier] = {}
                 print("  {0}: {1}".format(method, classifier))
-                result_statistic = ResultStatistic(spark, year, method, classifier, "./test/prediction")
+                result_statistic = ResultStatistic(spark, year, method, classifier, "./src/test/pyspark/prediction")
                 for stage in sorted(get_competition_dates(year).keys()):
                     result_statistic.set_stage(stage)
                     accuracy_by_stage[method][year][classifier][stage] = result_statistic.compute_accuracy_by_stage()

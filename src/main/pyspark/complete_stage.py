@@ -192,12 +192,12 @@ class CompleteStage:
 
 if __name__ == "__main__":
     spark = get_spark_session("Complete Stage")
-    path_model, path_prediction = "./test/model", "./test/prediction"
-    years = ["2010"]
+    path_model, path_prediction = "./src/test/pyspark/model", "./src/test/pyspark/prediction"
+    years = ["2006"]
     dic_model_methods = {
-        # "classification": {year: get_classification_approach() for year in years},
-        # "regression": {year: get_regression_approach() for year in years},
-        "stacking": {year: ["decision_tree", "random_forest"] for year in years}
+        "classification": {year: get_classification_approach() for year in years},
+        "regression": {year: get_regression_approach() for year in years},
+        # "stacking": {year: ["decision_tree", "random_forest"] for year in years}
         }
     dic_path_models = {model: os.path.join(path_model, model) for model in ["classification", "regression"]}
     dic_path_models.update({"stacking": path_model})
