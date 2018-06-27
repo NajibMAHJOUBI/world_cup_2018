@@ -269,56 +269,7 @@ if __name__ == "__main__":
                                 model_stacking=None,
                                 stacking_name=None)
 
-    # world_cup.set_country("Russia", "Saudi Arabia")
-    # world_cup.set_country("Saudi Arabia", "Russia")
-    #
-    # world_cup.set_country("Egypt", "Uruguay")
-    # world_cup.set_country("Uruguay", "Egypt")
-    #
-    # world_cup.set_country("Morocco", "Iran")
-    # world_cup.set_country("Iran", "Morocco")
-
-    # world_cup.set_country("Portugal", "Spain")
-    # world_cup.set_country("Spain", "Portugal")
-
-    # world_cup.set_country("France", "Australia")
-    # world_cup.set_country("Australia", "France")
-
-    # world_cup.set_country("Argentina", "Iceland")
-    # world_cup.set_country("Iceland", "Argentina")
-
-    # world_cup.set_country("Peru", "Denmark")
-    # world_cup.set_country("Denmark", "Peru")\
-
-    # world_cup.set_country("Croatia", "Nigeria")
-    # world_cup.set_country("Nigeria",  "Croatia")
-
-    # world_cup.set_country("Costa Rica", "Serbia")
-    # world_cup.set_country("Serbia", "Costa Rica")
-
-    # world_cup.set_country("Germany", "Mexico")
-    # world_cup.set_country("Mexico",  "Germany")
-
-    # world_cup.set_country("Brazil", "Switzerland")
-    # world_cup.set_country("Switzerland", "Brazil")
-
-    # world_cup.set_country("Sweden", "South Korea")
-    # world_cup.set_country("South Korea", "Sweden")
-
-    # world_cup.set_country("Belgium", "Panama")
-    # world_cup.set_country("Panama", "Belgium")
-
-    # world_cup.set_country("Tunisia", "England")
-    # world_cup.set_country("England", "Tunisia")
-
-    # world_cup.set_country("Colombia", "Japan")
-    # world_cup.set_country("Japan",  "Colombia")
-
-    # world_cup.set_country("Poland", "Senegal")
-    world_cup.set_country("Senegal", "Poland")
-
-    # world_cup.set_country("Russia", "Egypt")
-    world_cup.set_country("Egypt", "Russia")
+    world_cup.set_country("Costa Rica", "Switzerland")
 
     print("{0}".format(world_cup.get_country()))
 
