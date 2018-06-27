@@ -2,6 +2,7 @@
 # Import libraries
 import os
 from itertools import product
+import numpy as np
 
 from pyspark.ml.classification import LogisticRegression, DecisionTreeClassifier, RandomForestClassifier, \
     MultilayerPerceptronClassifier, OneVsRest, LinearSVC
@@ -128,8 +129,10 @@ class ClassificationModel:
         elif self.model_classifier == "one_vs_rest":
             list_classifier = []
             # logistic regression classifier
-            reg_param = [0.0, 0.01, 0.1, 1.0, 10.0]
-            elastic_param = [0.0, 0.25, 0.5, 0.75, 1.0]
+            # reg_param = [0.0, 0.01, 0.1, 1.0, 10.0]
+            reg_param = [1e-15, 1e-10, 1e-8, 1e-4, 1e-3, 1e-2, 1, 5, 10, 20]
+            # elastic_param = [0.0, 0.25, 0.5, 0.75, 1.0]
+            elastic_param = np.linspace(0, 1.0, 10).tolist()
             for reg, elastic in product(reg_param, elastic_param):
                 list_classifier.append(LogisticRegression(regParam=reg, elasticNetParam=elastic, family="binomial"))
             # linerSVC
@@ -199,7 +202,8 @@ if __name__ == "__main__":
 
     classification_models = get_classification_approach()
     dic_year_model = {
-        "2018": classification_models,
+        "2018": ["one_vs_rest"]
+        # "2018": classification_models,
         # "2014": classification_models,
         # "2010": classification_models,
         # "2006": classification_models,
